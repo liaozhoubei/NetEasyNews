@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="mask_tags_8">#1da8fe</color>
+
     <color name="white">#ffffff</color>
     <!-- 白色 -->
     <color name="ivory">#fffff0</color>

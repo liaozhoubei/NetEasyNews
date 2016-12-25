@@ -3,6 +3,7 @@ package cn.bproject.neteasynews;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,15 +16,21 @@ import java.util.List;
 
 import cn.bproject.neteasynews.bean.Tab;
 import cn.bproject.neteasynews.fragment.AboutFragment;
+import cn.bproject.neteasynews.fragment.BaseFragment;
 import cn.bproject.neteasynews.fragment.NewsFragment;
 import cn.bproject.neteasynews.fragment.PhotoFragment;
 import cn.bproject.neteasynews.fragment.VideoFragment;
 import cn.bproject.neteasynews.widget.FragmentTabHost;
 
 public class MainActivity extends AppCompatActivity {
+    private final String TAG = MainActivity.class.getSimpleName();
+
+
     private FragmentTabHost mTabHost;
     private LayoutInflater mInflater;
     private List<Tab> mTabs = new ArrayList<>(5);
+    private BaseFragment fragment;
+    private PhotoFragment photoFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,12 +86,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabChanged(String tabId) {
 
+                Log.d(TAG, "onTabChanged: mTabHost.setOnTabChangedListener" + R.string.news_fragment);
+//                if (tabId==getString(R.string.news_fragment)){
+//                    fragment = (BaseFragment) getSupportFragmentManager().findFragmentByTag(tabId);
+//                    fragment.loadData();
+//                }
 
             }
         });
 
         mTabHost.getTabWidget().setShowDividers(LinearLayout.SHOW_DIVIDER_NONE);
         mTabHost.setCurrentTab(0);
+
     }
 
     // 设置底部tab的图片和文字
@@ -98,5 +111,18 @@ public class MainActivity extends AppCompatActivity {
         text.setText(tab.getTitle());
 
         return  view;
+    }
+
+    private void refData(String fragmentTag){
+
+        if(fragment == null){
+
+            fragment = (BaseFragment) getSupportFragmentManager().findFragmentByTag(fragmentTag);
+//            if(fragment !=null){
+////                cartFragment= (CartFragment) fragment;
+////                cartFragment.refData();
+//            }
+        }
+        fragment.onLoad();
     }
 }
