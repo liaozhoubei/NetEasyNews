@@ -89,7 +89,7 @@ public class NewsFragment extends Fragment {
             public void onPageSelected(int position) {
                 Log.d(TAG, "onPageSelected: mNewsViewpager页面监听执行了" + position);
                 BaseFragment fragment = fragments.get(position);
-                fragment.loadData();
+//                fragment.loadData();
             }
 
             @Override

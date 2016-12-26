@@ -51,6 +51,7 @@ public class NewsListAdapter extends BaseAdapter{
         ViewHolder viewHolder = null;
         if (view == null) {
             view = View.inflate(mContext, R.layout.item_news_layout, null);
+            viewHolder = new ViewHolder();
             viewHolder.item_news_linearlayout = (LinearLayout) view.findViewById(R.id.item_news_linearlayout);
             viewHolder.item_news_tv_title = (TextView) view.findViewById(R.id.item_news_tv_title);
             viewHolder.item_news_tv_img = (ImageView) view.findViewById(R.id.item_news_tv_img);

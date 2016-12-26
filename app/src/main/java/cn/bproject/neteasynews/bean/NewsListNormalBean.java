@@ -252,5 +252,39 @@ public class NewsListNormalBean {
         public void setImgsrc(String imgsrc) {
             this.imgsrc = imgsrc;
         }
+
+        @Override
+        public String toString() {
+            return "ImgextraBean{" +
+                    "imgsrc='" + imgsrc + '\'' +
+                    '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "NewsListNormalBean{" +
+                "postid='" + postid + '\'' +
+                ", url_3w='" + url_3w + '\'' +
+                ", votecount=" + votecount +
+                ", replyCount=" + replyCount +
+                ", skipID='" + skipID + '\'' +
+                ", ltitle='" + ltitle + '\'' +
+                ", digest='" + digest + '\'' +
+                ", skipType='" + skipType + '\'' +
+                ", url='" + url + '\'' +
+                ", specialID='" + specialID + '\'' +
+                ", docid='" + docid + '\'' +
+                ", title='" + title + '\'' +
+                ", source='" + source + '\'' +
+                ", priority=" + priority +
+                ", lmodify='" + lmodify + '\'' +
+                ", boardid='" + boardid + '\'' +
+                ", subtitle='" + subtitle + '\'' +
+                ", imgsrc='" + imgsrc + '\'' +
+                ", ptime='" + ptime + '\'' +
+                ", hasAD=" + hasAD +
+                ", imgextra=" + imgextra +
+                '}';
     }
 }
