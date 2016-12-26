@@ -14,13 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.bproject.neteasynews.R;
+import cn.bproject.neteasynews.Utils.CategoryDataUtils;
 import cn.bproject.neteasynews.adapter.FixedPagerAdapter;
 import cn.bproject.neteasynews.bean.NewsBean;
+import cn.bproject.neteasynews.fragment.news.NewsListFragment;
+import cn.bproject.neteasynews.fragment.news.NewsListFragment2;
+import cn.bproject.neteasynews.fragment.news.NewsListFragment3;
 
 import static cn.bproject.neteasynews.R.id.tab_layout;
 
 /**
  * Created by Administrator on 2016/12/24.
+ * 新闻模块
  */
 
 public class NewsFragment extends Fragment {
@@ -39,14 +44,14 @@ public class NewsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment_news, container, false);
+        mView = inflater.inflate(R.layout.tablayout_pager, container, false);
         mTabLayout = (TabLayout) mView.findViewById(tab_layout);
         mNewsViewpager = (ViewPager) mView.findViewById(R.id.news_viewpager);
-        newsBeans= new ArrayList<>();
-        for (int i = 0; i < 5 ; i ++) {
-            NewsBean newsBean = new NewsBean("第" + i, "地址", "类型" + i);
-            newsBeans.add(newsBean);
-        }
+        newsBeans= CategoryDataUtils.getCategoryBeans();
+//        for (int i = 0; i < 5 ; i ++) {
+//            NewsBean newsBean = new NewsBean("第" + i, "地址", "类型" + i);
+//            newsBeans.add(newsBean);
+//        }
         initValidata();
         return mView;
     }

@@ -60,7 +60,12 @@ public abstract class BaseFragment extends Fragment{
     public abstract ResultState onLoad();
 
 
-
+    /**
+     * 未知bug，如果不在onStart或者  onResume中调用loadData()方法，则第一个fragment会一直处于loading状态
+     * 原因为loadData()被调用的时候，BaseFragment的onCreateView没有调用，导致mLoadingPage为空。
+     * 在此次调用的弊端为，每次使用TabLayout标签，loadData()方法会被调用两次，
+     * 一次为Viewpager的点击事件，一次为fragment创建的时候
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -83,11 +88,11 @@ public abstract class BaseFragment extends Fragment{
     public ResultState check(Object obj) {
         // 下列为测试数据
         if (obj != null) {
-            if ("123".equals(obj.toString())){
-                return ResultState.STATE_ERROR;
-            } else {
+//            if ("123".equals(obj.toString())){
+//                return ResultState.STATE_ERROR;
+//            } else {
                 return ResultState.STATE_SUCCESS;
-            }
+//            }
         } else {
             return ResultState.STATE_EMPTY;
         }

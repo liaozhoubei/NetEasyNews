@@ -113,16 +113,4 @@ public class MainActivity extends AppCompatActivity {
         return  view;
     }
 
-    private void refData(String fragmentTag){
-
-        if(fragment == null){
-
-            fragment = (BaseFragment) getSupportFragmentManager().findFragmentByTag(fragmentTag);
-//            if(fragment !=null){
-////                cartFragment= (CartFragment) fragment;
-////                cartFragment.refData();
-//            }
-        }
-        fragment.onLoad();
-    }
 }

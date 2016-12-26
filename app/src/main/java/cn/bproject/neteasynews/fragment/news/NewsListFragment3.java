@@ -1,16 +1,19 @@
-package cn.bproject.neteasynews.fragment;
+package cn.bproject.neteasynews.fragment.news;
 
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import cn.bproject.neteasynews.fragment.BaseFragment;
+import cn.bproject.neteasynews.fragment.NewsFragment;
 import cn.bproject.neteasynews.widget.LoadingPage;
 
 /**
  * Created by Bei on 2016/12/25.
+ * 测试错误网页
  */
 
-public class NewsListFragment extends BaseFragment{
+public class NewsListFragment3 extends BaseFragment {
 
     private final String TAG = NewsFragment.class.getSimpleName();
     
@@ -24,6 +27,7 @@ public class NewsListFragment extends BaseFragment{
 
     @Override
     public LoadingPage.ResultState onLoad() {
-        return check("hhh");
+        Log.d(TAG, "onLoad: NewsListFragment3重新加载了");
+        return check("123");
     }
 }

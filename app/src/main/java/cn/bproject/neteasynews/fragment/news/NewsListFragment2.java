@@ -1,9 +1,11 @@
-package cn.bproject.neteasynews.fragment;
+package cn.bproject.neteasynews.fragment.news;
 
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import cn.bproject.neteasynews.fragment.BaseFragment;
+import cn.bproject.neteasynews.fragment.NewsFragment;
 import cn.bproject.neteasynews.widget.LoadingPage;
 
 /**
@@ -11,7 +13,7 @@ import cn.bproject.neteasynews.widget.LoadingPage;
  * 测试空网络链接
  */
 
-public class NewsListFragment2 extends BaseFragment{
+public class NewsListFragment2 extends BaseFragment {
 
     private final String TAG = NewsFragment.class.getSimpleName();
     
