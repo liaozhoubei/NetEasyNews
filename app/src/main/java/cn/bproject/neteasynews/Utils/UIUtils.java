@@ -1,12 +1,15 @@
 package cn.bproject.neteasynews.Utils;
 
+import android.content.Context;
 import android.os.Handler;
 
 import cn.bproject.neteasynews.MyApplication;
 
 public class UIUtils {
 
-
+	public static Context getContext() {
+		return MyApplication.getContext();
+	}
 
 	public static Handler getHandler() {
 		return MyApplication.getHandler();

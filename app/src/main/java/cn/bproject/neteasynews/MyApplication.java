@@ -1,6 +1,7 @@
 package cn.bproject.neteasynews;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.Handler;
 
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -16,11 +17,12 @@ import okhttp3.OkHttpClient;
 public class MyApplication extends Application{
     private static int mainThreadId;
     private static Handler handler;
+    private static Context mContext;
 
     @Override
     public void onCreate() {
         super.onCreate();
-//        context = getApplicationContext();
+        mContext = getApplicationContext();
         handler = new Handler();
         mainThreadId = android.os.Process.myTid();
 
@@ -35,6 +37,10 @@ public class MyApplication extends Application{
 
 
 
+    }
+
+    public static Context getContext(){
+        return mContext;
     }
 
     public static Handler getHandler() {

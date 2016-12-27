@@ -8,12 +8,12 @@
     <LinearLayout
         android:id="@+id/item_news_three_image_view"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/item_news_height"
+        android:layout_height="120dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
         android:orientation="vertical"
-        android:visibility="gone"
+        android:visibility="visible"
         >
 
         <TextView
@@ -30,7 +30,34 @@
             android:id="@+id/item_news_three_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"/>
+            android:orientation="horizontal">
+            <ImageView
+                android:visibility="visible"
+                android:id="@+id/big_Image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+            <ImageView
+                android:paddingRight="5dp"
+                android:id="@+id/one_image"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/defaultbg"
+                android:layout_weight="1"/>
+            <ImageView
+                android:paddingRight="5dp"
+                android:id="@+id/two_image"
+                android:layout_width="0dp"
+                android:src="@drawable/defaultbg"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+            <ImageView
+                android:id="@+id/three_image"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/defaultbg"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
 
 
     </LinearLayout>
@@ -43,6 +70,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
+        android:visibility="gone"
         android:orientation="horizontal">
 
         <TextView
