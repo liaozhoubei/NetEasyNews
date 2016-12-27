@@ -4,9 +4,13 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <ListView
+
+
+    <com.handmark.pulltorefresh.PullToRefreshListView
         android:id="@+id/listView_news_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
+
 
 </LinearLayout>

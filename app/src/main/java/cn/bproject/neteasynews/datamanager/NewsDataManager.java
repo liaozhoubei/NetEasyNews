@@ -59,11 +59,7 @@ public class NewsDataManager {
             for (int i = 0; i < array.length(); i++) {
                 String js= array.get(i).toString();
                 NewsListNormalBean newsListNormalBean = gson.fromJson(js, NewsListNormalBean.class);
-//                System.out.println(newsListNormalBean  );
-//                String title = newsListNormalBean.getTitle();
-//
-//                int hasAD = newsListNormalBean.getHasAD();
-//                System.out.println(title + "   :" );
+
                 newsListNormalBeans.add(newsListNormalBean);
             }
             return newsListNormalBeans;

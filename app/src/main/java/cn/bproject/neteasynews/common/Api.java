@@ -6,178 +6,258 @@ package cn.bproject.neteasynews.common;
  *
  * URL 示例：
  * 栏目列表：
- http://c.m.163.com/nc/topicset/android/subscribe/manage/listspecial.html
- 新闻：
- 尾部：0为开始的新闻，10为一页显示多少条新闻
- 头条：
- http://c.m.163.com/recommend/getSubDocPic?tid=T1348647909107&from=toutiao&offset=0&size=10
- 要闻：
- http://c.m.163.com/nc/article/list/T1467284926140/0-20.html
- 体育：
- http://c.m.163.com/dlist/article/dynamic?from=T1348649079062&offset=0&size=10&fn=1&&devId=44t6%2B5mG3ACAOlQOCLuIHg%3D%3D
- 财经：
- http://c.m.163.com/nc/article/list/T1348648756099/0-20.html
- 科技：
- http://c.m.163.com/nc/article/list/T1348649580692/0-20.html
- 时尚：
- http://c.m.163.com/nc/article/list/T1348650593803/0-20.html
- 直播：
- http://data.live.126.net/livechannel/previewlist.json
- 段子
- http://c.m.163.com/recommend/getChanListNews?channel=T1419316284722&size=10&offset=0&devId=44t6%2B5mG3ACAOlQOCLuIHg%3D%3D
- 独家：
- http://c.m.163.com/nc/article/list/T1370583240249/0-20.html
- 政务：
- http://c.m.163.com/nc/article/list/T1414142214384/0-20.html
- 哒哒趣闻：
- http://c.m.163.com/nc/article/list/T1444289532601/0-20.html
- 二次元：
- http://c.m.163.com/nc/article/list/T1481105123675/0-20.html
- 图片：
- http://c.m.163.com/photo/api/list/0096/54GI0096.json
- 美女：
- http://c.m.163.com/recommend/getChanListNews?channel=T1456112189138&size=10&offset=0&devId=44t6%2B5mG3ACAOlQOCLuIHg%3D%3D
- 视频：
- http://c.m.163.com/recommend/getChanListNews?channel=T1457068979049&offset=0&size=20
-
- 图片新闻详情：
- http://c.m.163.com/photo/api/set/0009/13897.json
- 新闻详情：
- docid为网易文章
- 链接格式：http://c.m.163.com/nc/article/   + docid + /full.html
- 如下：
- http://c.m.163.com/nc/article/C8T2G5QL0511A99L/full.html
-
- 城市列表：
- http://m.163.com/special/newsclient/cities.html
- *
- *
- */
+ * http://c.m.163.com/nc/topicset/android/subscribe/manage/listspecial.html
+ * 	其他类型的图片api：
+ * 	http://c.m.163.com/photo/api/list/0096/54GI0096.json
+**/
 
 public class Api {
-    public static final String host = "http://c.m.163.com/";
-    /**
-     * 特殊频道使用，如：推荐视频、美女图片
-     */
-    public static final String Recommend = host + "recommend/getChanListNews?channel=";
-    // 特殊频道的结尾
-    public static final String RecommendEndUrl = "&size=10&offset=";
 
-    // 普通新闻栏目的结尾，注意要在签名添加新闻从那一条开始获取
+
+
+    public static final String host = "http://c.m.163.com/";
+
+    // 普通栏目前缀, 示例： http://c.m.163.com/nc/article/list/T1467284926140/0-20.html
+    public static final String CommonUrl = host + "nc/article/list/";
+
+    // 图片栏目的前缀， 示例： http://pic.news.163.com/photocenter/api/list/0031/6LRK0031,6LRI0031/0/20.json
+    // 推荐图片：0031， 新闻图片： 0001 ， 明星图片：0003
+    public static final String PictureUrl = "http://pic.news.163.com/photocenter/api/list/";
+
+    // 特殊频道前缀：热点、网易号适用
+    public static final String SpecialColumn1 = "recommend/getSubDocPic?";
+
+    // 特殊频道前缀:	段子、美女、萌宠适用
+    public static final String SpecialColumn2 = "recommend/getChanListNews?channel=";
+
+    // 普通新闻栏目的结尾，注意要在前面添加新闻从那一条开始获取
     // 如 ：http://c.m.163.com/nc/article/list/T1467284926140/0-20.html，获取最新的20条新闻
     // http://c.m.163.com/nc/article/list/T1467284926140/20-20.html，获取从第20条开始的后面20条新闻
     public static final String endUrl = "-20.html";
 
+    // 所有特殊频道的结尾，如：热点、网易号、段子、美女、萌宠
+    public static final String SpecialendUrl = "&size=10&offset=";
 
     /**
      * 新闻文章详情页链接尾部
      * 示例：http://c.m.163.com/nc/article/C8T2G5QL0511A99L/full.html
      * 其中postId ：C8T2G5QL0511A99L
-      */
-    public static final String endDetailUrl = "/full.html";
-    // 新闻详情
-    public static final String NewDetail = host + "/nc/article/";
-    /**
-     * 头条新闻
-     * http://c.m.163.com/recommend/getSubDocPic?tid=T1348647909107&from=toutiao&offset=0&size=10
      */
-    public static final String TopUrl = host + "nc/article/headline/";
-    public static final String TopId = "T1348647909107";
-    // 普通栏目前缀
-    public static final String CommonUrl = host + "nc/article/list/";
-    // 要闻ID
-    // 链接：http://c.m.163.com/nc/article/list/T1467284926140/0-20.html
-    public static final String YaoWenId = "T1467284926140";
+    public static final String endDetailUrl = "/full.html";
 
-    // 政务ID
-    public static final String ZhengWuId = "T1414142214384";
+    /**
+     * 图片新闻详情页连接
+     * 链接示例： http://c.m.163.com/photo/api/set/0031/13897.json
+     * 图片详情页：0031为图片频道（列表连接后面的0031），13897为图片新闻setid
+     */
+    public static final String PictureDetailUrl = host + "photo/api/set/";
+    // 图片新闻详情页结尾
+    public static final String endPictureDetailUrl = ".json";
+
     // 独家
-    public static final String DuJiaWuId = "T1370583240249";
-    // 足球
-    public static final String FootId = "T1399700447917";
-    // 娱乐
-    public static final String YuLeId = "T1348648517839";
-    // 体育
-    public static final String TiYuId = "T1348649079062";
-    // 财经
-    public static final String CaiJingId = "T1348648756099";
-    // 科技
-    public static final String KeJiId = "T1348649580692";
-    // 电影
-    public static final String DianYingId = "T1348648650048";
-    // 汽车
-    public static final String QiChiId = "T1348654060988";
-    // 笑话
-    public static final String XiaoHuaId = "T1350383429665";
-    // 游戏
-    public static final String YouXiId = "T1348654151579";
-    // 时尚
-    public static final String ShiShangId = "T1348650593803";
-    // 情感
-    public static final String QingGanId = "T1348650839000";
-    // 精选
-    public static final String JingXuanId = "T1370583240249";
-    // 电台
-    public static final String DianTaiId = "T1379038288239";
-    // nba
+    public static final String zhenhuaId = "T1370583240249";
+
+    // NBA
     public static final String NBAId = "T1348649145984";
-    // 数码
-    public static final String ShuMaId = "T1348649776727";
-    // 数码
-    public static final String YiDongId = "T1351233117091";
-    // 彩票
-    public static final String CaiPiaoId = "T1356600029035";
-    // 教育
-    public static final String JiaoYuId = "T1348654225495";
-    // 论坛
-    public static final String LunTanId = "T1349837670307";
-    // 旅游
-    public static final String LvYouId = "T1348654204705";
-    // 手机
-    public static final String ShouJiId = "T1348649654285";
-    // 博客
-    public static final String BoKeId = "T1349837698345";
+
+    // 头条
+    public static final String toutiaoId = "T1348647909107";
+
     // 社会
-    public static final String SheHuiId = "T1348648037603";
-    // 家居
-    public static final String JiaJuId = "T1348654105308";
-    // 暴雪游戏
-    public static final String BaoXueId = "T1397016069906";
-    // 亲子
-    public static final String QinZiId = "T1397116135282";
-    // CBA
-    public static final String CBAId = "T1348649475931";
-    // 消息
-    public static final String MsgId = "T1371543208049";
+    public static final String shehuiId = "T1348648037603";
+
+    // 历史
+    public static final String lishiId = "T1368497029546";
+
+    // 军事
+    public static final String junshiId = "T1348648141035";
 
     // 哒哒趣闻
-    public static final String DaDaId = "T1444289532601";
+    public static final String dadaId = "T1444289532601";
+
+    // 航空
+    public static final String aviationId = "T1474271789612";
+
+    // 要闻
+    public static final String yaowenspecialId = "T1467284926140";
+
+    // 娱乐
+    public static final String yuleId = "T1348648517839";
+
+    // 影视歌
+    public static final String dianyingId = "T1348648650048";
+
+    // 财经
+    public static final String caijingId = "T1348648756099";
+
+    // 股票
+    public static final String stockId = "T1473054348939";
+
+    // 彩票
+    public static final String caipiaoId = "T1356600029035";
+
+    // 体育
+    public static final String tiyuId = "T1348649079062";
+
+    // 中国足球
+    public static final String zhongchaoId = "T1348649503389";
+
+    // 国际足球
+    public static final String zuqiuId = "T1348649176279";
+
+    // CBA
+    public static final String CBAId = "T1348649475931";
+
+    // 跑步
+    public static final String paobuId = "T1411113472760";
+
+    // 科技
+    public static final String kejiId = "T1348649580692";
+
+    // 手机
+    public static final String shoujiId = "T1348649654285";
+
+    // 数码
+    public static final String shumaId = "T1348649776727";
+
+    // 智能
+    public static final String zhinengId = "T1351233117091";
+
+    // 轻松一刻
+    public static final String qingsongyikeId = "T1350383429665";
+
+    // 云课堂
+    public static final String gongkaikeId = "T1421997195219";
+
+    // 态度公开课
+    public static final String attitudeopenId = "T1456394562871";
+
+    // 汽车
+    public static final String qicheId = "T1348654060988";
+
+    // 房产
+    public static final String fangchanId = "T1348654085632";
+
+    // 家居
+    public static final String jiajuId = "T1348654105308";
+
+    // 游戏
+    public static final String youxiId = "T1348654151579";
+
+    // 旅游
+    public static final String lvyouId = "T1348654204705";
+
+    // 健康
+    public static final String jiankangId = "T1414389941036";
+
+    // 读书
+    public static final String dushuId = "T1401272877187";
+
+    // 酒香
+    public static final String jiuxiangId = "T1385429690972";
+
+    // 教育
+    public static final String jiaoyuId = "T1348654225495";
+
+    // 亲子
+    public static final String qinziId = "T1397116135282";
+
+    // 暴雪游戏
+    public static final String baoxueId = "T1397016069906";
+
+    // 漫画
+    public static final String manhuaId = "T1444270454635";
+
     // 二次元
-    public static final String ErCiYuanId = "T1481105123675";
+    public static final String erciyuanlanmuId = "T1481105123675";
 
-    public static final String FangChanId = "5YyX5Lqs";
+    // 态度营销
+    public static final String taiduyingxiaoId = "T1464592736048";
 
-    // 美 图
-    // http://c.m.163.com/recommend/getChanRecomNews?channel=T1456112189138&size=0&offset=10
-    public static final String MeiNvId = "T1456112189138";
-    public static final String TuPianMeiNv = Recommend +  MeiNvId + "&size=10&offset=0";
+    // 时尚
+    public static final String nvrenId = "T1348650593803";
 
-    //图片
-    //public static final String TuPian = "http://c.m.163.com/photo/api/list/0096/54GI0096.json";
+    // 情感
+    public static final String qingganId = "T1348650839000";
+
+    // 政务
+    public static final String zhengwuId = "T1414142214384";
+
+    // 艺术
+    public static final String ArtId = "T1441074311424";
+
+    // 阳光法院
+    public static final String yangguangfayuanId = "T1482470888760";
+
+    // 跟贴
+    public static final String specialCommentId = "T1419315959525";
+
+    // 海外
+    public static final String zongheId = "T1462426218632";
 
 
-    // 初始图集
-    public static final String TuJiInit = host
-            + "photo/api/list/0096/54GI0096.json";// 42358.json
+    // 本地   暂不使用
+    public static final String specialLocalId = "T1419316531256";
 
-    public static final String TuJi = host
-            + "photo/api/morelist/0096/54GI0096/";// 42358.json
+    // 博客
+    public static final String specialBlogId = "T1419386532423";
 
-    // 图集end
-    public static final String TuJiEnd = ".json";
+    // 论坛
+    public static final String specialBBSId = "T1419386592923";
 
 
-    //
+    // 直播
+    public static final String specialLiveId = "T1433137697241";
+
+
+    // 图片新闻尾部，需要在签名添加参数，可获得从某条新闻之后的20条新闻
+    // 示例 ： http://pic.news.163.com/photocenter/api/list/0001/00AN0001,00AO0001/0/20.json
+    public static final String endPicture = "/20.json";
+    // 图片
+    public static final String specialPictureId = "T1419316384474";
+    // 推荐图片：0031/6LRK0031,6LRI0031/
+    public static final String RecommendPicture = PictureUrl + "0031/6LRK0031,6LRI0031/";
+    // 新闻图片：0001/00AP0001,3R710001,4T8E0001/
+    public static final String NewsPicture = PictureUrl + "0001/00AP0001,3R710001,4T8E0001/";
+    // 明星图片：0003/00AJ0003,0AJQ0003,3LF60003,00B70003,00B50003/
+    public static final String StarPicture = PictureUrl + "0003/00AJ0003,0AJQ0003,3LF60003,00B70003,00B50003/";
+    // 热点图片：0001/00AN0001,00AO0001/
+    public static final String HotPicture = PictureUrl + "0001/00AN0001,00AO0001/";
+
+
+    /**
+     *   特殊格式新闻：
+     *   下面几类连接基本一致：
+     *   热点、网易号类的新闻连接形式差不多，但是网易号多了from参数
+     *   使用getSubDocPic
+     *
+     *   段子、美女、萌宠连接基本一致
+     *   使用	getChanListNews
+     **/
+    // 热点
+    public static final String specialRedianId = "T1427878984398";
+    // 热点url
+    public static final String RedianUrl = host + SpecialColumn1 + SpecialendUrl;
+
+    // 网易号
+    public static final String specialSubId = "T1449126525962";
+    // 网易号url
+    public static final String WangYiHaoUrl = host + SpecialColumn1 + "from=netease_h" +SpecialendUrl;
+
+    // 下列为特殊频道URL， 统一连接形式为： http://c.m.163.com/recommend/getChanListNews?channel=T1419316284722&size=10&offset=
+    public static final String specialURL = host + SpecialColumn2;
+
+    // 视频
+    public static final String specialVideoId = "T1468031118349";
+
+    // 段子
+    public static final String specialJokeId = "T1419316284722";
+
+    // 美女
+    public static final String specialGirlId = "T1456112189138";
+
+    // 萌宠
+    public static final String specialAnimalId = "T1456112438822";
 
     // 视频 http://c.3g.163.com/nc/video/list/V9LG4B3A0/n/10-10.html
     public static final String Video = host + "nc/video/list/";
@@ -191,14 +271,6 @@ public class Api {
     //直播视频
     public static final String VideoLive = "http://data.live.126.net/livechannel/previewlist.json";
 
-
-    // 以下视频为老旧视频，15年视频源
-    // 娱乐视频
-    public static final String VideoYuLeId = "V9LG4CHOR";
-    // 搞笑视频
-    public static final String VideoGaoXiaoId = "V9LG4E6VR";
-    // 精品视频
-    public static final String VideoJingPinId = "00850FRB";
 
 
 }

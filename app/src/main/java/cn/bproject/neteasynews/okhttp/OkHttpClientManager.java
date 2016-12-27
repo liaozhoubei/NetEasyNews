@@ -1,10 +1,41 @@
-package cn.bproject.neteasynews.okhttp;
-
-/**
- * Created by zhy on 15/8/17.
- * 使用OKhttp3.5的封装
- */
-
+//package cn.bproject.neteasynews.okhttp;
+//
+//
+//import android.os.Handler;
+//import android.os.Looper;
+//import android.widget.ImageView;
+//
+//import com.google.gson.Gson;
+//import com.google.gson.internal.$Gson$Types;
+//
+//import java.io.File;
+//import java.io.FileOutputStream;
+//import java.io.IOException;
+//import java.io.InputStream;
+//import java.lang.reflect.ParameterizedType;
+//import java.lang.reflect.Type;
+//import java.net.FileNameMap;
+//import java.net.URLConnection;
+//import java.util.HashMap;
+//import java.util.Map;
+//import java.util.Set;
+//
+//import okhttp3.Call;
+//import okhttp3.Callback;
+//import okhttp3.FormBody;
+//import okhttp3.Headers;
+//import okhttp3.MediaType;
+//import okhttp3.MultipartBody;
+//import okhttp3.OkHttpClient;
+//import okhttp3.Request;
+//import okhttp3.RequestBody;
+//import okhttp3.Response;
+//
+///**
+// * Created by zhy on 15/8/17.
+// * 使用OKhttp3.5的封装
+// */
+//
 //public class OkHttpClientManager {
 //
 //    private static OkHttpClientManager mInstance;
@@ -396,12 +427,12 @@ package cn.bproject.neteasynews.okhttp;
 //    private void deliveryResult(final ResultCallback callback, final Request request) {
 //        mOkHttpClient.newCall(request).enqueue(new Callback() {
 //            @Override
-//            public void onFailure(Call call, IOException e) {
+//            public void onFailure(okhttp3.Call call, IOException e) {
 //                sendFailedStringCallback(request, e, callback);
 //            }
 //
 //            @Override
-//            public void onResponse(Call call, Response response) throws IOException {
+//            public void onResponse(okhttp3.Call call, Response response) throws IOException {
 //                try {
 //                    final String string = response.body().string();
 //                    if (callback.mType == String.class) {
@@ -418,7 +449,6 @@ package cn.bproject.neteasynews.okhttp;
 //                {
 //                    sendFailedStringCallback(response.request(), e, callback);
 //                }
-//
 //            }
 //        });
 //    }
