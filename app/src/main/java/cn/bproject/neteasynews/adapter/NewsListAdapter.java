@@ -71,7 +71,6 @@ public class NewsListAdapter extends BaseAdapter {
             viewHolder.two_image = (ImageView) view.findViewById(R.id.two_image);
             viewHolder.three_image = (ImageView) view.findViewById(R.id.three_image);
 
-
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();
@@ -80,10 +79,11 @@ public class NewsListAdapter extends BaseAdapter {
         // 如果有额外图片存在
         List<NewsListNormalBean.ImgextraBean> imgextraBeenlist = newsListNormalBean.getImgextra();
         String imageSrc = newsListNormalBean.getImgsrc();
-        String title = newsListNormalBean.getTitle();
+        final String title = newsListNormalBean.getTitle();
         String source = newsListNormalBean.getSource();
         String postTime = newsListNormalBean.getPtime();
-
+        // 文章的id号
+        String docid = newsListNormalBean.getDocid();
         int hasAd = newsListNormalBean.getHasAD();
         if (hasAd == 1) {
 

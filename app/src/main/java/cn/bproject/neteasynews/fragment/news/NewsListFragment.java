@@ -1,5 +1,6 @@
 package cn.bproject.neteasynews.fragment.news;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -17,6 +19,7 @@ import com.handmark.pulltorefresh.PullToRefreshListView;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.bproject.neteasynews.NewsDetailActivity;
 import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.ThreadManager;
 import cn.bproject.neteasynews.Utils.UIUtils;
@@ -117,6 +120,7 @@ public class NewsListFragment extends BaseFragment implements DefineView {
                 UIUtils.runOnUIThread(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d(TAG, ": 解析id" + tid);
                         bindData();
                     }
                 });
@@ -163,6 +167,15 @@ public class NewsListFragment extends BaseFragment implements DefineView {
                     }
                 });
 
+            }
+        });
+
+        mListView_news_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(getActivity(), NewsDetailActivity.class);
+                intent.putExtra("DOCID", mNewsListNormalBeanList.get((int) l).getDocid());
+                getActivity().startActivity(intent);
             }
         });
 

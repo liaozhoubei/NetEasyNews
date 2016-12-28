@@ -30,6 +30,8 @@ public class Api {
     // 特殊频道前缀:	段子、美女、萌宠适用
     public static final String SpecialColumn2 = "recommend/getChanListNews?channel=";
 
+    public static final String DetailUrl = host + "nc/article/";
+
     // 普通新闻栏目的结尾，注意要在前面添加新闻从那一条开始获取
     // 如 ：http://c.m.163.com/nc/article/list/T1467284926140/0-20.html，获取最新的20条新闻
     // http://c.m.163.com/nc/article/list/T1467284926140/20-20.html，获取从第20条开始的后面20条新闻

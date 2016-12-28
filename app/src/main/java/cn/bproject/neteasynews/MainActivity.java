@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private void initToolbar(){
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+
     }
 
     // 初始化底部标签栏

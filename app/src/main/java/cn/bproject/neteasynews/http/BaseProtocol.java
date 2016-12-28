@@ -42,8 +42,38 @@ public abstract class BaseProtocol<T> {
 		return null;
 	}
 
-	// 从网络获取数据
-	// index表示的是从哪个位置开始返回20条数据, 用于分页
+	/**
+	 * 获取新闻详情页数据
+	 * @param url
+	 * @param docid
+     * @return
+     */
+	public T getData(String url, String docid){
+		String connectUrl  = url + docid + getParams();
+		HttpHelper.HttpResult httpResult = HttpHelper.get(connectUrl);
+		String result = null;
+		if (httpResult != null) {
+			result = httpResult.getString();
+			Log.d(TAG, "getDataFromServer 访问结果:" + result);
+
+		}
+		// 开始解析
+		if (result != null) {
+			T data = parseData(result, docid);
+			return data;
+		}
+
+		return null;
+	}
+
+
+	/**
+	 * 从网络获取数据
+	 * 新闻普通栏目适用
+	 * @param url
+	 * @param index index表示的是从哪个位置开始返回20条数据, 用于分页
+     * @return
+     */
 	private String getDataFromServer(String url, int index) {
 		// http://c.m.163.com/nc/article/list/T1467284926140/0-20.html
 		// http://www.itheima.com/home?index=0&name=zhangsan&age=18
