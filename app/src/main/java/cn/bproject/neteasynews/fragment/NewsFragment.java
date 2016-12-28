@@ -18,8 +18,6 @@ import cn.bproject.neteasynews.Utils.CategoryDataUtils;
 import cn.bproject.neteasynews.adapter.FixedPagerAdapter;
 import cn.bproject.neteasynews.bean.NewsBean;
 import cn.bproject.neteasynews.fragment.news.NewsListFragment;
-import cn.bproject.neteasynews.fragment.news.NewsListFragment2;
-import cn.bproject.neteasynews.fragment.news.NewsListFragment3;
 
 import static cn.bproject.neteasynews.R.id.tab_layout;
 
@@ -47,11 +45,8 @@ public class NewsFragment extends Fragment {
         mView = inflater.inflate(R.layout.tablayout_pager, container, false);
         mTabLayout = (TabLayout) mView.findViewById(tab_layout);
         mNewsViewpager = (ViewPager) mView.findViewById(R.id.news_viewpager);
-        newsBeans= CategoryDataUtils.getCategoryBeans();
-//        for (int i = 0; i < 5 ; i ++) {
-//            NewsBean newsBean = new NewsBean("第" + i, "地址", "类型" + i);
-//            newsBeans.add(newsBean);
-//        }
+        newsBeans = CategoryDataUtils.getCategoryBeans();
+
         initValidata();
         return mView;
     }
@@ -61,15 +56,7 @@ public class NewsFragment extends Fragment {
         fixedPagerAdapter.setNewsBean(newsBeans);
         fragments = new ArrayList<BaseFragment>();
         for (int i = 0; i < newsBeans.size(); i++) {
-            BaseFragment fragment;
-            if (i == 1){
-                fragment = new NewsListFragment2();
-            } else if (i == 2) {
-                fragment = new NewsListFragment3();
-            } else {
-                fragment = new NewsListFragment();
-            }
-
+            BaseFragment  fragment = NewsListFragment.newInstance(newsBeans.get(i).getTid());
             fragments.add(fragment);
         }
 
@@ -89,7 +76,7 @@ public class NewsFragment extends Fragment {
             public void onPageSelected(int position) {
                 Log.d(TAG, "onPageSelected: mNewsViewpager页面监听执行了" + position);
                 BaseFragment fragment = fragments.get(position);
-//                fragment.loadData();
+
             }
 
             @Override

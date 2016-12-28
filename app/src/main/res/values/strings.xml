@@ -7,4 +7,7 @@
     <string name="photo_fragment">图片</string>
     <string name="video_fragment">视频</string>
     <string name="about_fragment">我</string>
+
+    <string name="default_text">会武术谁都挡不住——感受进化的力量</string>
+    <string name="source_news_text">网易</string>
 </resources>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:orientation="vertical">
@@ -23,7 +22,7 @@
             android:layout_marginRight="5dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="三张图片的标题"
+            android:text="@string/default_text"
             android:textColor="@color/black"/>
 
         <LinearLayout
@@ -31,31 +30,35 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal">
+
             <ImageView
-                android:visibility="visible"
                 android:id="@+id/big_Image"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:visibility="visible"/>
+
             <ImageView
-                android:paddingRight="5dp"
                 android:id="@+id/one_image"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:src="@drawable/defaultbg"
-                android:layout_weight="1"/>
-            <ImageView
+                android:layout_weight="1"
                 android:paddingRight="5dp"
+                android:src="@drawable/defaultbg"/>
+
+            <ImageView
                 android:id="@+id/two_image"
                 android:layout_width="0dp"
-                android:src="@drawable/defaultbg"
                 android:layout_height="match_parent"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:paddingRight="5dp"
+                android:src="@drawable/defaultbg"/>
+
             <ImageView
                 android:id="@+id/three_image"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:src="@drawable/defaultbg"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:src="@drawable/defaultbg"/>
 
         </LinearLayout>
 
@@ -70,8 +73,16 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
-        android:visibility="gone"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/item_news_tv_img"
+            android:layout_width="fill_parent"
+            android:layout_height="90dp"
+            android:layout_weight="2"
+            android:scaleType="fitXY"
+            android:src="@drawable/defaultbg"/>
 
         <TextView
             android:id="@+id/item_news_tv_title"
@@ -81,16 +92,10 @@
             android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="4"
-            android:text="【氪空间第五期毕业礼】创业精英进化论——感受进化的力量"
+            android:text="@string/default_text"
             android:textColor="@color/black"/>
 
-        <ImageView
-            android:id="@+id/item_news_tv_img"
-            android:layout_width="fill_parent"
-            android:layout_height="90dp"
-            android:layout_weight="2"
-            android:scaleType="fitXY"
-            android:src="@drawable/defaultbg"/>
+
     </LinearLayout>
 
     <RelativeLayout
@@ -130,7 +135,7 @@
             android:layout_marginBottom="10dp"
             android:layout_marginRight="10dp"
             android:layout_toLeftOf="@id/item_news_tv_arrow"
-            android:text="专栏"
+            android:text="@string/source_news_text"
             android:textColor="@color/darkgray"
             android:textSize="12sp"
             />

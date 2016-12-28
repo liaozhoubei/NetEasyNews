@@ -16,6 +16,10 @@ public class ThreadManager {
 
 	private static ThreadPool mThreadPool;
 
+	/**
+	 *  创建线程池，使用单例模式，在Applicaiton中初始化
+	 * @return	返回线程池
+     */
 	public static ThreadPool getThreadPool() {
 		if (mThreadPool == null) {
 			synchronized (ThreadManager.class) {

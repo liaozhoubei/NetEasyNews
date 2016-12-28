@@ -17,15 +17,15 @@ allprojects {
         jcenter()
     }
     // gradle跳过测试任务
-    gradle.taskGraph.whenReady {
-        tasks.each {
-            task ->
-                if (task.name.contains("Test"))
-                {
-                    task.enabled = false
-                }
-        }
-    }
+//    gradle.taskGraph.whenReady {
+//        tasks.each {
+//            task ->
+//                if (task.name.contains("Test"))
+//                {
+//                    task.enabled = false
+//                }
+//        }
+//    }
 }
 
 task clean(type: Delete) {

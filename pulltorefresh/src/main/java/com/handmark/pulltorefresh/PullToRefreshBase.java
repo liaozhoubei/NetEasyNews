@@ -46,8 +46,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	// ===========================================================
 	// Constants
 	// ===========================================================
-
-	static final boolean DEBUG = true;
+	// 是否显示上拉与下拉时的Log，true为显示
+	static final boolean DEBUG = false;
 
 	static final boolean USE_HW_LAYERS = false;
 

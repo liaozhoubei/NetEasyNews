@@ -7,16 +7,16 @@ package cn.bproject.neteasynews.bean;
 public class NewsBean {
     private String title; // 分类Tab名称
     private String href; // 分类点击地址
-    private String data_type; // 分类类型
+    private String tid; // 分类类型
 
     public NewsBean(){
         super();
     }
 
-    public NewsBean(String title, String href, String data_type) {
+    public NewsBean(String title, String href, String tid) {
         this.title = title;
         this.href = href;
-        this.data_type = data_type;
+        this.tid = tid;
     }
 
     public String getTitle() {
@@ -35,11 +35,11 @@ public class NewsBean {
         this.href = href;
     }
 
-    public String getData_type() {
-        return data_type;
+    public String getTid() {
+        return tid;
     }
 
-    public void setData_type(String data_type) {
-        this.data_type = data_type;
+    public void setTid(String data_type) {
+        this.tid = tid;
     }
 }

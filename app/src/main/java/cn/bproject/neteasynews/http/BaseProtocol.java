@@ -1,5 +1,7 @@
 package cn.bproject.neteasynews.http;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -19,6 +21,8 @@ import cn.bproject.neteasynews.Utils.UIUtils;
  */
 public abstract class BaseProtocol<T> {
 
+	private final String TAG = BaseProtocol.class.getSimpleName();
+
 	// index表示的是从哪个位置开始返回20条数据, 用于分页
 	public T getData(String url, int index, String tid) {
 		// 先判断是否有缓存, 有的话就加载缓存
@@ -26,7 +30,7 @@ public abstract class BaseProtocol<T> {
 
 		if (StringUtils.isEmpty(result)) {// 如果没有缓存,或者缓存失效
 			// 请求服务器
-			result = getDataFromServer(url, index);
+			 result = getDataFromServer(url, index);
 		}
 
 		// 开始解析
@@ -43,12 +47,12 @@ public abstract class BaseProtocol<T> {
 	private String getDataFromServer(String url, int index) {
 		// http://c.m.163.com/nc/article/list/T1467284926140/0-20.html
 		// http://www.itheima.com/home?index=0&name=zhangsan&age=18
-		HttpHelper.HttpResult httpResult = HttpHelper.get(url + getKey()
-				+ "?index=" + index + getParams());
+		String connectUrl  = url + getTid() + "/" + index  + getParams();
+		HttpHelper.HttpResult httpResult = HttpHelper.get(connectUrl);
 
 		if (httpResult != null) {
 			String result = httpResult.getString();
-			System.out.println("访问结果:" + result);
+			Log.d(TAG, "getDataFromServer 访问结果:" + result);
 			// 写缓存
 			if (!StringUtils.isEmpty(result)) {
 				setCache(index, result);
@@ -60,10 +64,17 @@ public abstract class BaseProtocol<T> {
 		return null;
 	}
 
-	// 获取网络链接关键词, 子类必须实现
-	public abstract String getKey();
 
-	// 获取网络链接参数, 子类必须实现
+	/**
+	 * 获取网络链接关键词, 子类必须实现
+	 * @return 频道tid：如要闻tid：T1467284926140
+     */
+	public abstract String getTid();
+
+	/**
+	 * 获取url尾部, 子类必须实现
+	 * @return	url尾部数据
+     */
 	public abstract String getParams();
 
 	// 写缓存
@@ -72,8 +83,7 @@ public abstract class BaseProtocol<T> {
 		// 以url为文件名, 以json为文件内容,保存在本地
 		File cacheDir = UIUtils.getContext().getCacheDir();// 本应用的缓存文件夹
 		// 生成缓存文件
-		File cacheFile = new File(cacheDir, getKey() + "?index=" + index
-				+ getParams());
+		File cacheFile = new File(cacheDir, getTid() + "/" + index  + getParams());
 
 		FileWriter writer = null;
 		try {
@@ -95,8 +105,7 @@ public abstract class BaseProtocol<T> {
 		// 以url为文件名, 以json为文件内容,保存在本地
 		File cacheDir = UIUtils.getContext().getCacheDir();// 本应用的缓存文件夹
 		// 生成缓存文件
-		File cacheFile = new File(cacheDir, getKey() + "?index=" + index
-				+ getParams());
+		File cacheFile = new File(cacheDir, getTid() + "/" + index  + getParams());
 
 		// 判断缓存是否存在
 		if (cacheFile.exists()) {
