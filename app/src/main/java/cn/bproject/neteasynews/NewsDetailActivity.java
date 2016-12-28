@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.Utils.ThreadManager;
 import cn.bproject.neteasynews.bean.NewsDetailBean;
 import cn.bproject.neteasynews.common.Api;
@@ -99,7 +100,7 @@ public class NewsDetailActivity extends Activity implements DefineView {
             @Override
             public void run() {
                 NewsDetailProtocol newsDetailProtocol = new NewsDetailProtocol(mDocid);
-                mNewsDetailBeen = newsDetailProtocol.getData(Api.DetailUrl, mDocid);
+                mNewsDetailBeen = newsDetailProtocol.getData();
                 handler.sendMessage(handler.obtainMessage());
             }
         });
@@ -167,7 +168,7 @@ public class NewsDetailActivity extends Activity implements DefineView {
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
-            Log.d(TAG, "加载进度发生变化:" + newProgress);
+            LogUtils.d(TAG, "加载进度发生变化:" + newProgress);
         }
     }
 
@@ -175,20 +176,20 @@ public class NewsDetailActivity extends Activity implements DefineView {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
-            Log.d(TAG, "网页开始加载:" + url);
+            LogUtils.d(TAG, "网页开始加载:" + url);
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
-            Log.d(TAG, "网页加载完成..." + url);
+            LogUtils.d(TAG, "网页加载完成..." + url);
             mWebSettings.setBlockNetworkImage(false);
         }
 
         @Override
         public void onLoadResource(WebView view, String url) {
             super.onLoadResource(view, url);
-            Log.d(TAG, "加载的资源:" + url);
+            LogUtils.d(TAG, "加载的资源:" + url);
         }
 
         @Override
@@ -221,7 +222,7 @@ public class NewsDetailActivity extends Activity implements DefineView {
             } else {
                 // 在客户端解决WebView图片屏幕适配的问题，在<img标签下添加style='max-width:90%;height:auto;'即可
                 newChars = "<img" + " style='max-width:100%;height:auto;' " + "src=\"" + imgSrcs.get(i).getSrc() + "\"" + "/>";
-                Log.d(TAG, "changeNewsBody: " + newChars);
+                LogUtils.d(TAG, "changeNewsBody: " + newChars);
 
             }
             newsBody = newsBody.replace(oldChars, newChars);

@@ -1,7 +1,5 @@
 package cn.bproject.neteasynews.http;
 
-import android.util.Log;
-
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -10,6 +8,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.bean.NewsListNormalBean;
 import cn.bproject.neteasynews.common.Api;
 
@@ -21,7 +20,6 @@ import static android.content.ContentValues.TAG;
 public class NewsProtocol extends BaseProtocol<ArrayList<NewsListNormalBean>> {
 
     private String tid;
-
 
     public NewsProtocol(String tid) {
         this.tid = tid;
@@ -35,6 +33,13 @@ public class NewsProtocol extends BaseProtocol<ArrayList<NewsListNormalBean>> {
     @Override
     public String getParams() {
         return Api.endUrl;// 如果没有参数,就传空串,不要传null
+    }
+
+    @Override
+    public String buildURL(int index) {
+
+        String url = Api.CommonUrl + getTid() + "/" + index + getParams();
+        return url;
     }
 
     /**
@@ -63,10 +68,10 @@ public class NewsProtocol extends BaseProtocol<ArrayList<NewsListNormalBean>> {
                 return newsListNormalBeans;
             } catch (JSONException e) {
                 e.printStackTrace();
-                Log.d(TAG, "parseJson: 数据解析错误");
+                LogUtils.d(TAG, "parseJson: 数据解析错误");
             }
         } else {
-            Log.d(TAG, "parseData: 没有数据");
+            LogUtils.d(TAG, "parseData: 没有数据");
         }
         return null;
     }

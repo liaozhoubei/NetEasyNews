@@ -1,12 +1,11 @@
 package cn.bproject.neteasynews.http;
 
-import android.util.Log;
-
 import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.bean.NewsDetailBean;
 import cn.bproject.neteasynews.common.Api;
 
@@ -37,6 +36,12 @@ public class NewsDetailProtocol extends BaseProtocol<NewsDetailBean>{
     }
 
     @Override
+    public String buildURL(int index) {
+        String url = Api.DetailUrl + getTid() + Api.endDetailUrl;
+        return url;
+    }
+
+    @Override
     public NewsDetailBean parseData(String result, String tid) {
         if (result != null) {
             JSONObject jsonObject = null;
@@ -49,10 +54,10 @@ public class NewsDetailProtocol extends BaseProtocol<NewsDetailBean>{
                 return newsDetailBean;
             } catch (JSONException e) {
                 e.printStackTrace();
-                Log.d(TAG, "parseJson: 数据解析错误");
+                LogUtils.d(TAG, "parseJson: 数据解析错误");
             }
         } else {
-            Log.d(TAG, "parseData: 没有数据");
+            LogUtils.d(TAG, "parseData: 没有数据");
         }
         return null;
     }

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +20,11 @@ import java.util.List;
 
 import cn.bproject.neteasynews.NewsDetailActivity;
 import cn.bproject.neteasynews.R;
+import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.Utils.ThreadManager;
 import cn.bproject.neteasynews.Utils.UIUtils;
 import cn.bproject.neteasynews.adapter.NewsListAdapter;
 import cn.bproject.neteasynews.bean.NewsListNormalBean;
-import cn.bproject.neteasynews.common.Api;
 import cn.bproject.neteasynews.common.DefineView;
 import cn.bproject.neteasynews.fragment.BaseFragment;
 import cn.bproject.neteasynews.http.NewsProtocol;
@@ -78,7 +77,7 @@ public class NewsListFragment extends BaseFragment implements DefineView {
         windowManager.getDefaultDisplay().getMetrics(outMetrics);// 给白纸设置宽高
         long width = outMetrics.widthPixels;
         long height = outMetrics.heightPixels;
-        Log.d(TAG, "width: " + width + "     height: " + height);
+        LogUtils.d(TAG, "width: " + width + "     height: " + height);
 
         mView = inflater.inflate(R.layout.fragment_news_list, container, false);
         initView();
@@ -116,12 +115,15 @@ public class NewsListFragment extends BaseFragment implements DefineView {
             @Override
             public void run() {
                 mNewsProtocol = new NewsProtocol(tid);
-                mNewsListNormalBeanList = mNewsProtocol.getData(Api.CommonUrl, mStartIndex, tid);
+                mNewsListNormalBeanList = mNewsProtocol.getData(mStartIndex);
                 UIUtils.runOnUIThread(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, ": 解析id" + tid);
-                        bindData();
+                        LogUtils.d(TAG, ": 解析id" + tid);
+                        if(mNewsListNormalBeanList != null){
+                            bindData();
+                        }
+
                     }
                 });
             }
@@ -136,13 +138,13 @@ public class NewsListFragment extends BaseFragment implements DefineView {
         mListView_news_list.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
             @Override
             public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
-                Log.d(TAG, "onPullDownToRefresh: 下拉刷新了");
+                LogUtils.d(TAG, "onPullDownToRefresh: 下拉刷新了");
 
                 mThreadPool.execute(new Runnable() {
                     @Override
                     public void run() {
                         mNewsProtocol = new NewsProtocol(tid);
-                        newlist = mNewsProtocol.getData(Api.CommonUrl, 0, tid);
+                        newlist = mNewsProtocol.getData(0);
                         isPullRefresh = true;
                         DataChange();
                     }
@@ -151,17 +153,17 @@ public class NewsListFragment extends BaseFragment implements DefineView {
 
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
-                Log.d(TAG, "onPullUpToRefresh: 上拉刷新了");
+                LogUtils.d(TAG, "onPullUpToRefresh: 上拉刷新了");
                 mStartIndex += 20;
 
-                Log.d(TAG, "mStartIndex: " + mStartIndex);
+                LogUtils.d(TAG, "mStartIndex: " + mStartIndex);
 //                mUrl = Api.CommonUrl + Api.yaowenspecialId + "/" + mStartIndex + Api.endUrl;
 
                 mThreadPool.execute(new Runnable() {
                     @Override
                     public void run() {
                         mNewsProtocol = new NewsProtocol(tid);
-                        newlist = mNewsProtocol.getData(Api.CommonUrl, mStartIndex, tid);
+                        newlist = mNewsProtocol.getData(mStartIndex);
                         isPullRefresh = false;
                         DataChange();
                     }

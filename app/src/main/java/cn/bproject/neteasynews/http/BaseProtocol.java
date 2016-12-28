@@ -1,7 +1,5 @@
 package cn.bproject.neteasynews.http;
 
-import android.util.Log;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -9,6 +7,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import cn.bproject.neteasynews.Utils.IOUtils;
+import cn.bproject.neteasynews.Utils.LogUtils;
+import cn.bproject.neteasynews.Utils.MD5Encoder;
 import cn.bproject.neteasynews.Utils.StringUtils;
 import cn.bproject.neteasynews.Utils.UIUtils;
 
@@ -24,18 +24,18 @@ public abstract class BaseProtocol<T> {
 	private final String TAG = BaseProtocol.class.getSimpleName();
 
 	// index表示的是从哪个位置开始返回20条数据, 用于分页
-	public T getData(String url, int index, String tid) {
+	public T getData(int index) {
 		// 先判断是否有缓存, 有的话就加载缓存
 		String result = getCache(index);
 
 		if (StringUtils.isEmpty(result)) {// 如果没有缓存,或者缓存失效
 			// 请求服务器
-			 result = getDataFromServer(url, index);
+			 result = getDataFromServer(index);
 		}
 
 		// 开始解析
 		if (result != null) {
-			T data = parseData(result, tid);
+			T data = parseData(result, getTid());
 			return data;
 		}
 
@@ -44,22 +44,20 @@ public abstract class BaseProtocol<T> {
 
 	/**
 	 * 获取新闻详情页数据
-	 * @param url
-	 * @param docid
      * @return
      */
-	public T getData(String url, String docid){
-		String connectUrl  = url + docid + getParams();
+	public T getData(){
+		String connectUrl  = buildURL(0);
 		HttpHelper.HttpResult httpResult = HttpHelper.get(connectUrl);
 		String result = null;
 		if (httpResult != null) {
 			result = httpResult.getString();
-			Log.d(TAG, "getDataFromServer 访问结果:" + result);
+			LogUtils.d(TAG, "getDataFromServer 访问结果:" + result);
 
 		}
 		// 开始解析
 		if (result != null) {
-			T data = parseData(result, docid);
+			T data = parseData(result, getTid());
 			return data;
 		}
 
@@ -70,19 +68,18 @@ public abstract class BaseProtocol<T> {
 	/**
 	 * 从网络获取数据
 	 * 新闻普通栏目适用
-	 * @param url
 	 * @param index index表示的是从哪个位置开始返回20条数据, 用于分页
      * @return
      */
-	private String getDataFromServer(String url, int index) {
+	private String getDataFromServer(int index) {
 		// http://c.m.163.com/nc/article/list/T1467284926140/0-20.html
 		// http://www.itheima.com/home?index=0&name=zhangsan&age=18
-		String connectUrl  = url + getTid() + "/" + index  + getParams();
+		String connectUrl  = buildURL(index);
 		HttpHelper.HttpResult httpResult = HttpHelper.get(connectUrl);
 
 		if (httpResult != null) {
 			String result = httpResult.getString();
-			Log.d(TAG, "getDataFromServer 访问结果:" + result);
+			LogUtils.d(TAG, "getDataFromServer 访问结果:" + result);
 			// 写缓存
 			if (!StringUtils.isEmpty(result)) {
 				setCache(index, result);
@@ -112,8 +109,14 @@ public abstract class BaseProtocol<T> {
 	public void setCache(int index, String json) {
 		// 以url为文件名, 以json为文件内容,保存在本地
 		File cacheDir = UIUtils.getContext().getCacheDir();// 本应用的缓存文件夹
+		String filename = null;
+		try {
+			filename = MD5Encoder.encode(buildURL(index));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		// 生成缓存文件
-		File cacheFile = new File(cacheDir, getTid() + "/" + index  + getParams());
+		File cacheFile = new File(cacheDir, filename);
 
 		FileWriter writer = null;
 		try {
@@ -134,8 +137,14 @@ public abstract class BaseProtocol<T> {
 	public String getCache(int index) {
 		// 以url为文件名, 以json为文件内容,保存在本地
 		File cacheDir = UIUtils.getContext().getCacheDir();// 本应用的缓存文件夹
+		String filename = null;
+		try {
+			filename = MD5Encoder.encode(buildURL(index));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		// 生成缓存文件
-		File cacheFile = new File(cacheDir, getTid() + "/" + index  + getParams());
+		File cacheFile = new File(cacheDir, filename);
 
 		// 判断缓存是否存在
 		if (cacheFile.exists()) {
@@ -168,6 +177,8 @@ public abstract class BaseProtocol<T> {
 
 		return null;
 	}
+
+	public abstract String buildURL(int index);
 
 	//
 	/**

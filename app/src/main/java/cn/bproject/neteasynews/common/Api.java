@@ -27,7 +27,7 @@ public class Api {
     // 特殊频道前缀：热点、网易号适用
     public static final String SpecialColumn1 = "recommend/getSubDocPic?";
 
-    // 特殊频道前缀:	段子、美女、萌宠适用
+    // 特殊频道前缀:	视频/段子、美女、萌宠适用
     public static final String SpecialColumn2 = "recommend/getChanListNews?channel=";
 
     public static final String DetailUrl = host + "nc/article/";
@@ -250,11 +250,15 @@ public class Api {
     // 网易号url
     public static final String WangYiHaoUrl = host + SpecialColumn1 + "from=netease_h" +SpecialendUrl;
 
-    // 下列为特殊频道URL， 统一连接形式为： http://c.m.163.com/recommend/getChanListNews?channel=T1419316284722&size=10&offset=
+    // 下列为特殊频道URL， 统一连接形式为：
+    // http://c.m.163.com/recommend/getChanListNews?channel=T1419316284722&size=10&offset=
     public static final String specialURL = host + SpecialColumn2;
 
     // 视频
-    public static final String specialVideoId = "T1468031118349";
+    // http://c.m.163.com/recommend/getChanListNews?channel=T1457068979049&offset=0&size=20&devId=44t6%2B5mG3ACAOlQOCLuIHg%3D%3D
+    public static final String specialVideoId = "T1457068979049";
+    // 手机开发id号，任意手机的开发Id号都可以
+    public static final String devId = "&devId=44t6%2B5mG3ACAOlQOCLuIHg%3D%3D";
 
     // 段子
     public static final String specialJokeId = "T1419316284722";
@@ -265,16 +269,23 @@ public class Api {
     // 萌宠
     public static final String specialAnimalId = "T1456112438822";
 
-    // 视频 http://c.3g.163.com/nc/video/list/V9LG4B3A0/n/10-10.html
+    // 热点视频 http://c.m.163.com/nc/video/list/V9LG4B3A0/n/10-10.html
     public static final String Video = host + "nc/video/list/";
     public static final String VideoCenter = "/n/";
     public static final String videoEndUrl = "-20.html";
     // 热点视频
     public static final String VideoReDianId = "V9LG4B3A0";
     // 推荐视频
-    // http://c.m.163.com/recommend/getChanListNews?channel=T1457068979049&offset=0&size=20
+    // http://c.m.163.com/recommend/getChanListNews?channel=T1457068979049&offset=0&size=20&devId=44t6%2B5mG3ACAOlQOCLuIHg%3D%3D
     public static final String VideorecommendId = "T1457068979049";
-    //直播视频
+    // 搞笑视屏 http://c.m.163.com/nc/video/list/VAP4BFE3U/y/10-10.html
+    // 美女视频 http://c.m.163.com/nc/video/list/VAP4BG6DL/y/0-10.html
+    // 新闻现场 http://c.m.163.com/nc/video/list/VAV3H6JSN/y/0-10.html
+    // 萌物 http://c.m.163.com/nc/video/list/VAP4BFR16/y/0-10.html
+    // 黑科技  http://c.m.163.com/nc/video/list/VBF8F2PKF/y/0-10.html
+    // 二次元 http://c.m.163.com/nc/video/list/VBF8F1PSA/y/0-10.html
+    // 涨姿势  http://c.m.163.com/nc/video/list/VBF8F3SGL/y/0-10.html
+    //直播视
     public static final String VideoLive = "http://data.live.126.net/livechannel/previewlist.json";
 
 

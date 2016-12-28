@@ -3,7 +3,6 @@ package cn.bproject.neteasynews;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,6 +13,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.bean.Tab;
 import cn.bproject.neteasynews.fragment.AboutFragment;
 import cn.bproject.neteasynews.fragment.BaseFragment;
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabChanged(String tabId) {
 
-                Log.d(TAG, "onTabChanged: mTabHost.setOnTabChangedListener" + R.string.news_fragment);
+                LogUtils.d(TAG, "onTabChanged: mTabHost.setOnTabChangedListener" + R.string.news_fragment);
 //                if (tabId==getString(R.string.news_fragment)){
 //                    fragment = (BaseFragment) getSupportFragmentManager().findFragmentByTag(tabId);
 //                    fragment.loadData();

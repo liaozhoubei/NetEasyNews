@@ -10,7 +10,7 @@ public class IOUtils {
 			try {
 				io.close();
 			} catch (IOException e) {
-				LogUtils.e(e);
+				LogUtils.e("IOUtils", e);
 			}
 		}
 		return true;

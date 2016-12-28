@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,7 @@ import java.util.List;
 
 import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.CategoryDataUtils;
+import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.adapter.FixedPagerAdapter;
 import cn.bproject.neteasynews.bean.NewsBean;
 import cn.bproject.neteasynews.fragment.news.NewsListFragment;
@@ -74,7 +74,7 @@ public class NewsFragment extends Fragment {
 
             @Override
             public void onPageSelected(int position) {
-                Log.d(TAG, "onPageSelected: mNewsViewpager页面监听执行了" + position);
+                LogUtils.d(TAG, "onPageSelected: mNewsViewpager页面监听执行了" + position);
                 BaseFragment fragment = fragments.get(position);
 
             }
