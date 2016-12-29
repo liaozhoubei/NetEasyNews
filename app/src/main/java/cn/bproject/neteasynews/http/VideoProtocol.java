@@ -18,7 +18,7 @@ import static android.content.ContentValues.TAG;
  * Created by Bei on 2016/12/29.
  */
 
-public class VedioProtocol  extends BaseProtocol<ArrayList<VideoBean>> {
+public class VideoProtocol extends BaseProtocol<ArrayList<VideoBean>> {
 
     @Override
     public String getTid() {
@@ -46,7 +46,7 @@ public class VedioProtocol  extends BaseProtocol<ArrayList<VideoBean>> {
             ArrayList<VideoBean> videoBeen = new ArrayList<>();
             try {
                 jsonObject = new JSONObject(result);
-                JSONArray array = jsonObject.getJSONArray(tid);
+                JSONArray array = jsonObject.getJSONArray("视频");
                 Gson gson = new Gson();
                 for (int i = 0; i < array.length(); i++) {
                     String js = array.get(i).toString();

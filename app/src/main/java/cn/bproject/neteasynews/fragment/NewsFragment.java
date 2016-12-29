@@ -45,7 +45,7 @@ public class NewsFragment extends Fragment {
         mView = inflater.inflate(R.layout.tablayout_pager, container, false);
         mTabLayout = (TabLayout) mView.findViewById(tab_layout);
         mNewsViewpager = (ViewPager) mView.findViewById(R.id.news_viewpager);
-        newsBeans = CategoryDataUtils.getCategoryBeans();
+        newsBeans = CategoryDataUtils.getNewsCategoryBeans();
 
         initValidata();
         return mView;

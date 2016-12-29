@@ -217,15 +217,15 @@ public class Api {
     public static final String endPicture = "/20.json";
     // 图片
     public static final String specialPictureId = "T1419316384474";
-    // 推荐图片：0031/6LRK0031,6LRI0031/
+    // 推荐图片：0031/6LRK0031,6LRI0031/    应使用瀑布流
     public static final int RecommendPictureId = 0031;
     public static final String RecommendPicture = PictureUrl + RecommendPictureId + "/6LRK0031,6LRI0031/";
-    // 新闻图片：0001/00AP0001,3R710001,4T8E0001/
+    // 新闻图片：0001/00AP0001,3R710001,4T8E0001/    横向排版
     public static final int NewsPictureId = 0001;
     public static final String NewsPicture = PictureUrl + NewsPictureId + "/00AP0001,3R710001,4T8E0001/";
-    // 热点图片：0001/00AN0001,00AO0001/
+    // 热点图片：0001/00AN0001,00AO0001/     横向排版
     public static final String HotPicture = PictureUrl + NewsPictureId +  "0001/00AN0001,00AO0001/";
-    // 明星图片：0003/00AJ0003,0AJQ0003,3LF60003,00B70003,00B50003/
+    // 明星图片：0003/00AJ0003,0AJQ0003,3LF60003,00B70003,00B50003/      瀑布流排版
     public static final int StarPictureId = 0003;
     public static final String StarPicture = PictureUrl + StarPictureId + "/00AJ0003,0AJQ0003,3LF60003,00B70003,00B50003/";
 

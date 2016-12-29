@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--使用渐变色，添加视频模块图片顶部文字阴影-->
+    <gradient
+        android:angle="270"
+        android:startColor="@android:color/black"/>
+
+</shape>

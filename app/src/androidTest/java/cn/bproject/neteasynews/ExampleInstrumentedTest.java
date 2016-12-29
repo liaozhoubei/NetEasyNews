@@ -10,8 +10,8 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 
-import cn.bproject.neteasynews.bean.NewsListNormalBean;
-import cn.bproject.neteasynews.http.NewsProtocol;
+import cn.bproject.neteasynews.bean.VideoBean;
+import cn.bproject.neteasynews.http.VideoProtocol;
 
 import static org.junit.Assert.assertEquals;
 
@@ -33,9 +33,9 @@ public class ExampleInstrumentedTest {
     @Test
     public void getDataFromServer(){
 
-        NewsProtocol newsProtocol = new NewsProtocol();
-        ArrayList<NewsListNormalBean> newsListNormalBeens=  newsProtocol.getData("http://c.m.163.com/nc/article/list/", 0, "T1348647909107");
-        for (NewsListNormalBean bean: newsListNormalBeens
+        VideoProtocol newsProtocol = new VideoProtocol();
+        ArrayList<VideoBean> vidwoBeens=  newsProtocol.getData();
+        for (VideoBean bean: vidwoBeens
              ) {
             Log.d("ExampleInstrumentedTest", "getDataFromServer: title :  " + bean.getTitle());
         }
