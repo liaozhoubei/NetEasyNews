@@ -16,7 +16,7 @@
         >
 
         <ImageView
-            android:id="@+id/iv_video"
+            android:id="@+id/iv_pic"
             android:layout_width="match_parent"
             android:layout_height="160dp"
             android:scaleType="fitXY"

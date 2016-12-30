@@ -27,10 +27,10 @@ public class CategoryDataUtils {
 
     public static List<NewsBean> getPicCategoryBeans(){
         List<NewsBean>  beans=new ArrayList<>();
-        beans.add(new NewsBean("推荐","","0031"));
-        beans.add(new NewsBean("新闻","","0001"));
-        beans.add(new NewsBean("热点","","0001"));
-        beans.add(new NewsBean("明星","","0003"));
+        beans.add(new NewsBean("推荐","/6LRK0031,6LRI0031/","0031"));
+        beans.add(new NewsBean("新闻","/00AP0001,3R710001,4T8E0001/","0001"));
+        beans.add(new NewsBean("热点","/00AN0001,00AO0001/","0001"));
+        beans.add(new NewsBean("明星","/00AJ0003,0AJQ0003,3LF60003,00B70003,00B50003/","0003"));
 
 
 //        // 图片新闻尾部，需要在签名添加参数，可获得从某条新闻之后的20条新闻

@@ -36,9 +36,9 @@ public class NewsProtocol extends BaseProtocol<ArrayList<NewsListNormalBean>> {
     }
 
     @Override
-    public String buildURL(int index) {
+    public String buildURL(String... params) {
 
-        String url = Api.CommonUrl + getTid() + "/" + index + getParams();
+        String url = Api.CommonUrl + getTid() + "/" + getAllParams(params) + getParams();
         return url;
     }
 

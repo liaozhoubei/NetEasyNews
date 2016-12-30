@@ -21,16 +21,23 @@ import cn.bproject.neteasynews.Utils.UIUtils;
  */
 public abstract class BaseProtocol<T> {
 
+	public static final int NEWS_TYPE = 1;
+	public static final int PIC_TYPE = 2;
+
 	private final String TAG = BaseProtocol.class.getSimpleName();
 
-	// index表示的是从哪个位置开始返回20条数据, 用于分页
 	public T getData(int index) {
+		return getData(NEWS_TYPE, "", index);
+	}
+
+	// index表示的是从哪个位置开始返回20条数据, 用于分页
+	public T getData(int type, String columm, int index) {
 		// 先判断是否有缓存, 有的话就加载缓存
 		String result = getCache(index);
 
 		if (StringUtils.isEmpty(result)) {// 如果没有缓存,或者缓存失效
 			// 请求服务器
-			 result = getDataFromServer(index);
+			 result = getDataFromServer(type, columm, index);
 		}
 
 		// 开始解析
@@ -46,8 +53,8 @@ public abstract class BaseProtocol<T> {
 	 * 获取新闻详情页数据
      * @return
      */
-	public T getData(){
-		String connectUrl  = buildURL(0);
+	public T getDetailData(){
+		String connectUrl  = buildURL();
 		HttpHelper.HttpResult httpResult = HttpHelper.get(connectUrl);
 		String result = null;
 		if (httpResult != null) {
@@ -69,12 +76,19 @@ public abstract class BaseProtocol<T> {
 	 * 从网络获取数据
 	 * 新闻普通栏目适用
 	 * @param index index表示的是从哪个位置开始返回20条数据, 用于分页
+	 * @param columm 当链接是图片的url时有用
      * @return
      */
-	private String getDataFromServer(int index) {
+	private String getDataFromServer(int type, String columm, int index) {
 		// http://c.m.163.com/nc/article/list/T1467284926140/0-20.html
 		// http://www.itheima.com/home?index=0&name=zhangsan&age=18
-		String connectUrl  = buildURL(index);
+		String connectUrl = null;
+		if (type == NEWS_TYPE) {
+			connectUrl  = buildURL(index + "");
+		} else if (type == PIC_TYPE) {
+			connectUrl  = buildURL(columm + index);
+		}
+
 		HttpHelper.HttpResult httpResult = HttpHelper.get(connectUrl);
 
 		if (httpResult != null) {
@@ -99,7 +113,7 @@ public abstract class BaseProtocol<T> {
 	public abstract String getTid();
 
 	/**
-	 * 获取url尾部, 子类必须实现
+	 * 获取url部分参数
 	 * @return	url尾部数据
      */
 	public abstract String getParams();
@@ -111,7 +125,7 @@ public abstract class BaseProtocol<T> {
 		File cacheDir = UIUtils.getContext().getCacheDir();// 本应用的缓存文件夹
 		String filename = null;
 		try {
-			filename = MD5Encoder.encode(buildURL(index));
+			filename = MD5Encoder.encode(buildURL(String.valueOf(index)));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -139,7 +153,7 @@ public abstract class BaseProtocol<T> {
 		File cacheDir = UIUtils.getContext().getCacheDir();// 本应用的缓存文件夹
 		String filename = null;
 		try {
-			filename = MD5Encoder.encode(buildURL(index));
+			filename = MD5Encoder.encode(buildURL(String.valueOf(index)));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -178,7 +192,12 @@ public abstract class BaseProtocol<T> {
 		return null;
 	}
 
-	public abstract String buildURL(int index);
+	/**
+	 * 传入url所需要的参数
+	 * @param params
+	 * @return
+     */
+	public abstract String buildURL(String... params);
 
 	//
 	/**
@@ -188,4 +207,17 @@ public abstract class BaseProtocol<T> {
 	 * @return
 	 */
 	public abstract T parseData(String result, String tid);
+
+	/**
+	 * 遍历传入的可变数组，将他们拼接在一起
+	 * @param params
+	 * @return	返回可变数组拼接后的字符串
+     */
+	public String getAllParams(String... params) {
+		StringBuffer sb = new StringBuffer();
+		for (String param : params) {
+			sb.append(param);
+		}
+		return sb.toString();
+	}
 }

@@ -75,7 +75,7 @@ public class VideoFragment extends Fragment implements DefineView{
             @Override
             public void run() {
                 mVideoProtocol = new VideoProtocol();
-                mVideoBeanList = mVideoProtocol.getData();
+                mVideoBeanList = mVideoProtocol.getData(mStartIndex);
                 UIUtils.runOnUIThread(new Runnable() {
                     @Override
                     public void run() {
@@ -103,7 +103,7 @@ public class VideoFragment extends Fragment implements DefineView{
                     @Override
                     public void run() {
                         mVideoProtocol = new VideoProtocol();
-                        newlist = mVideoProtocol.getData();
+                        newlist = mVideoProtocol.getDetailData();
                         isPullRefresh = true;
                         DataChange();
                     }
@@ -122,7 +122,7 @@ public class VideoFragment extends Fragment implements DefineView{
                     @Override
                     public void run() {
                         mVideoProtocol = new VideoProtocol();
-                        newlist = mVideoProtocol.getData();
+                        newlist = mVideoProtocol.getData(mStartIndex);
                         isPullRefresh = false;
                         DataChange();
                     }

@@ -114,7 +114,7 @@ public class NewsListFragment extends BaseFragment implements DefineView {
         mThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                mNewsProtocol = new NewsProtocol(tid);
+                CreateNewsProtocol();
                 mNewsListNormalBeanList = mNewsProtocol.getData(mStartIndex);
                 UIUtils.runOnUIThread(new Runnable() {
                     @Override
@@ -143,7 +143,7 @@ public class NewsListFragment extends BaseFragment implements DefineView {
                 mThreadPool.execute(new Runnable() {
                     @Override
                     public void run() {
-                        mNewsProtocol = new NewsProtocol(tid);
+                        CreateNewsProtocol();
                         newlist = mNewsProtocol.getData(0);
                         isPullRefresh = true;
                         DataChange();
@@ -162,7 +162,7 @@ public class NewsListFragment extends BaseFragment implements DefineView {
                 mThreadPool.execute(new Runnable() {
                     @Override
                     public void run() {
-                        mNewsProtocol = new NewsProtocol(tid);
+                        CreateNewsProtocol();
                         newlist = mNewsProtocol.getData(mStartIndex);
                         isPullRefresh = false;
                         DataChange();
@@ -187,6 +187,12 @@ public class NewsListFragment extends BaseFragment implements DefineView {
     public void bindData() {
         mNewsListAdapter = new NewsListAdapter(getActivity(), (ArrayList<NewsListNormalBean>) mNewsListNormalBeanList);
         mListView_news_list.setAdapter(mNewsListAdapter);
+    }
+
+    private void CreateNewsProtocol(){
+        if(mNewsProtocol == null){
+            mNewsProtocol = new NewsProtocol(tid);
+        }
     }
 
     /**

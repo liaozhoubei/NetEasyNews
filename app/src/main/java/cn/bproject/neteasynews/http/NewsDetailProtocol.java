@@ -36,10 +36,12 @@ public class NewsDetailProtocol extends BaseProtocol<NewsDetailBean>{
     }
 
     @Override
-    public String buildURL(int index) {
+    public String buildURL(String... params) {
         String url = Api.DetailUrl + getTid() + Api.endDetailUrl;
         return url;
     }
+
+
 
     @Override
     public NewsDetailBean parseData(String result, String tid) {

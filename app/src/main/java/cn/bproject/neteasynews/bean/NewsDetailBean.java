@@ -757,7 +757,10 @@ public class NewsDetailBean {
             }
         }
 
-
-
-
+    @Override
+    public String toString() {
+        return "NewsDetailBean{" +
+                "body='" + body + '\'' +
+                '}';
+    }
 }

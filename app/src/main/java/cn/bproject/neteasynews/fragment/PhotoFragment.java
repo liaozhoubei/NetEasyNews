@@ -58,8 +58,8 @@ public class PhotoFragment extends Fragment{
         for (int i = 0; i < newsBeans.size(); i++) {
             // "推荐","","0031"
             // "明星","","0003"使用瀑布流
-
-            BaseFragment  fragment = PicListFragment.newInstance(newsBeans.get(i).getTid());
+            NewsBean newsBean = newsBeans.get(i);
+            BaseFragment  fragment = PicListFragment.newInstance(newsBean.getTid(),newsBean.getColumn());
             fragments.add(fragment);
         }
 
@@ -67,7 +67,7 @@ public class PhotoFragment extends Fragment{
 
         mNewsViewpager.setAdapter(fixedPagerAdapter);
         mTabLayout.setupWithViewPager(mNewsViewpager);
-        mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE); //适合很多tab
+        // mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE); //适合很多tab
         mTabLayout.setTabMode(TabLayout.MODE_FIXED); // tablayout均分，适合少Tablayout
         mNewsViewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

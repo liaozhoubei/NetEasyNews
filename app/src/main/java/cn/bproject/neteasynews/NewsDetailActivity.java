@@ -100,41 +100,12 @@ public class NewsDetailActivity extends Activity implements DefineView {
             @Override
             public void run() {
                 NewsDetailProtocol newsDetailProtocol = new NewsDetailProtocol(mDocid);
-                mNewsDetailBeen = newsDetailProtocol.getData();
+                mNewsDetailBeen = newsDetailProtocol.getDetailData();
                 handler.sendMessage(handler.obtainMessage());
             }
         });
 
 
-//        OkhttpManager.getAsync(titleUrl, new OkhttpManager.DataCallBack() {
-//            @Override
-//            public void requestFailure(Request request, Exception e) {
-//                Log.d(TAG, "数据加载失败...");
-//                relative_content.setVisibility(View.GONE);
-//                showErroPage();
-//                home_framelayout.setVisibility(View.VISIBLE);
-//                loading.setVisibility(View.GONE);
-//                empty.setVisibility(View.GONE);
-//                error.setVisibility(View.VISIBLE);
-//            }
-//
-//            @Override
-//            public void requestSuccess(String result) {
-//                Log.d(TAG, "数据加载成功...");
-//
-//                final String detailJson = JsonGetUtil.getJson(result, Config.BASE_URL);
-//                // 在客户端解决WebView图片屏幕适配的问题，在<img标签下添加style='max-width:90%;height:auto;'即可
-//                final String lastJson = detailJson.replace("<img", "<img style='max-width:100%;height:auto;'");
-//
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        articleBean = new ArticleDataManager().getArticleBean_CNK(lastJson);
-//                        handler.sendMessage(handler.obtainMessage());
-//                    }
-//                }).start();
-//            }
-//        });
     }
 
     @Override
