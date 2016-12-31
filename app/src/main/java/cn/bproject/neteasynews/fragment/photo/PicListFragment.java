@@ -119,4 +119,5 @@ public class PicListFragment  extends BaseFragment implements DefineView {
         mPullToRefreshListView.setAdapter(mPicListAdapter);
     }
 
+
 }
