@@ -5,7 +5,12 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
+import android.widget.ListView;
+import android.widget.Toast;
 
+import com.handmark.pulltorefresh.PullToRefreshBase;
+import com.handmark.pulltorefresh.PullToRefreshGridView;
 import com.handmark.pulltorefresh.PullToRefreshListView;
 
 import java.util.ArrayList;
@@ -26,7 +31,7 @@ import cn.bproject.neteasynews.http.PicProtocol;
  * Created by liaozhoubei on 2016/12/29.
  */
 
-public class PicListFragment  extends BaseFragment implements DefineView {
+public class PicListFragment extends BaseFragment implements DefineView {
     private String tid; // 图片频道id，用于打开新闻详情页
     private String column;  //   图片的分类
     private View mView;
@@ -36,16 +41,20 @@ public class PicListFragment  extends BaseFragment implements DefineView {
     private static final String KEY_TID = "TID";
     private static final String KEY_COLUMN = "COLUMN";
     private PicListAdapter mPicListAdapter;   // ListView的Adapter
-    private List<PicListBean> mPicListBeen;   // 启动时获得的数据
+    private List<PicListBean> mPicListBeens;   // 启动时获得的数据
     private List<PicListBean> newlist;   // 上拉刷新后获得的数据
     private int mStartIndex = 0;    // 请求数据的起始参数
     private String mUrl;        // 请求网络的url
     private ThreadManager.ThreadPool mThreadPool;   // 线程池
     private boolean isPullRefresh;
     private PicProtocol mPicProtocol;
+    private PullToRefreshGridView mPull_refresh_grid;
+    private GridView mGridView;
+    // 图片新闻的id，推荐和热点都为0001， 新闻和明星是0031，他们是按照column区分的
+    private final String isListView = "0001";   // 使用ListView的标志
 
 
-    public static PicListFragment newInstance(String tid, String column){
+    public static PicListFragment newInstance(String tid, String column) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(KEY_TID, tid);
         bundle.putSerializable(KEY_COLUMN, column);
@@ -57,7 +66,8 @@ public class PicListFragment  extends BaseFragment implements DefineView {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment_news_list, container, false);
+        mView = inflater.inflate(R.layout.fragment_pic_list, container, false);
+
         initView();
         initValidata();
         initListener();
@@ -67,18 +77,25 @@ public class PicListFragment  extends BaseFragment implements DefineView {
     @Override
     public void initView() {
         mPullToRefreshListView = (PullToRefreshListView) mView.findViewById(R.id.listView_news_list);
-
-
+        mPull_refresh_grid = (PullToRefreshGridView) mView.findViewById(R.id.pull_refresh_grid);
+        mGridView = mPull_refresh_grid.getRefreshableView();
     }
 
     @Override
     public void initValidata() {
         mThreadPool = ThreadManager.getThreadPool();
         requestData();
-        if(getArguments()!=null){
+        if (getArguments() != null) {
             //取出保存的频道TID
             tid = getArguments().getString(KEY_TID);
             column = getArguments().getString(KEY_COLUMN);
+        }
+        if (tid.equals(isListView)) {
+            mPullToRefreshListView.setVisibility(View.VISIBLE);
+            mPull_refresh_grid.setVisibility(View.GONE);
+        } else {
+            mPullToRefreshListView.setVisibility(View.GONE);
+            mPull_refresh_grid.setVisibility(View.VISIBLE);
         }
     }
 
@@ -90,15 +107,14 @@ public class PicListFragment  extends BaseFragment implements DefineView {
             @Override
             public void run() {
                 mPicProtocol = new PicProtocol(tid);
-                mPicListBeen = mPicProtocol.getData(BaseProtocol.PIC_TYPE, column, mStartIndex);
+                mPicListBeens = mPicProtocol.getData(BaseProtocol.PIC_TYPE, column, mStartIndex);
                 UIUtils.runOnUIThread(new Runnable() {
                     @Override
                     public void run() {
                         LogUtils.d(TAG, ": 解析id" + tid);
-                        if(mPicListBeen != null){
+                        if (mPicListBeens != null) {
                             bindData();
                         }
-
                     }
                 });
             }
@@ -109,14 +125,120 @@ public class PicListFragment  extends BaseFragment implements DefineView {
 
     @Override
     public void initListener() {
+        // ListView上拉和下拉刷新
+        mPullToRefreshListView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
+            @Override
+            public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
+                Toast.makeText(getActivity(), "已经是最新数据了！", Toast.LENGTH_SHORT).show();
+            }
 
+            @Override
+            public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
+                PullUpToRefresh();
+            }
+        });
+        // GridView上拉和下拉刷新，与ListView逻辑一样
+        mPull_refresh_grid.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<GridView>() {
+            @Override
+            public void onPullDownToRefresh(PullToRefreshBase<GridView> refreshView) {
+                Toast.makeText(getActivity(), "已经是最新数据了！", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onPullUpToRefresh(PullToRefreshBase<GridView> refreshView) {
+                PullUpToRefresh();
+            }
+        });
 
     }
 
     @Override
     public void bindData() {
-        mPicListAdapter = new PicListAdapter(getActivity(), (ArrayList<PicListBean>) mPicListBeen);
-        mPullToRefreshListView.setAdapter(mPicListAdapter);
+        mPicListAdapter = new PicListAdapter(getActivity(), (ArrayList<PicListBean>) mPicListBeens);
+        if (tid.equals(isListView)) {
+            mPullToRefreshListView.setAdapter(mPicListAdapter);
+        } else {
+            mGridView.setAdapter(mPicListAdapter);
+        }
+    }
+
+    // 下拉刷新
+    public void DownToRefresh(){
+        LogUtils.d(TAG, "onPullDownToRefresh: 下拉刷新了");
+        // 图片模块下拉刷新返回的是当前数据
+        mThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                CreateNewsProtocol();
+                newlist = mPicProtocol.getData(BaseProtocol.PIC_TYPE, column, 0);
+                isPullRefresh = true;
+                DataChange();
+            }
+        });
+    }
+
+    // 上拉刷新
+    public void PullUpToRefresh(){
+        mStartIndex += 21;
+
+        LogUtils.d(TAG, "mStartIndex: " + mStartIndex);
+//                mUrl = Api.CommonUrl + Api.yaowenspecialId + "/" + mStartIndex + Api.endUrl;
+
+        mThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                CreateNewsProtocol();
+                newlist = mPicProtocol.getData(BaseProtocol.PIC_TYPE, column, mStartIndex);
+                isPullRefresh = false;
+                DataChange();
+            }
+        });
+    }
+
+    private void CreateNewsProtocol(){
+        if(mPicProtocol == null){
+            mPicProtocol = new PicProtocol(tid);
+        }
+    }
+
+    /**
+     * 上拉或下拉刷新之后更新UI界面
+     */
+    private void DataChange() {
+        UIUtils.runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                if (newlist != null) {
+                    isPullRefreshView();
+                    Toast.makeText(getActivity(), "数据已更新", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), "数据请求失败", Toast.LENGTH_SHORT).show();
+                }
+                //上拉加载和关闭刷新时间太短会导致mListView.onRefreshComplete()无效的情况，只需要延迟一秒即可：
+                if (tid.equals(isListView)) {
+                    mPullToRefreshListView.onRefreshComplete();
+                } else {
+                    mPull_refresh_grid.onRefreshComplete();
+                }
+            }
+        });
+    }
+
+    /**
+     * 判断是上拉刷新还是下拉刷新，执行相应的方法
+     */
+    public void isPullRefreshView() {
+        if (isPullRefresh){
+            // 是下拉刷新
+            newlist.addAll(mPicListBeens);
+            mPicListBeens.removeAll(mPicListBeens);
+            mPicListBeens.addAll(newlist);
+            mPicListAdapter.notifyDataSetChanged();
+        } else {
+            // 上拉刷新
+            mPicListBeens.addAll(newlist);
+            mPicListAdapter.notifyDataSetChanged();
+        }
     }
 
 

@@ -27,9 +27,13 @@ public class CategoryDataUtils {
 
     public static List<NewsBean> getPicCategoryBeans(){
         List<NewsBean>  beans=new ArrayList<>();
+        // GirdView排版
         beans.add(new NewsBean("推荐","/6LRK0031,6LRI0031/","0031"));
+        // ListView排版
         beans.add(new NewsBean("新闻","/00AP0001,3R710001,4T8E0001/","0001"));
+        //  ListView排版
         beans.add(new NewsBean("热点","/00AN0001,00AO0001/","0001"));
+        // GirdView排版
         beans.add(new NewsBean("明星","/00AJ0003,0AJQ0003,3LF60003,00B70003,00B50003/","0003"));
 
 

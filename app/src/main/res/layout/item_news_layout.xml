@@ -4,67 +4,6 @@
               android:layout_height="wrap_content"
               android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/item_news_three_image_view"
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:orientation="vertical"
-        android:visibility="visible"
-        >
-
-        <TextView
-            android:id="@+id/item_news_three_image_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="@string/default_text"
-            android:textColor="@color/black"/>
-
-        <LinearLayout
-            android:id="@+id/item_news_three_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/big_Image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="visible"/>
-
-            <ImageView
-                android:id="@+id/one_image"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:paddingRight="5dp"
-                android:src="@drawable/defaultbg"/>
-
-            <ImageView
-                android:id="@+id/two_image"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:paddingRight="5dp"
-                android:src="@drawable/defaultbg"/>
-
-            <ImageView
-                android:id="@+id/three_image"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:src="@drawable/defaultbg"/>
-
-        </LinearLayout>
-
-
-    </LinearLayout>
-
     <!--标题和LOGO图片-->
     <LinearLayout
         android:id="@+id/item_news_linearlayout"
@@ -74,7 +13,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
         android:orientation="horizontal"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <ImageView
             android:id="@+id/item_news_tv_img"
@@ -94,50 +33,8 @@
             android:maxLines="4"
             android:text="@string/default_text"
             android:textColor="@color/black"/>
-
-
     </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="25dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        >
+    <include layout="@layout/item_news_bottom"/>
 
-        <!--发布时间-->
-        <TextView
-            android:id="@+id/item_news_tv_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="5dp"
-            android:text="10分钟前"
-            android:textColor="@color/darkgray"
-            android:textSize="12sp"/>
-
-        <TextView
-            android:id="@+id/item_news_tv_arrow"
-            android:layout_width="3dp"
-            android:layout_height="20dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@color/darkgray"
-            />
-        <!--文章来源-->
-        <TextView
-            android:id="@+id/item_news_tv_source"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginBottom="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@id/item_news_tv_arrow"
-            android:text="@string/source_news_text"
-            android:textColor="@color/darkgray"
-            android:textSize="12sp"
-            />
-    </RelativeLayout>
 </LinearLayout>

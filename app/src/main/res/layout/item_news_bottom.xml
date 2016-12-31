@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="25dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp">
+
+<!--新闻列表的底部信息-->
+
+        <!--发布时间-->
+        <TextView
+            android:id="@+id/item_news_tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:text="10分钟前"
+            android:textColor="@color/darkgray"
+            android:textSize="12sp"/>
+
+        <TextView
+            android:id="@+id/item_news_tv_arrow"
+            android:layout_width="3dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@color/darkgray"
+            />
+        <!--文章来源-->
+        <TextView
+            android:id="@+id/item_news_tv_source"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@id/item_news_tv_arrow"
+            android:text="@string/source_news_text"
+            android:textColor="@color/darkgray"
+            android:textSize="12sp"
+            />
+
+
+</RelativeLayout>

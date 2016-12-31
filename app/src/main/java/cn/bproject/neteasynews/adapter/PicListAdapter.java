@@ -53,7 +53,7 @@ public class PicListAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             viewHolder.iv_pic = (ImageView) view.findViewById(R.id.iv_pic);
             viewHolder.tv_title = (TextView) view.findViewById(R.id.tv_title);
-            viewHolder.tv_play_time = (TextView) view.findViewById(R.id.tv_play_time);
+            // viewHolder.tv_play_time = (TextView) view.findViewById(R.id.tv_play_time);
 
             view.setTag(viewHolder);
         } else {
@@ -66,8 +66,9 @@ public class PicListAdapter extends BaseAdapter {
         String title = picListBean.getSetname();
         String datetime = picListBean.getDatetime();
 
+
         viewHolder.tv_title.setText(title);
-        viewHolder.tv_play_time.setText(datetime);
+        //viewHolder.tv_play_time.setText(datetime);
 
         setNetPicture(imageSrc, viewHolder.iv_pic);
 
@@ -77,7 +78,7 @@ public class PicListAdapter extends BaseAdapter {
     class ViewHolder {
         public ImageView iv_pic;
         public TextView tv_title;
-        public TextView tv_play_time;
+        //public TextView tv_play_time;
 
     }
 

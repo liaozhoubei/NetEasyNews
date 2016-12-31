@@ -4,48 +4,47 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
+    android:layout_height="wrap_content"
     app:cardElevation="2dp"
     >
 
     <RelativeLayout
         android:id="@+id/rl_root"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         >
 
         <ImageView
             android:id="@+id/iv_video"
             android:layout_width="match_parent"
-            android:layout_height="160dp"
+            android:layout_height="@dimen/item_big_image_height"
             android:scaleType="fitXY"
             android:src="@drawable/defaultbg_h"/>
 
-   <!--     <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@drawable/show"
-            />-->
+        <!--     <FrameLayout
+                 android:layout_width="match_parent"
+                 android:layout_height="40dp"
+                 android:background="@drawable/show"
+                 />-->
 
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            android:background="@drawable/shadow"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:paddingTop="8dp"
-            android:maxLines="1"
+            android:gravity="center_vertical"
             android:textColor="@color/white"
             android:textSize="16dp"
-            android:background="@drawable/shadow"
             tools:text="大家好，我是标题,很牛的标题栏，估计世界上没有我更牛了"/>
 
         <TextView
             android:id="@+id/tv_from"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
             android:layout_below="@+id/iv_video"
             android:layout_marginLeft="5dp"
             android:gravity="center"
@@ -55,7 +54,6 @@
             android:id="@+id/tv_play_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/iv_video"
             android:layout_marginRight="5dp"
