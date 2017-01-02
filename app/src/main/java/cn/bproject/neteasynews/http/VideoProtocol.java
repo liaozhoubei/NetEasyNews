@@ -33,11 +33,9 @@ public class VideoProtocol extends BaseProtocol<ArrayList<VideoBean>> {
     }
 
     @Override
-    public String buildURL(String... params) {
-        String url = Api.host + Api.SpecialColumn2 + getTid() + Api.SpecialendUrl + getAllParams(params) + getParams();
+    public String buildURL(String url) {
         return url;
     }
-
 
     @Override
     public ArrayList<VideoBean> parseData(String result, String tid) {

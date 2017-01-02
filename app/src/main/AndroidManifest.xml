@@ -23,6 +23,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".NewsDetailActivity"/>
+        <activity android:name=".PicDetailActivity"/>
     </application>
 
 </manifest>

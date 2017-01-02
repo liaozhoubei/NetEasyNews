@@ -1,10 +1,12 @@
 package cn.bproject.neteasynews.fragment.photo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -16,30 +18,33 @@ import com.handmark.pulltorefresh.PullToRefreshListView;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.bproject.neteasynews.PicDetailActivity;
 import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.Utils.ThreadManager;
 import cn.bproject.neteasynews.Utils.UIUtils;
 import cn.bproject.neteasynews.adapter.PicListAdapter;
 import cn.bproject.neteasynews.bean.PicListBean;
+import cn.bproject.neteasynews.common.Api;
 import cn.bproject.neteasynews.common.DefineView;
 import cn.bproject.neteasynews.fragment.BaseFragment;
-import cn.bproject.neteasynews.http.BaseProtocol;
 import cn.bproject.neteasynews.http.PicProtocol;
 
 /**
  * Created by liaozhoubei on 2016/12/29.
  */
 
-public class PicListFragment extends BaseFragment implements DefineView {
+public class PicListFragment extends BaseFragment implements DefineView , AdapterView.OnItemClickListener{
     private String tid; // 图片频道id，用于打开新闻详情页
     private String column;  //   图片的分类
+
     private View mView;
     private PullToRefreshListView mPullToRefreshListView;// 可上拉下拉刷新的listView
 
     private final String TAG = PicListFragment.class.getSimpleName();
-    private static final String KEY_TID = "TID";
+    private static final String KEY_TID = "TID";  //频道id
     private static final String KEY_COLUMN = "COLUMN";
+    private static final String SETID = "SETID";  // 图集id
     private PicListAdapter mPicListAdapter;   // ListView的Adapter
     private List<PicListBean> mPicListBeens;   // 启动时获得的数据
     private List<PicListBean> newlist;   // 上拉刷新后获得的数据
@@ -74,6 +79,8 @@ public class PicListFragment extends BaseFragment implements DefineView {
         return mView;
     }
 
+
+
     @Override
     public void initView() {
         mPullToRefreshListView = (PullToRefreshListView) mView.findViewById(R.id.listView_news_list);
@@ -107,12 +114,14 @@ public class PicListFragment extends BaseFragment implements DefineView {
             @Override
             public void run() {
                 mPicProtocol = new PicProtocol(tid);
-                mPicListBeens = mPicProtocol.getData(BaseProtocol.PIC_TYPE, column, mStartIndex);
+                // Api.PictureUrl + getTid() + getAllParams(params) +  getParams();
+//                mPicListBeens = mPicProtocol.getData(BaseProtocol.PIC_TYPE, column, mStartIndex);
+                mPicListBeens = mPicProtocol.getData(Api.PictureUrl + tid + column + mStartIndex + Api.endPicture);
                 UIUtils.runOnUIThread(new Runnable() {
                     @Override
                     public void run() {
-                        LogUtils.d(TAG, ": 解析id" + tid);
                         if (mPicListBeens != null) {
+
                             bindData();
                         }
                     }
@@ -126,9 +135,12 @@ public class PicListFragment extends BaseFragment implements DefineView {
     @Override
     public void initListener() {
         // ListView上拉和下拉刷新
+
         mPullToRefreshListView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
             @Override
             public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
+
+                
                 Toast.makeText(getActivity(), "已经是最新数据了！", Toast.LENGTH_SHORT).show();
             }
 
@@ -142,6 +154,7 @@ public class PicListFragment extends BaseFragment implements DefineView {
             @Override
             public void onPullDownToRefresh(PullToRefreshBase<GridView> refreshView) {
                 Toast.makeText(getActivity(), "已经是最新数据了！", Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
@@ -150,11 +163,20 @@ public class PicListFragment extends BaseFragment implements DefineView {
             }
         });
 
+        mPullToRefreshListView.setOnItemClickListener(this);
+        mGridView.setOnItemClickListener(this);
+//        mPullToRefreshListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                mPicListAdapter.getItem(i);
+//            }
+//        });
     }
 
     @Override
     public void bindData() {
         mPicListAdapter = new PicListAdapter(getActivity(), (ArrayList<PicListBean>) mPicListBeens);
+        LogUtils.d(TAG, ": 解析id:" + tid + ":" + mPicListBeens.toString());
         if (tid.equals(isListView)) {
             mPullToRefreshListView.setAdapter(mPicListAdapter);
         } else {
@@ -170,7 +192,8 @@ public class PicListFragment extends BaseFragment implements DefineView {
             @Override
             public void run() {
                 CreateNewsProtocol();
-                newlist = mPicProtocol.getData(BaseProtocol.PIC_TYPE, column, 0);
+                newlist = mPicProtocol.getData(Api.PictureUrl + tid + column + 0 + Api.endPicture);
+//                newlist = mPicProtocol.getData(BaseProtocol.PIC_TYPE, column, 0);
                 isPullRefresh = true;
                 DataChange();
             }
@@ -188,7 +211,8 @@ public class PicListFragment extends BaseFragment implements DefineView {
             @Override
             public void run() {
                 CreateNewsProtocol();
-                newlist = mPicProtocol.getData(BaseProtocol.PIC_TYPE, column, mStartIndex);
+                newlist = mPicProtocol.getData(Api.PictureUrl + tid + column + 0 + Api.endPicture);
+//                newlist = mPicProtocol.getData(BaseProtocol.PIC_TYPE, column, mStartIndex);
                 isPullRefresh = false;
                 DataChange();
             }
@@ -242,4 +266,14 @@ public class PicListFragment extends BaseFragment implements DefineView {
     }
 
 
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        PicListBean picListBean = (PicListBean) mPicListAdapter.getItem(i);
+        String id = picListBean.getSetid();
+//        String imgSum = picListBean.getImgsum();
+        Intent intent = new Intent(getActivity(), PicDetailActivity.class);
+        intent.putExtra(KEY_TID, tid);
+        intent.putExtra(SETID, id);
+        getActivity().startActivity(intent);
+    }
 }

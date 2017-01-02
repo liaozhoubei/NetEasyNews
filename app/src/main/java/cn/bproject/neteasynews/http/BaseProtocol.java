@@ -21,24 +21,20 @@ import cn.bproject.neteasynews.Utils.UIUtils;
  */
 public abstract class BaseProtocol<T> {
 
-    public static final int NEWS_TYPE = 1;
-    public static final int PIC_TYPE = 2;
+
 
     private final String TAG = BaseProtocol.class.getSimpleName();
 
-    public T getData(int index) {
-        return getData(NEWS_TYPE, "", index);
-    }
 
     // index表示的是从哪个位置开始返回20条数据, 用于分页
-    public T getData(int type, String columm, int index) {
+    public T getData(String url) {
         // 先判断是否有缓存, 有的话就加载缓存
-        String result = getCache(type, columm, index);
+//        String result = getCache(type, columm, index);
 
-		if (StringUtils.isEmpty(result)) {// 如果没有缓存,或者缓存失效
-        // 请求服务器
-		result = getDataFromServer(type, columm, index);
-		}
+//        if (StringUtils.isEmpty(result)) {// 如果没有缓存,或者缓存失效
+            // 请求服务器
+        String result = getDataFromServer(url);
+//        }
 
         // 开始解析
         if (result != null) {
@@ -51,11 +47,11 @@ public abstract class BaseProtocol<T> {
 
     /**
      * 获取新闻详情页数据
-     *
+     *  不缓存数据
      * @return
      */
-    public T getDetailData() {
-        String connectUrl = buildURL();
+    public T getDetailData(String url) {
+        String connectUrl = buildURL(url);
         HttpHelper.HttpResult httpResult = HttpHelper.get(connectUrl);
         String result = null;
         if (httpResult != null) {
@@ -72,19 +68,16 @@ public abstract class BaseProtocol<T> {
         return null;
     }
 
-
     /**
      * 从网络获取数据
      * 新闻普通栏目适用
      *
-     * @param index  index表示的是从哪个位置开始返回20条数据, 用于分页
-     * @param columm 当链接是图片的url时有用
+     * @param url 链接的url
      * @return
      */
-    private String getDataFromServer(int type, String columm, int index) {
-        // http://c.m.163.com/nc/article/list/T1467284926140/0-20.html
-        // http://www.itheima.com/home?index=0&name=zhangsan&age=18
-        String connectUrl = getUrl(type, columm, index);
+    private String getDataFromServer(String url) {
+
+        String connectUrl = buildURL(url);
 
         HttpHelper.HttpResult httpResult = HttpHelper.get(connectUrl);
 
@@ -93,7 +86,7 @@ public abstract class BaseProtocol<T> {
             LogUtils.d(TAG, "getDataFromServer 访问结果:" + result);
             // 写缓存
             if (!StringUtils.isEmpty(result)) {
-                setCache(type, columm, index, result);
+                setCache(url, result);
             }
 
             return result;
@@ -119,12 +112,12 @@ public abstract class BaseProtocol<T> {
 
     // 写缓存
     // 以url为key, 以json为value
-    public void setCache(int type, String columm, int index, String json) {
+    public void setCache(String cacheurl, String json) {
         // 以url为文件名, 以json为文件内容,保存在本地
         File cacheDir = UIUtils.getContext().getCacheDir();// 本应用的缓存文件夹
-                String filename = null;
+        String filename = null;
         try {
-            String url = getUrl(type, columm, index);
+            String url = buildURL(cacheurl);
             LogUtils.d(TAG, "设置的setCache: " + url);
             filename = MD5Encoder.encode(url);
         } catch (Exception e) {
@@ -149,12 +142,12 @@ public abstract class BaseProtocol<T> {
     }
 
     // 读缓存
-    public String getCache(int type, String columm, int index) {
+    public String getCache(String url) {
         // 以url为文件名, 以json为文件内容,保存在本地
         File cacheDir = UIUtils.getContext().getCacheDir();// 本应用的缓存文件夹
         String filename = null;
         try {
-            String connectUrl = getUrl(type, columm, index);
+            String connectUrl = buildURL(url);
             LogUtils.d(TAG, "设置的getCache: " + connectUrl);
             filename = MD5Encoder.encode(connectUrl);
         } catch (Exception e) {
@@ -195,30 +188,15 @@ public abstract class BaseProtocol<T> {
         return null;
     }
 
-    /**
-     * 返回相应的url链接
-     *
-     * @param index  网页请求数据的起始位置
-     * @param columm 图片心里的类别，只有图片新闻游泳
-     * @return
-     */
-    public String getUrl(int type, String columm, int index) {
-        String url = null;
-        if (type == NEWS_TYPE) {
-            url = buildURL(index + "");
-        } else if (type == PIC_TYPE) {
-            url = buildURL(columm + index);
-        }
-        return url;
-    }
+
 
     /**
-     * 传入url所需要的参数
+     * 传入url
      *
-     * @param params
+     * @param url
      * @return
      */
-    public abstract String buildURL(String... params);
+    public abstract String buildURL(String url);
 
     //
 
@@ -231,17 +209,5 @@ public abstract class BaseProtocol<T> {
      */
     public abstract T parseData(String result, String tid);
 
-    /**
-     * 遍历传入的可变数组，将他们拼接在一起
-     *
-     * @param params
-     * @return 返回可变数组拼接后的字符串
-     */
-    public String getAllParams(String... params) {
-        StringBuffer sb = new StringBuffer();
-        for (String param : params) {
-            sb.append(param);
-        }
-        return sb.toString();
-    }
+
 }

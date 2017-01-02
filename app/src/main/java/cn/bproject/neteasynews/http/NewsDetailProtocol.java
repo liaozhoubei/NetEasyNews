@@ -17,7 +17,7 @@ import static android.content.ContentValues.TAG;
  * http://c.m.163.com/nc/article/C9C8QCUV0008856R/full.html
  */
 
-public class NewsDetailProtocol extends BaseProtocol<NewsDetailBean>{
+public class NewsDetailProtocol extends BaseProtocol<NewsDetailBean> {
 
     private String docid;
 
@@ -36,10 +36,12 @@ public class NewsDetailProtocol extends BaseProtocol<NewsDetailBean>{
     }
 
     @Override
-    public String buildURL(String... params) {
-        String url = Api.DetailUrl + getTid() + Api.endDetailUrl;
+    public String buildURL(String url) {
+//        String url = Api.DetailUrl + getTid() + Api.endDetailUrl;
         return url;
     }
+
+
 
 
 

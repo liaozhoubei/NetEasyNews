@@ -22,6 +22,7 @@ import cn.bproject.neteasynews.Utils.ThreadManager;
 import cn.bproject.neteasynews.Utils.UIUtils;
 import cn.bproject.neteasynews.adapter.VideoListAdapter;
 import cn.bproject.neteasynews.bean.VideoBean;
+import cn.bproject.neteasynews.common.Api;
 import cn.bproject.neteasynews.common.DefineView;
 import cn.bproject.neteasynews.http.VideoProtocol;
 
@@ -75,7 +76,8 @@ public class VideoFragment extends Fragment implements DefineView{
             @Override
             public void run() {
                 mVideoProtocol = new VideoProtocol();
-                mVideoBeanList = mVideoProtocol.getData(mStartIndex);
+//                String url = Api.host + Api.SpecialColumn2 + getTid() + Api.SpecialendUrl + getAllParams(params) + getParams();
+                mVideoBeanList = mVideoProtocol.getData( Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + mStartIndex + Api.devId);
                 UIUtils.runOnUIThread(new Runnable() {
                     @Override
                     public void run() {
@@ -103,7 +105,7 @@ public class VideoFragment extends Fragment implements DefineView{
                     @Override
                     public void run() {
                         mVideoProtocol = new VideoProtocol();
-                        newlist = mVideoProtocol.getDetailData();
+                        newlist = mVideoProtocol.getData(Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + 0 + Api.devId);
                         isPullRefresh = true;
                         DataChange();
                     }
@@ -122,7 +124,7 @@ public class VideoFragment extends Fragment implements DefineView{
                     @Override
                     public void run() {
                         mVideoProtocol = new VideoProtocol();
-                        newlist = mVideoProtocol.getData(mStartIndex);
+                        newlist = mVideoProtocol.getData(Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + mStartIndex + Api.devId);
                         isPullRefresh = false;
                         DataChange();
                     }

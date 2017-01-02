@@ -25,6 +25,7 @@ import cn.bproject.neteasynews.Utils.ThreadManager;
 import cn.bproject.neteasynews.Utils.UIUtils;
 import cn.bproject.neteasynews.adapter.NewsListAdapter;
 import cn.bproject.neteasynews.bean.NewsListNormalBean;
+import cn.bproject.neteasynews.common.Api;
 import cn.bproject.neteasynews.common.DefineView;
 import cn.bproject.neteasynews.fragment.BaseFragment;
 import cn.bproject.neteasynews.http.NewsProtocol;
@@ -95,18 +96,19 @@ public class NewsListFragment extends BaseFragment implements DefineView {
 
     @Override
     public void initValidata() {
-        // 创建线程池
-        mThreadPool = ThreadManager.getThreadPool();
-        requestData();
         if(getArguments()!=null){
             //取出保存的频道TID
             tid = getArguments().getString("TID");
         }
+        // 创建线程池
+        mThreadPool = ThreadManager.getThreadPool();
+        requestData();
+
 
     }
 
     public void requestData() {
-//        mUrl = Api.CommonUrl + Api.toutiaoId + "/" + mStartIndex + Api.endUrl;
+        mUrl = Api.CommonUrl + tid + "/" + mStartIndex + Api.endUrl;
 //        Log.d(TAG, "mUrl地址为: " + mUrl);
 //        http://c.m.163.com/nc/article/list/T1467284926140/0-20.html
 //        http://c.m.163.com/nc/article/list/T1348647909107/0-20.html
@@ -115,7 +117,7 @@ public class NewsListFragment extends BaseFragment implements DefineView {
             @Override
             public void run() {
                 CreateNewsProtocol();
-                mNewsListNormalBeanList = mNewsProtocol.getData(mStartIndex);
+                mNewsListNormalBeanList = mNewsProtocol.getData(mUrl);
                 UIUtils.runOnUIThread(new Runnable() {
                     @Override
                     public void run() {
@@ -139,12 +141,12 @@ public class NewsListFragment extends BaseFragment implements DefineView {
             @Override
             public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
                 LogUtils.d(TAG, "onPullDownToRefresh: 下拉刷新了");
-
+                mUrl = Api.CommonUrl + tid + "/" + 0 + Api.endUrl;
                 mThreadPool.execute(new Runnable() {
                     @Override
                     public void run() {
                         CreateNewsProtocol();
-                        newlist = mNewsProtocol.getData(0);
+                        newlist = mNewsProtocol.getData(mUrl);
                         isPullRefresh = true;
                         DataChange();
                     }
@@ -157,13 +159,13 @@ public class NewsListFragment extends BaseFragment implements DefineView {
                 mStartIndex += 20;
 
                 LogUtils.d(TAG, "mStartIndex: " + mStartIndex);
-//                mUrl = Api.CommonUrl + Api.yaowenspecialId + "/" + mStartIndex + Api.endUrl;
+                mUrl = Api.CommonUrl + tid + "/" + mStartIndex + Api.endUrl;
 
                 mThreadPool.execute(new Runnable() {
                     @Override
                     public void run() {
                         CreateNewsProtocol();
-                        newlist = mNewsProtocol.getData(mStartIndex);
+                        newlist = mNewsProtocol.getData(mUrl);
                         isPullRefresh = false;
                         DataChange();
                     }

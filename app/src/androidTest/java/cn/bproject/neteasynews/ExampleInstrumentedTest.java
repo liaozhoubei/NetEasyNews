@@ -10,17 +10,19 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 
+import cn.bproject.neteasynews.bean.ImageDetailBean;
 import cn.bproject.neteasynews.bean.NewsDetailBean;
 import cn.bproject.neteasynews.bean.NewsListNormalBean;
 import cn.bproject.neteasynews.bean.PicListBean;
 import cn.bproject.neteasynews.bean.VideoBean;
 import cn.bproject.neteasynews.common.Api;
-import cn.bproject.neteasynews.http.BaseProtocol;
 import cn.bproject.neteasynews.http.NewsDetailProtocol;
 import cn.bproject.neteasynews.http.NewsProtocol;
+import cn.bproject.neteasynews.http.PicDetailProtocol;
 import cn.bproject.neteasynews.http.PicProtocol;
 import cn.bproject.neteasynews.http.VideoProtocol;
 
+import static android.content.ContentValues.TAG;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -42,7 +44,9 @@ public class ExampleInstrumentedTest {
     public void getNewsListDataFromServer() {
         // 测试新闻详情
         NewsProtocol newsProtocol = new NewsProtocol("T1467284926140");
-        ArrayList<NewsListNormalBean> content = newsProtocol.getData(0);
+        String mStartIndex = "0";
+        String mUrl = Api.CommonUrl + Api.yaowenspecialId + "/" + mStartIndex + Api.endUrl;
+        ArrayList<NewsListNormalBean> content = newsProtocol.getData(mUrl);
         for (NewsListNormalBean bean : content) {
         Log.d("ExampleInstrumentedTest", "getDataFromServer: title :  " + bean);
         }
@@ -52,7 +56,7 @@ public class ExampleInstrumentedTest {
     public void getNewsDetailDataFromServer() {
         // 测试新闻详情
         NewsDetailProtocol newsDetailProtocol = new NewsDetailProtocol("C8T2G5QL0511A99L");
-        NewsDetailBean content = newsDetailProtocol.getDetailData();
+        NewsDetailBean content = newsDetailProtocol.getDetailData("http://c.m.163.com/nc/article/C8T2G5QL0511A99L/full.html");
 //        for (PicListBean bean : arrayList) {
             Log.d("ExampleInstrumentedTest", "getDataFromServer: title :  " + content);
 //        }
@@ -62,7 +66,7 @@ public class ExampleInstrumentedTest {
     public void getVideoDataFromServer() {
         // 测试视频列表
         VideoProtocol newsProtocol = new VideoProtocol();
-        ArrayList<VideoBean> vidwoBeens = newsProtocol.getData(0);
+        ArrayList<VideoBean> vidwoBeens = newsProtocol.getData( Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + 0 + Api.devId);
         for (VideoBean bean : vidwoBeens
                 ) {
             Log.d("ExampleInstrumentedTest", "getDataFromServer: title :  " + bean.getTitle());
@@ -71,12 +75,20 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void getPicListDataFromServer() {
-        // 测试视频列表
-        PicProtocol picProtocol = new PicProtocol("0031");
 
-        ArrayList<PicListBean> arrayList = picProtocol.getData(BaseProtocol.PIC_TYPE, Api.RecommendPicture, 0);
+        PicProtocol picProtocol = new PicProtocol("0001");
+
+        ArrayList<PicListBean> arrayList = picProtocol.getData("http://pic.news.163.com/photocenter/api/list/0001/00AN0001,00AO0001/0/20.json");
         for (PicListBean bean : arrayList) {
             Log.d("ExampleInstrumentedTest", "getDataFromServer: title :  " + bean.getSetname());
         }
+    }
+
+    @Test
+    public void getPicDetailDataFromServer(){
+        PicDetailProtocol picDetailProtocol = new PicDetailProtocol("0031");
+        ImageDetailBean imageDetailBean = picDetailProtocol.getData("http://c.m.163.com/photo/api/set/0031/13897.json");
+//        imageDetailBean.getCover();
+        Log.d(TAG, "getPicDetailDataFromServer: " + imageDetailBean.getCover());
     }
 }

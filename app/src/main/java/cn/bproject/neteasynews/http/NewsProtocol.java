@@ -1,5 +1,7 @@
 package cn.bproject.neteasynews.http;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -36,11 +38,12 @@ public class NewsProtocol extends BaseProtocol<ArrayList<NewsListNormalBean>> {
     }
 
     @Override
-    public String buildURL(String... params) {
-
-        String url = Api.CommonUrl + getTid() + "/" + getAllParams(params) + getParams();
+    public String buildURL(String url) {
+        Log.d(TAG, "buildURL: " + url);
         return url;
     }
+
+
 
     /**
      * 解析新闻列表json数据

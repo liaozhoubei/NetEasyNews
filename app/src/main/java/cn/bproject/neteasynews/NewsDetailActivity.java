@@ -100,7 +100,7 @@ public class NewsDetailActivity extends Activity implements DefineView {
             @Override
             public void run() {
                 NewsDetailProtocol newsDetailProtocol = new NewsDetailProtocol(mDocid);
-                mNewsDetailBeen = newsDetailProtocol.getDetailData();
+                mNewsDetailBeen = newsDetailProtocol.getDetailData(Api.DetailUrl + mDocid + Api.endDetailUrl);
                 handler.sendMessage(handler.obtainMessage());
             }
         });

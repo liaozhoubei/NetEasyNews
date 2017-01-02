@@ -34,17 +34,12 @@ public class PicProtocol extends BaseProtocol<ArrayList<PicListBean>> {
         return Api.endPicture;
     }
 
-    /**
-     *
-     * @param params    需要传入频道参数和index起始参数
-     * @return
-     */
     @Override
-    public String buildURL(String... params) {
-        String url = Api.PictureUrl + getTid() + getAllParams(params) +  getParams();
-        LogUtils.d("PicProtocol", url);
+    public String buildURL(String url) {
         return url;
     }
+
+
 
     @Override
     public ArrayList<PicListBean> parseData(String result, String tid) {
@@ -56,7 +51,7 @@ public class PicProtocol extends BaseProtocol<ArrayList<PicListBean>> {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 PicListBean picListbean = gson.fromJson(jsonObject.toString(), PicListBean.class);
-                LogUtils.d("图片返回的数据", "parseData: " + picListbean);
+                //LogUtils.d("图片返回的数据", "parseData: " + picListbean);
                 PicListBeans.add(picListbean);
             }
             return PicListBeans;
