@@ -26,7 +26,14 @@
         ptr:ptrMode="both"
          />
 
-
+    <FrameLayout
+        android:id="@+id/framelayout_news_list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <include layout="@layout/page_loading"/>
+        <include layout="@layout/page_empty"/>
+        <include layout="@layout/page_error"/>
+    </FrameLayout>
 
 
 

@@ -15,17 +15,18 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        maven { url "https://jitpack.io" }
     }
-    // gradle跳过测试任务
-    gradle.taskGraph.whenReady {
-        tasks.each {
-            task ->
-                if (task.name.contains("Test"))
-                {
-                    task.enabled = false
-                }
-        }
-    }
+    // gradle跳过测试任务，这会导致unitTest以及AndroidTest报错，如果要使用测试工具，则请注释此任务
+//    gradle.taskGraph.whenReady {
+//        tasks.each {
+//            task ->
+//                if (task.name.contains("Test"))
+//                {
+//                    task.enabled = false
+//                }
+//        }
+//    }
 }
 
 task clean(type: Delete) {

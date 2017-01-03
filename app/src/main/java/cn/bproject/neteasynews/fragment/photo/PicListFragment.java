@@ -7,7 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -57,6 +60,11 @@ public class PicListFragment extends BaseFragment implements DefineView , Adapte
     private GridView mGridView;
     // 图片新闻的id，推荐和热点都为0001， 新闻和明星是0031，他们是按照column区分的
     private final String isListView = "0001";   // 使用ListView的标志
+    private FrameLayout mFramelayout_news_list;
+    private LinearLayout mLoading;
+    private LinearLayout mEmpty;
+    private LinearLayout mError;
+    private Button mBtn_retry;
 
 
     public static PicListFragment newInstance(String tid, String column) {
@@ -86,24 +94,26 @@ public class PicListFragment extends BaseFragment implements DefineView , Adapte
         mPullToRefreshListView = (PullToRefreshListView) mView.findViewById(R.id.listView_news_list);
         mPull_refresh_grid = (PullToRefreshGridView) mView.findViewById(R.id.pull_refresh_grid);
         mGridView = mPull_refresh_grid.getRefreshableView();
+
+        mFramelayout_news_list = (FrameLayout) mView.findViewById(R.id.framelayout_news_list);
+        mLoading = (LinearLayout) mView.findViewById(R.id.loading);
+        mEmpty = (LinearLayout) mView.findViewById(R.id.empty);
+        mError = (LinearLayout) mView.findViewById(R.id.error);
+        // 点击重试按键
+        mBtn_retry = (Button) mView.findViewById(R.id.btn_retry);
     }
 
     @Override
     public void initValidata() {
-        mThreadPool = ThreadManager.getThreadPool();
-        requestData();
         if (getArguments() != null) {
             //取出保存的频道TID
             tid = getArguments().getString(KEY_TID);
             column = getArguments().getString(KEY_COLUMN);
         }
-        if (tid.equals(isListView)) {
-            mPullToRefreshListView.setVisibility(View.VISIBLE);
-            mPull_refresh_grid.setVisibility(View.GONE);
-        } else {
-            mPullToRefreshListView.setVisibility(View.GONE);
-            mPull_refresh_grid.setVisibility(View.VISIBLE);
-        }
+        showLoadingPage();
+        mThreadPool = ThreadManager.getThreadPool();
+        requestData();
+
     }
 
     public void requestData() {
@@ -121,8 +131,10 @@ public class PicListFragment extends BaseFragment implements DefineView , Adapte
                     @Override
                     public void run() {
                         if (mPicListBeens != null) {
-
+                            showNewsPage();
                             bindData();
+                        } else {
+                            showEmptyPage();
                         }
                     }
                 });
@@ -275,5 +287,58 @@ public class PicListFragment extends BaseFragment implements DefineView , Adapte
         intent.putExtra(KEY_TID, tid);
         intent.putExtra(SETID, id);
         getActivity().startActivity(intent);
+    }
+
+    /**
+     * 如果有新闻就展示新闻页面
+     */
+    private void showNewsPage() {
+        if (tid.equals(isListView)) {
+            mPullToRefreshListView.setVisibility(View.VISIBLE);
+            mPull_refresh_grid.setVisibility(View.GONE);
+        } else {
+            mPullToRefreshListView.setVisibility(View.GONE);
+            mPull_refresh_grid.setVisibility(View.VISIBLE);
+        }
+        mFramelayout_news_list.setVisibility(View.GONE);
+        mLoading.setVisibility(View.GONE);
+        mEmpty.setVisibility(View.GONE);
+        mError.setVisibility(View.GONE);
+    }
+
+    /**
+     * 展示加载页面
+     */
+    private void showLoadingPage() {
+        mPullToRefreshListView.setVisibility(View.GONE);
+        mPull_refresh_grid.setVisibility(View.GONE);
+        mFramelayout_news_list.setVisibility(View.VISIBLE);
+        mLoading.setVisibility(View.VISIBLE);
+        mEmpty.setVisibility(View.GONE);
+        mError.setVisibility(View.GONE);
+
+    }
+
+    /**
+     * 如果没有网络就展示空消息页面
+     */
+    private void showEmptyPage() {
+        mPullToRefreshListView.setVisibility(View.GONE);
+        mPull_refresh_grid.setVisibility(View.GONE);
+        mFramelayout_news_list.setVisibility(View.VISIBLE);
+        mLoading.setVisibility(View.GONE);
+        mEmpty.setVisibility(View.VISIBLE);
+        mError.setVisibility(View.GONE);
+
+    }
+
+    private void showErroPage() {
+        mPullToRefreshListView.setVisibility(View.GONE);
+        mPull_refresh_grid.setVisibility(View.GONE);
+        mFramelayout_news_list.setVisibility(View.VISIBLE);
+        mLoading.setVisibility(View.GONE);
+        mEmpty.setVisibility(View.GONE);
+        mError.setVisibility(View.VISIBLE);
+
     }
 }

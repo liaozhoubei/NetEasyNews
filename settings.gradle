@@ -1,1 +1,1 @@
-include ':app', ':pulltorefresh'
+include ':app', ':pulltorefresh', ':InitActivity'

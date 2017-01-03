@@ -9,6 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -52,6 +55,11 @@ public class NewsListFragment extends BaseFragment implements DefineView {
     private boolean isPullRefresh;
     private NewsProtocol mNewsProtocol;
     private String tid; // 栏目频道id
+    private FrameLayout mFramelayout_news_list;
+    private LinearLayout mLoading;
+    private LinearLayout mEmpty;
+    private LinearLayout mError;
+    private Button mBtn_retry;
 
 
     /**
@@ -92,6 +100,12 @@ public class NewsListFragment extends BaseFragment implements DefineView {
     public void initView() {
         mListView_news_list = (PullToRefreshListView) mView.findViewById(listView_news_list);
 
+        mFramelayout_news_list = (FrameLayout) mView.findViewById(R.id.framelayout_news_list);
+        mLoading = (LinearLayout) mView.findViewById(R.id.loading);
+        mEmpty = (LinearLayout) mView.findViewById(R.id.empty);
+        mError = (LinearLayout) mView.findViewById(R.id.error);
+        // 点击重试按键
+        mBtn_retry = (Button) mView.findViewById(R.id.btn_retry);
     }
 
     @Override
@@ -100,6 +114,7 @@ public class NewsListFragment extends BaseFragment implements DefineView {
             //取出保存的频道TID
             tid = getArguments().getString("TID");
         }
+        showLoadingPage();
         // 创建线程池
         mThreadPool = ThreadManager.getThreadPool();
         requestData();
@@ -123,7 +138,10 @@ public class NewsListFragment extends BaseFragment implements DefineView {
                     public void run() {
                         LogUtils.d(TAG, ": 解析id" + tid);
                         if(mNewsListNormalBeanList != null){
+                            showNewsPage();
                             bindData();
+                        } else {
+                            showEmptyPage();
                         }
 
                     }
@@ -232,4 +250,50 @@ public class NewsListFragment extends BaseFragment implements DefineView {
             mNewsListAdapter.notifyDataSetChanged();
         }
     }
+
+    /**
+     * 如果有新闻就展示新闻页面
+     */
+    private void showNewsPage() {
+
+        mListView_news_list.setVisibility(View.VISIBLE);
+        mFramelayout_news_list.setVisibility(View.GONE);
+        mLoading.setVisibility(View.GONE);
+        mEmpty.setVisibility(View.GONE);
+        mError.setVisibility(View.GONE);
+    }
+
+    /**
+     * 展示加载页面
+     */
+    private void showLoadingPage() {
+        mListView_news_list.setVisibility(View.GONE);
+        mFramelayout_news_list.setVisibility(View.VISIBLE);
+        mLoading.setVisibility(View.VISIBLE);
+        mEmpty.setVisibility(View.GONE);
+        mError.setVisibility(View.GONE);
+
+    }
+
+    /**
+     * 如果没有网络就展示空消息页面
+     */
+    private void showEmptyPage() {
+        mListView_news_list.setVisibility(View.GONE);
+        mFramelayout_news_list.setVisibility(View.VISIBLE);
+        mLoading.setVisibility(View.GONE);
+        mEmpty.setVisibility(View.VISIBLE);
+        mError.setVisibility(View.GONE);
+
+    }
+
+    private void showErroPage() {
+        mListView_news_list.setVisibility(View.GONE);
+        mFramelayout_news_list.setVisibility(View.VISIBLE);
+        mLoading.setVisibility(View.GONE);
+        mEmpty.setVisibility(View.GONE);
+        mError.setVisibility(View.VISIBLE);
+
+    }
+
 }
