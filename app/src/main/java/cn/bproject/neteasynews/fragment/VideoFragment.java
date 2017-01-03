@@ -139,8 +139,8 @@ public class VideoFragment extends Fragment implements DefineView{
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(getActivity(), VideoDetailActivity.class);
-//                intent.putExtra(VID, mVideoBeanList.get((int) l).getVid());
-                intent.putExtra("VIDEO", mVideoBeanList.get(i));
+                intent.putExtra(VID, mVideoBeanList.get((int) l).getVid());
+//                intent.putExtra("VIDEO", mVideoBeanList.get(i));
                 getActivity().startActivity(intent);
             }
         });

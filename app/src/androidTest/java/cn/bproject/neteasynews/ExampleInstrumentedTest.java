@@ -20,6 +20,7 @@ import cn.bproject.neteasynews.http.NewsDetailProtocol;
 import cn.bproject.neteasynews.http.NewsProtocol;
 import cn.bproject.neteasynews.http.PicDetailProtocol;
 import cn.bproject.neteasynews.http.PicProtocol;
+import cn.bproject.neteasynews.http.VideoDetailProtocol;
 import cn.bproject.neteasynews.http.VideoProtocol;
 
 import static android.content.ContentValues.TAG;
@@ -71,6 +72,17 @@ public class ExampleInstrumentedTest {
                 ) {
             Log.d("ExampleInstrumentedTest", "getDataFromServer: title :  " + bean.getTitle());
         }
+    }
+
+    @Test
+    public void getVideoDetailDataFromServer() {
+        // 测试视频列表
+        VideoDetailProtocol newsProtocol = new VideoDetailProtocol();
+
+        VideoBean vidwoBeen = newsProtocol.getDetailData("http://c.m.163.com/nc/video/detail/VC8TVUN5N.html");
+
+            Log.d("ExampleInstrumentedTest", "getDataFromServer: title :  " + vidwoBeen.getTitle());
+
     }
 
     @Test

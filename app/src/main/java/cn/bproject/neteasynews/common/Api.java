@@ -64,7 +64,7 @@ public class Api {
      */
     public static final String videoDetailUrl = host + "nc/video/detail/";
     // 视频详情链接尾部
-    public static final String getEndUrlVideoDetailUrl = ".html";
+    public static final String EndUrlVideoDetailUrl = ".html";
 
 
     // 独家
