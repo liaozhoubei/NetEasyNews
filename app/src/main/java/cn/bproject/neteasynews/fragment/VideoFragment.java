@@ -1,5 +1,6 @@
 package cn.bproject.neteasynews.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,7 @@ import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.Utils.ThreadManager;
 import cn.bproject.neteasynews.Utils.UIUtils;
+import cn.bproject.neteasynews.VideoDetailActivity;
 import cn.bproject.neteasynews.adapter.VideoListAdapter;
 import cn.bproject.neteasynews.bean.VideoBean;
 import cn.bproject.neteasynews.common.Api;
@@ -43,6 +45,7 @@ public class VideoFragment extends Fragment implements DefineView{
     private int mStartIndex = 0;
     private boolean isPullRefresh;
     private List<VideoBean> newlist;   // 上拉刷新后获得的数据
+    private final String VID = "VID";
 
     @Nullable
     @Override
@@ -135,9 +138,10 @@ public class VideoFragment extends Fragment implements DefineView{
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                Intent intent = new Intent(getActivity(), NewsDetailActivity.class);
-//                intent.putExtra("DOCID", mNewsListNormalBeanList.get((int) l).getDocid());
-//                getActivity().startActivity(intent);
+                Intent intent = new Intent(getActivity(), VideoDetailActivity.class);
+//                intent.putExtra(VID, mVideoBeanList.get((int) l).getVid());
+                intent.putExtra("VIDEO", mVideoBeanList.get(i));
+                getActivity().startActivity(intent);
             }
         });
     }

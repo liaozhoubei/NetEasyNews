@@ -29,7 +29,7 @@ public class Api {
 
     // 特殊频道前缀:	视频/段子、美女、萌宠适用
     public static final String SpecialColumn2 = "recommend/getChanListNews?channel=";
-
+    // 文章详情前缀
     public static final String DetailUrl = host + "nc/article/";
 
     // 普通新闻栏目的结尾，注意要在前面添加新闻从那一条开始获取
@@ -55,6 +55,17 @@ public class Api {
     public static final String PictureDetailUrl = host + "photo/api/set/";
     // 图片新闻详情页结尾
     public static final String endPictureDetailUrl = ".json";
+
+
+    /**
+     * 视频详情链接
+     *  示例： http://c.m.163.com/nc/video/detail/VC5BA022H.html
+     *  其中VC5BA022H是视频的vid
+     */
+    public static final String videoDetailUrl = host + "nc/video/detail/";
+    // 视频详情链接尾部
+    public static final String getEndUrlVideoDetailUrl = ".html";
+
 
     // 独家
     public static final String zhenhuaId = "T1370583240249";

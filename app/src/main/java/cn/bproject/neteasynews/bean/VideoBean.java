@@ -1,10 +1,13 @@
 package cn.bproject.neteasynews.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Bei on 2016/12/28.
  */
 
-public class VideoBean {
+public class VideoBean implements Parcelable {
 
     /**
      * cover : http://vimg2.ws.126.net/image/snapshot/2016/12/L/K/VC8FOVBLK.jpg
@@ -43,7 +46,7 @@ public class VideoBean {
     private String topicName;
     private String topicSid;
     private String vid;
-    private VideoTopicBean videoTopic;
+    //    private VideoTopicBean videoTopic;
     private String videosource;
 
     public String getCover() {
@@ -158,13 +161,13 @@ public class VideoBean {
         this.vid = vid;
     }
 
-    public VideoTopicBean getVideoTopic() {
-        return videoTopic;
-    }
-
-    public void setVideoTopic(VideoTopicBean videoTopic) {
-        this.videoTopic = videoTopic;
-    }
+//    public VideoTopicBean getVideoTopic() {
+//        return videoTopic;
+//    }
+//
+//    public void setVideoTopic(VideoTopicBean videoTopic) {
+//        this.videoTopic = videoTopic;
+//    }
 
     public String getVideosource() {
         return videosource;
@@ -174,49 +177,122 @@ public class VideoBean {
         this.videosource = videosource;
     }
 
-    public static class VideoTopicBean {
-        /**
-         * alias : 关于知识,关于世界
-         * ename : T1482313997359
-         * tid : T1482313997359
-         * tname : 大开眼界
-         */
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
-        private String alias;
-        private String ename;
-        private String tid;
-        private String tname;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(cover);
+        dest.writeInt(length);
+        dest.writeString(m3u8_url);
+        dest.writeString(m3u8Hd_url);
+        dest.writeString(mp4_url);
+        dest.writeString(mp4Hd_url);
+        dest.writeInt(playCount);
+        dest.writeString(ptime);
+        dest.writeString(replyid);
+        dest.writeString(title);
+        dest.writeString(topicDesc);
+        dest.writeString(topicName);
+        dest.writeString(topicSid);
+        dest.writeString(vid);
+        dest.writeString(videosource);
+    }
 
-        public String getAlias() {
-            return alias;
+    public static final Parcelable.Creator<VideoBean> CREATOR = new Parcelable.Creator<VideoBean>() {
+
+        @Override
+        public VideoBean createFromParcel(Parcel source) {
+            VideoBean videoBean = new VideoBean();
+            videoBean.cover = source.readString();
+            videoBean.length = source.readInt();
+            videoBean.m3u8_url = source.readString();
+            videoBean.m3u8Hd_url = source.readString();
+            videoBean.mp4_url = source.readString();
+            videoBean.mp4Hd_url = source.readString();
+            videoBean.playCount = source.readInt();
+            videoBean.replyid = source.readString();
+            videoBean.title = source.readString();
+            videoBean.topicDesc = source.readString();
+            videoBean.topicName = source.readString();
+            videoBean.vid = source.readString();
+            videoBean.videosource = source.readString();
+
+            return videoBean;
         }
 
-        public void setAlias(String alias) {
-            this.alias = alias;
+        @Override
+        public VideoBean[] newArray(int size) {
+            return new VideoBean[size];
         }
+    };
 
-        public String getEname() {
-            return ename;
-        }
+//    public static class VideoTopicBean {
+//        /**
+//         * alias : 关于知识,关于世界
+//         * ename : T1482313997359
+//         * tid : T1482313997359
+//         * tname : 大开眼界
+//         */
+//
+//        private String alias;
+//        private String ename;
+//        private String tid;
+//        private String tname;
+//
+//        public String getAlias() {
+//            return alias;
+//        }
+//
+//        public void setAlias(String alias) {
+//            this.alias = alias;
+//        }
+//
+//        public String getEname() {
+//            return ename;
+//        }
+//
+//        public void setEname(String ename) {
+//            this.ename = ename;
+//        }
+//
+//        public String getTid() {
+//            return tid;
+//        }
+//
+//        public void setTid(String tid) {
+//            this.tid = tid;
+//        }
+//
+//        public String getTname() {
+//            return tname;
+//        }
+//
+//        public void setTname(String tname) {
+//            this.tname = tname;
+//        }
+//    }
 
-        public void setEname(String ename) {
-            this.ename = ename;
-        }
-
-        public String getTid() {
-            return tid;
-        }
-
-        public void setTid(String tid) {
-            this.tid = tid;
-        }
-
-        public String getTname() {
-            return tname;
-        }
-
-        public void setTname(String tname) {
-            this.tname = tname;
-        }
+    @Override
+    public String toString() {
+        return "VideoBean{" +
+                "cover='" + cover + '\'' +
+                ", length=" + length +
+                ", m3u8_url='" + m3u8_url + '\'' +
+                ", m3u8Hd_url='" + m3u8Hd_url + '\'' +
+                ", mp4_url='" + mp4_url + '\'' +
+                ", mp4Hd_url='" + mp4Hd_url + '\'' +
+                ", playCount=" + playCount +
+                ", ptime='" + ptime + '\'' +
+                ", replyid='" + replyid + '\'' +
+                ", title='" + title + '\'' +
+                ", topicDesc='" + topicDesc + '\'' +
+                ", topicName='" + topicName + '\'' +
+                ", topicSid='" + topicSid + '\'' +
+                ", vid='" + vid + '\'' +
+                ", videosource='" + videosource + '\'' +
+                '}';
     }
 }
