@@ -10,6 +10,8 @@
     </CLASSES>
     <JAVADOC />
     <SOURCES>
+      <root url="jar://C:/Android/android-sdk/extras/m2repository/com/android/support/test/runner/0.5/runner-0.5-sources.jar!/" />
+      <root url="jar://C:/Android/android-sdk/extras/m2repository/com/android/support/test/runner/0.5/runner-0.5-sources.jar!/" />
       <root url="jar://C:/Android/extras/android/m2repository/com/android/support/test/runner/0.5/runner-0.5-sources.jar!/" />
       <root url="jar://C:/Android/extras/android/m2repository/com/android/support/test/runner/0.5/runner-0.5-sources.jar!/" />
     </SOURCES>
