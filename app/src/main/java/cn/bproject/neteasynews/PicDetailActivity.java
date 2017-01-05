@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -29,7 +31,7 @@ import cn.bproject.neteasynews.http.PicDetailProtocol;
  * Created by Bei on 2016/12/31.
  */
 
-public class PicDetailActivity extends AppCompatActivity implements DefineView{
+public class PicDetailActivity extends AppCompatActivity implements DefineView {
     private final String TAG = PicDetailActivity.class.getSimpleName();
 
     private String tid; // 图片频道id，用于打开新闻详情页
@@ -44,12 +46,13 @@ public class PicDetailActivity extends AppCompatActivity implements DefineView{
     private List<ImageDetailBean.PhotosBean> mPhotosBeens;
     private ImageDetailBean mImageDetailBean1;
     private Context mContext;
+    private boolean isGone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pic_detail);
-        mContext= this;
+        mContext = this;
         initView();
         initValidata();
         initListener();
@@ -97,13 +100,13 @@ public class PicDetailActivity extends AppCompatActivity implements DefineView{
             public void run() {
                 PicDetailProtocol picDetailProtocol = new PicDetailProtocol(tid);
 //                String url = Api.PictureDetailUrl + getTid() + "/"+getAllParams(params) + ".json";
-                mImageDetailBean = picDetailProtocol.getDetailData(Api.PictureDetailUrl + tid +"/" + setid +".json");
+                mImageDetailBean = picDetailProtocol.getDetailData(Api.PictureDetailUrl + tid + "/" + setid + ".json");
 
                 UIUtils.runOnUIThread(new Runnable() {
                     @Override
                     public void run() {
                         LogUtils.d(TAG, ": 解析id" + mImageDetailBean);
-                        if(mImageDetailBean != null){
+                        if (mImageDetailBean != null) {
                             mPhotosBeens = mImageDetailBean.getPhotos();
                             bindData();
                         }
@@ -115,9 +118,10 @@ public class PicDetailActivity extends AppCompatActivity implements DefineView{
 
     }
 
-    public class PicDetailAdapter extends PagerAdapter{
+    public class PicDetailAdapter extends PagerAdapter {
 
-        private List<ImageDetailBean.PhotosBean> mPhotosBeens;;
+        private List<ImageDetailBean.PhotosBean> mPhotosBeens;
+        ;
 
         public PicDetailAdapter(List<ImageDetailBean.PhotosBean> photosBeens) {
             mPhotosBeens = photosBeens;
@@ -139,19 +143,42 @@ public class PicDetailActivity extends AppCompatActivity implements DefineView{
             ImageView iv_pic = (ImageView) view.findViewById(R.id.iv_pic);
             TextView tv_title = (TextView) view.findViewById(R.id.tv_title);
             TextView tv_pic_sum = (TextView) view.findViewById(R.id.tv_pic_sum);
+            final ScrollView sv_content = (ScrollView) view.findViewById(R.id.sv_content);
             TextView tv_pic_content = (TextView) view.findViewById(R.id.tv_pic_content);
             ImageDetailBean.PhotosBean photosBean = mPhotosBeens.get(position);
-            String title = photosBean.getImgtitle();
-//            String conent = photosBean.getNote();
+            final String title = photosBean.getImgtitle();
+            final String note = photosBean.getNote();
+            isGone = false;
 
-//            tv_pic_sum.setText(photosBean.get);
             tv_title.setText(title);
-//            tv_pic_content.setText(photosBean.getImgtitle());
+            if (note != null) {
+                tv_pic_content.setText(note);
+                isGone = false;
+            } else {
+                sv_content.setVisibility(View.GONE);
+                isGone = true;
+            }
+
             Glide.with(mContext)
                     .load(photosBean.getImgurl())
                     .placeholder(R.drawable.defaultbg)
                     .crossFade()
                     .into(iv_pic);
+
+            iv_pic.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d(TAG, "onClick: " + note);
+                    if (isGone) {
+                        sv_content.setVisibility(View.VISIBLE);
+                        isGone = false;
+                    } else {
+                        sv_content.setVisibility(View.GONE);
+                        isGone = true;
+                    }
+                }
+            });
+
             container.addView(view);
 
             return view;
@@ -164,33 +191,4 @@ public class PicDetailActivity extends AppCompatActivity implements DefineView{
     }
 
 
-//    public class PicDetailAdapter extends FragmentStatePagerAdapter{
-//
-//
-//
-//        public PicDetailAdapter(FragmentManager fm) {
-//            super(fm);
-//        }
-//
-//        @Override
-//        public Fragment getItem(int position) {
-//            return mBaseFragmentArrayList.get(position);
-//        }
-//
-//        @Override
-//        public int getCount() {
-//            return mBaseFragmentArrayList.size();
-//        }
-//
-//        @Override
-//        public Object instantiateItem(ViewGroup container, int position) {
-//            BaseFragment fragment = mBaseFragmentArrayList.get(position);
-//            return fragment;
-//        }
-//
-//        @Override
-//        public void destroyItem(ViewGroup container, int position, Object object) {
-//            container.removeView((View) object);
-//        }
-//    }
 }

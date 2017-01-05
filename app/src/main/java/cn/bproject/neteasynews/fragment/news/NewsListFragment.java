@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.bproject.neteasynews.NewsDetailActivity;
+import cn.bproject.neteasynews.PicDetailActivity;
 import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.Utils.ThreadManager;
@@ -195,8 +196,24 @@ public class NewsListFragment extends BaseFragment implements DefineView {
         mListView_news_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(getActivity(), NewsDetailActivity.class);
-                intent.putExtra("DOCID", mNewsListNormalBeanList.get((int) l).getDocid());
+                NewsListNormalBean newsListNormalBean = mNewsListNormalBeanList.get((int) l);
+                String photosetID = newsListNormalBean.getPhotosetID();
+                Intent intent;
+                if (photosetID != null) {
+                    intent = new Intent(getActivity(), PicDetailActivity.class);
+                    String[] str = photosetID.split("\\|");
+                    //  图片新闻文章所属的类目id
+                    String tid = str[0].substring(4);
+                    // 图片新闻的文章id好
+                    String setid = str[1];
+                    intent.putExtra("TID", tid);
+                    intent.putExtra("SETID", setid);
+                    LogUtils.d(TAG, "onItemClick: photosetID:"  + photosetID);
+                } else {
+                    intent = new Intent(getActivity(), NewsDetailActivity.class);
+                    intent.putExtra("DOCID", newsListNormalBean.getDocid());
+
+                }
                 getActivity().startActivity(intent);
             }
         });

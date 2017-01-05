@@ -3,7 +3,7 @@
     <color name="colorPrimary">#1da8fe</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-
+    <color name="color_head_title">#777777</color>
     <color name="mask_tags_8">#1da8fe</color>
 
     <color name="white">#ffffff</color>

@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
 
     <application
@@ -25,14 +25,14 @@
             </intent-filter>
         </activity>
         <activity android:name=".NewsDetailActivity"/>
-        <activity android:name=".PicDetailActivity"/>
+        <activity
+            android:name=".PicDetailActivity"
+            android:process=":vitamio"/>
 
-                  />
-        <!--android:process=":vitamio"-->
 
-
-        <activity android:name=".VideoDetailActivity" />
-
+        <activity android:name=".VideoDetailActivity"/>
+        <activity android:name=".AboutActivity"/>
+        <activity android:name=".FeedbackActivity"/>
     </application>
 
 </manifest>

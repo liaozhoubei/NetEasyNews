@@ -11,8 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-
-        android:src="@drawable/defaultbg_h"/>
+        android:layout_centerHorizontal="true"
+        />
 
 
     <LinearLayout
@@ -54,8 +54,7 @@
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/defaultTextColor"
-        android:visibility="gone"
+        android:background="@drawable/translucent"
         >
 
         <TextView
@@ -63,7 +62,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
-            android:text="这里是打断大风降温看了就多看几遍v看了就不考虑重新科技博客了艰苦奋斗你不看别问附近"
             android:textColor="@color/white"/>
     </ScrollView>
 

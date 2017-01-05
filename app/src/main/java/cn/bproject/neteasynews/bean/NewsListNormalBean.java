@@ -67,6 +67,17 @@ public class NewsListNormalBean {
     private String ptime;
     // 是否banner新闻
     private int hasAD;
+    // 新闻是否为图片新闻
+    private String photosetID;
+
+    public String getPhotosetID() {
+        return photosetID;
+    }
+
+    public void setPhotosetID(String photosetID) {
+        this.photosetID = photosetID;
+    }
+
     // 额外图片
     private List<ImgextraBean> imgextra;
 
