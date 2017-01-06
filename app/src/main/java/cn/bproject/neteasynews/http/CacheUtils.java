@@ -13,26 +13,18 @@ import cn.bproject.neteasynews.Utils.UIUtils;
 
 
 /**
- * 访问网络的基类
- *
- * @author Kevin
- * @date 2015-10-28
+ * 写入缓存与读取缓存的工具类
  */
 public  class CacheUtils {
-
-
-
     private final String TAG = CacheUtils.class.getSimpleName();
-
 
     // 写缓存
     // 以url为key, 以json为value
-    public void setCache(String cacheurl, String json) {
+    public void setCache(String url, String json) {
         // 以url为文件名, 以json为文件内容,保存在本地
         File cacheDir = UIUtils.getContext().getCacheDir();// 本应用的缓存文件夹
         String filename = null;
         try {
-            String url = cacheurl;
             LogUtils.d(TAG, "设置的setCache: " + url);
             filename = MD5Encoder.encode(url);
         } catch (Exception e) {
@@ -62,9 +54,8 @@ public  class CacheUtils {
         File cacheDir = UIUtils.getContext().getCacheDir();// 本应用的缓存文件夹
         String filename = null;
         try {
-            String connectUrl = url;
-            LogUtils.d(TAG, "设置的getCache: " + connectUrl);
-            filename = MD5Encoder.encode(connectUrl);
+            LogUtils.d(TAG, "设置的getCache: " + url);
+            filename = MD5Encoder.encode(url);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -97,9 +88,7 @@ public  class CacheUtils {
             } finally {
                 IOUtils.close(reader);
             }
-
         }
-
         return null;
     }
 

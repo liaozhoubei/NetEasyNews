@@ -17,45 +17,51 @@ import org.apache.http.protocol.SyncBasicHttpContext;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 
 import cn.bproject.neteasynews.Utils.IOUtils;
 import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.Utils.StringUtils;
 
+/**
+ * Created by liaozhoubei on 2017/1/6.
+ * HttpClient链接封装
+ */
 
 public class HttpHelper {
+
     private static final String TAG = HttpHelper.class.getSimpleName();
 
     /**
      * get请求，获取返回字符串内容
      */
-    public static HttpResult get(String url) {
+    public static void get(String url, HttpCallbackListener httpCallbackListener) {
         HttpGet httpGet = new HttpGet(url);
-        return execute(url, httpGet);
+        execute(url, httpGet, httpCallbackListener);
     }
 
     /**
      * post请求，获取返回字符串内容
      */
-    public static HttpResult post(String url, byte[] bytes) {
+    public static void post(String url, byte[] bytes, HttpCallbackListener httpCallbackListener) {
         HttpPost httpPost = new HttpPost(url);
         ByteArrayEntity byteArrayEntity = new ByteArrayEntity(bytes);
         httpPost.setEntity(byteArrayEntity);
-        return execute(url, httpPost);
+        execute(url, httpPost, httpCallbackListener);
     }
 
     /**
      * 下载
      */
-    public static HttpResult download(String url) {
+    public static void download(String url, HttpCallbackListener httpCallbackListener) {
         HttpGet httpGet = new HttpGet(url);
-        return execute(url, httpGet);
+        execute(url, httpGet, httpCallbackListener);
     }
 
     /**
      * 执行网络访问
      */
-    private static HttpResult execute(String url, HttpRequestBase requestBase) {
+    private static void execute(String url, HttpRequestBase requestBase, HttpCallbackListener httpCallbackListener) {
         boolean isHttps = url.startsWith("https://");//判断是否需要采用https
         AbstractHttpClient httpClient = HttpClientFactory.create(isHttps);
         HttpContext httpContext = new SyncBasicHttpContext(new BasicHttpContext());
@@ -65,16 +71,27 @@ public class HttpHelper {
         while (retry) {
             try {
                 HttpResponse response = httpClient.execute(requestBase, httpContext);//访问网络
+                int stateCode  = response.getStatusLine().getStatusCode();
+//                LogUtils.e(TAG, "http状态码：" + stateCode);
                 if (response != null) {
-                    return new HttpResult(response, httpClient, requestBase);
+                    if (stateCode == HttpURLConnection.HTTP_OK){
+                        HttpResult httpResult = new HttpResult(response, httpClient, requestBase);
+                        String result = httpResult.getString();
+                        if (result != null){
+                            httpCallbackListener.onSuccess(result);
+                        }
+                    } else {
+                        httpCallbackListener.onError(HttpRequestCode.ReturnCode(stateCode), null);
+                    }
+                    return;
                 }
             } catch (Exception e) {
                 IOException ioException = new IOException(e.getMessage());
                 retry = retryHandler.retryRequest(ioException, ++retryCount, httpContext);//把错误异常交给重试机制，以判断是否需要采取从事
-                LogUtils.e(TAG, e);
+                httpCallbackListener.onError(TAG, e);
+                LogUtils.e(TAG, "重复次数：" + retryCount + "   :"+ e);
             }
         }
-        return null;
     }
 
     /**
@@ -97,6 +114,7 @@ public class HttpHelper {
             StatusLine status = mResponse.getStatusLine();
             return status.getStatusCode();
         }
+
 
         /**
          * 从结果中获取字符串，一旦获取，会自动关流，并且把字符串保存，方便下次获取

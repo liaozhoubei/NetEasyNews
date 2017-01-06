@@ -2,6 +2,7 @@ package cn.bproject.neteasynews.bean;
 
 /**
  * Created by Bei on 2016/12/25.
+ *
  */
 
 public class NewsBean {

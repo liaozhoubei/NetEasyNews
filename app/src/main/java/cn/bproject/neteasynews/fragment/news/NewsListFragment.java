@@ -32,7 +32,9 @@ import cn.bproject.neteasynews.bean.NewsListNormalBean;
 import cn.bproject.neteasynews.common.Api;
 import cn.bproject.neteasynews.common.DefineView;
 import cn.bproject.neteasynews.fragment.BaseFragment;
-import cn.bproject.neteasynews.http.NewsProtocol;
+import cn.bproject.neteasynews.http.DataParse;
+import cn.bproject.neteasynews.http.HttpCallbackListener;
+import cn.bproject.neteasynews.http.HttpHelper;
 
 import static android.content.Context.WINDOW_SERVICE;
 import static cn.bproject.neteasynews.R.id.listView_news_list;
@@ -54,7 +56,6 @@ public class NewsListFragment extends BaseFragment implements DefineView {
     private String mUrl;        // 请求网络的url
     private ThreadManager.ThreadPool mThreadPool;   // 线程池
     private boolean isPullRefresh;
-    private NewsProtocol mNewsProtocol;
     private String tid; // 栏目频道id
     private FrameLayout mFramelayout_news_list;
     private LinearLayout mLoading;
@@ -65,7 +66,8 @@ public class NewsListFragment extends BaseFragment implements DefineView {
 
     /**
      * 从外部往Fragment中传参数的方法
-     * @param tid   频道id
+     *
+     * @param tid 频道id
      * @return
      */
     public static NewsListFragment newInstance(String tid) {
@@ -111,7 +113,7 @@ public class NewsListFragment extends BaseFragment implements DefineView {
 
     @Override
     public void initValidata() {
-        if(getArguments()!=null){
+        if (getArguments() != null) {
             //取出保存的频道TID
             tid = getArguments().getString("TID");
         }
@@ -132,21 +134,33 @@ public class NewsListFragment extends BaseFragment implements DefineView {
         mThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                CreateNewsProtocol();
-                mNewsListNormalBeanList = mNewsProtocol.getData(mUrl);
-                UIUtils.runOnUIThread(new Runnable() {
+//                CreateNewsProtocol();
+                HttpHelper.get(mUrl, new HttpCallbackListener() {
                     @Override
-                    public void run() {
-                        LogUtils.d(TAG, ": 解析id" + tid);
-                        if(mNewsListNormalBeanList != null){
-                            showNewsPage();
-                            bindData();
-                        } else {
-                            showEmptyPage();
-                        }
+                    public void onSuccess(String result) {
+                        mNewsListNormalBeanList = DataParse.NewsList(result, tid);
+                        UIUtils.runOnUIThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                LogUtils.d(TAG, ": 解析id" + tid);
+                                if (mNewsListNormalBeanList != null) {
+                                    showNewsPage();
+                                    bindData();
+                                } else {
+                                    showEmptyPage();
+                                }
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(String result, Exception e) {
 
                     }
                 });
+//                mNewsListNormalBeanList = mNewsProtocol.getData(mUrl);
+
             }
         });
 
@@ -164,10 +178,21 @@ public class NewsListFragment extends BaseFragment implements DefineView {
                 mThreadPool.execute(new Runnable() {
                     @Override
                     public void run() {
-                        CreateNewsProtocol();
-                        newlist = mNewsProtocol.getData(mUrl);
-                        isPullRefresh = true;
-                        DataChange();
+//                        CreateNewsProtocol();
+                        HttpHelper.get(mUrl, new HttpCallbackListener() {
+                            @Override
+                            public void onSuccess(String result) {
+                                newlist = DataParse.NewsList(result, tid);
+                                isPullRefresh = true;
+                                DataChange();
+                            }
+
+                            @Override
+                            public void onError(String result, Exception e) {
+
+                            }
+                        });
+
                     }
                 });
             }
@@ -183,10 +208,21 @@ public class NewsListFragment extends BaseFragment implements DefineView {
                 mThreadPool.execute(new Runnable() {
                     @Override
                     public void run() {
-                        CreateNewsProtocol();
-                        newlist = mNewsProtocol.getData(mUrl);
-                        isPullRefresh = false;
-                        DataChange();
+                        HttpHelper.get(mUrl, new HttpCallbackListener() {
+                            @Override
+                            public void onSuccess(String result) {
+                                newlist = DataParse.NewsList(result, tid);
+                                isPullRefresh = false;
+                                DataChange();
+                            }
+
+                            @Override
+                            public void onError(String result, Exception e) {
+
+                            }
+                        });
+
+
                     }
                 });
 
@@ -208,7 +244,7 @@ public class NewsListFragment extends BaseFragment implements DefineView {
                     String setid = str[1];
                     intent.putExtra("TID", tid);
                     intent.putExtra("SETID", setid);
-                    LogUtils.d(TAG, "onItemClick: photosetID:"  + photosetID);
+                    LogUtils.d(TAG, "onItemClick: photosetID:" + photosetID);
                 } else {
                     intent = new Intent(getActivity(), NewsDetailActivity.class);
                     intent.putExtra("DOCID", newsListNormalBean.getDocid());
@@ -226,11 +262,11 @@ public class NewsListFragment extends BaseFragment implements DefineView {
         mListView_news_list.setAdapter(mNewsListAdapter);
     }
 
-    private void CreateNewsProtocol(){
-        if(mNewsProtocol == null){
-            mNewsProtocol = new NewsProtocol(tid);
-        }
-    }
+//    private void CreateNewsProtocol(){
+//        if(mNewsProtocol == null){
+//            mNewsProtocol = new NewsProtocol(tid);
+//        }
+//    }
 
     /**
      * 上拉或下拉刷新之后更新UI界面
@@ -255,7 +291,7 @@ public class NewsListFragment extends BaseFragment implements DefineView {
      * 判断是上拉刷新还是下拉刷新，执行相应的方法
      */
     public void isPullRefreshView() {
-        if (isPullRefresh){
+        if (isPullRefresh) {
             // 是下拉刷新
             newlist.addAll(mNewsListNormalBeanList);
             mNewsListNormalBeanList.removeAll(mNewsListNormalBeanList);

@@ -5,6 +5,6 @@ package cn.bproject.neteasynews.http;
  */
 
 public interface HttpCallbackListener {
-    void onFinish(String result);
-    void onError(Exception e);
+    void onSuccess(String result);
+    void onError(String result, Exception e);
 }

@@ -26,7 +26,9 @@ import cn.bproject.neteasynews.adapter.VideoListAdapter;
 import cn.bproject.neteasynews.bean.VideoBean;
 import cn.bproject.neteasynews.common.Api;
 import cn.bproject.neteasynews.common.DefineView;
-import cn.bproject.neteasynews.http.VideoProtocol;
+import cn.bproject.neteasynews.http.DataParse;
+import cn.bproject.neteasynews.http.HttpCallbackListener;
+import cn.bproject.neteasynews.http.HttpHelper;
 
 /**
  * Created by Administrator on 2016/12/24.
@@ -41,7 +43,6 @@ public class VideoFragment extends Fragment implements DefineView{
     private ArrayList<VideoBean> mVideoBeanList;
     private VideoListAdapter mVideoListAdapter;
     private ThreadManager.ThreadPool mThreadPool;   // 线程池
-    private VideoProtocol mVideoProtocol;
     private int mStartIndex = 0;
     private boolean isPullRefresh;
     private List<VideoBean> newlist;   // 上拉刷新后获得的数据
@@ -78,19 +79,29 @@ public class VideoFragment extends Fragment implements DefineView{
         mThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                mVideoProtocol = new VideoProtocol();
-//                String url = Api.host + Api.SpecialColumn2 + getTid() + Api.SpecialendUrl + getAllParams(params) + getParams();
-                mVideoBeanList = mVideoProtocol.getData( Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + mStartIndex + Api.devId);
-                UIUtils.runOnUIThread(new Runnable() {
+                String url = Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + mStartIndex + Api.devId;
+                HttpHelper.get(url, new HttpCallbackListener() {
                     @Override
-                    public void run() {
+                    public void onSuccess(String result) {
+                        mVideoBeanList = DataParse.VideoList(result);
+                        UIUtils.runOnUIThread(new Runnable() {
+                            @Override
+                            public void run() {
 //                        LogUtils.d(TAG, ": 解析id" + tid);
-                        if(mVideoBeanList != null){
-                            bindData();
-                        }
+                                if(mVideoBeanList != null){
+                                    bindData();
+                                }
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(String result, Exception e) {
 
                     }
                 });
+
             }
         });
 
@@ -107,10 +118,21 @@ public class VideoFragment extends Fragment implements DefineView{
                 mThreadPool.execute(new Runnable() {
                     @Override
                     public void run() {
-                        mVideoProtocol = new VideoProtocol();
-                        newlist = mVideoProtocol.getData(Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + 0 + Api.devId);
-                        isPullRefresh = true;
-                        DataChange();
+
+                        String url = Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + 0 + Api.devId;
+                        HttpHelper.get(url, new HttpCallbackListener() {
+                            @Override
+                            public void onSuccess(String result) {
+                                newlist = DataParse.VideoList(result);
+                                isPullRefresh = true;
+                                DataChange();
+                            }
+
+                            @Override
+                            public void onError(String result, Exception e) {
+
+                            }
+                        });
                     }
                 });
             }
@@ -126,10 +148,21 @@ public class VideoFragment extends Fragment implements DefineView{
                 mThreadPool.execute(new Runnable() {
                     @Override
                     public void run() {
-                        mVideoProtocol = new VideoProtocol();
-                        newlist = mVideoProtocol.getData(Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + mStartIndex + Api.devId);
-                        isPullRefresh = false;
-                        DataChange();
+                        String url = Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + mStartIndex + Api.devId;
+                        HttpHelper.get(url, new HttpCallbackListener() {
+                            @Override
+                            public void onSuccess(String result) {
+                                newlist = DataParse.VideoList(result);
+                                isPullRefresh = false;
+                                DataChange();
+                            }
+
+                            @Override
+                            public void onError(String result, Exception e) {
+
+                            }
+                        });
+
                     }
                 });
             }

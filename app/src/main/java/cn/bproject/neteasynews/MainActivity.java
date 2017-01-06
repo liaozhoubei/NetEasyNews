@@ -36,17 +36,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        initToolbar();
         initTab();
 
     }
-
-//    // 初始化Toolbar
-//    private void initToolbar(){
-//        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-//        setSupportActionBar(myToolbar);
-//
-//    }
 
     // 初始化底部标签栏
     private void initTab() {
@@ -87,10 +79,6 @@ public class MainActivity extends AppCompatActivity {
             public void onTabChanged(String tabId) {
 
                 LogUtils.d(TAG, "onTabChanged: mTabHost.setOnTabChangedListener" + R.string.news_fragment);
-//                if (tabId==getString(R.string.news_fragment)){
-//                    fragment = (BaseFragment) getSupportFragmentManager().findFragmentByTag(tabId);
-//                    fragment.loadData();
-//                }
 
             }
         });

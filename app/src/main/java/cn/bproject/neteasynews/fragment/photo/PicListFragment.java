@@ -29,7 +29,9 @@ import cn.bproject.neteasynews.bean.PicListBean;
 import cn.bproject.neteasynews.common.Api;
 import cn.bproject.neteasynews.common.DefineView;
 import cn.bproject.neteasynews.fragment.BaseFragment;
-import cn.bproject.neteasynews.http.PicProtocol;
+import cn.bproject.neteasynews.http.DataParse;
+import cn.bproject.neteasynews.http.HttpCallbackListener;
+import cn.bproject.neteasynews.http.HttpHelper;
 
 /**
  * Created by liaozhoubei on 2016/12/29.
@@ -54,7 +56,6 @@ public class PicListFragment extends BaseFragment implements DefineView {
     private String mUrl;        // 请求网络的url
     private ThreadManager.ThreadPool mThreadPool;   // 线程池
     private boolean isPullRefresh;
-    private PicProtocol mPicProtocol;
 
     // 图片新闻的id，推荐和热点都为0001， 新闻和明星是0031，他们是按照column区分的
     private final String isListView = "0001";   // 使用ListView的标志
@@ -125,19 +126,28 @@ public class PicListFragment extends BaseFragment implements DefineView {
         mThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                mPicProtocol = new PicProtocol(tid);
-                // Api.PictureUrl + getTid() + getAllParams(params) +  getParams();
-//                mPicListBeens = mPicProtocol.getData(BaseProtocol.PIC_TYPE, column, mStartIndex);
-                mPicListBeens = mPicProtocol.getData(Api.PictureUrl + tid + column + mStartIndex + Api.endPicture);
-                UIUtils.runOnUIThread(new Runnable() {
+
+                String url = Api.PictureUrl + tid + column + mStartIndex + Api.endPicture;
+                HttpHelper.get(url, new HttpCallbackListener() {
                     @Override
-                    public void run() {
-                        if (mPicListBeens != null) {
-                            showNewsPage();
-                            bindData();
-                        } else {
-                            showEmptyPage();
-                        }
+                    public void onSuccess(String result) {
+                        mPicListBeens = DataParse.PicList(result);
+                        UIUtils.runOnUIThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mPicListBeens != null) {
+                                    showNewsPage();
+                                    bindData();
+                                } else {
+                                    showEmptyPage();
+                                }
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(String result, Exception e) {
+
                     }
                 });
             }
@@ -221,11 +231,21 @@ public class PicListFragment extends BaseFragment implements DefineView {
         mThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                CreateNewsProtocol();
-                newlist = mPicProtocol.getData(Api.PictureUrl + tid + column + 0 + Api.endPicture);
-//                newlist = mPicProtocol.getData(BaseProtocol.PIC_TYPE, column, 0);
-                isPullRefresh = true;
-                DataChange();
+
+                String url = Api.PictureUrl + tid + column + 0 + Api.endPicture;
+                HttpHelper.get(url, new HttpCallbackListener() {
+                    @Override
+                    public void onSuccess(String result) {
+                        newlist = DataParse.PicList(result);
+                        isPullRefresh = true;
+                        DataChange();
+                    }
+
+                    @Override
+                    public void onError(String result, Exception e) {
+
+                    }
+                });
             }
         });
     }
@@ -240,20 +260,26 @@ public class PicListFragment extends BaseFragment implements DefineView {
         mThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                CreateNewsProtocol();
-                newlist = mPicProtocol.getData(Api.PictureUrl + tid + column + mStartIndex + Api.endPicture);
-//                newlist = mPicProtocol.getData(BaseProtocol.PIC_TYPE, column, mStartIndex);
-                isPullRefresh = false;
-                DataChange();
+
+                String url = Api.PictureUrl + tid + column + mStartIndex + Api.endPicture;
+                HttpHelper.get(url, new HttpCallbackListener() {
+                    @Override
+                    public void onSuccess(String result) {
+                        newlist = DataParse.PicList(result);
+                        isPullRefresh = true;
+                        DataChange();
+                    }
+
+                    @Override
+                    public void onError(String result, Exception e) {
+
+                    }
+                });
             }
         });
     }
 
-    private void CreateNewsProtocol() {
-        if (mPicProtocol == null) {
-            mPicProtocol = new PicProtocol(tid);
-        }
-    }
+
 
     /**
      * 上拉或下拉刷新之后更新UI界面

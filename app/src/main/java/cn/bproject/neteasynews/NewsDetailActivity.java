@@ -24,7 +24,9 @@ import cn.bproject.neteasynews.Utils.ThreadManager;
 import cn.bproject.neteasynews.bean.NewsDetailBean;
 import cn.bproject.neteasynews.common.Api;
 import cn.bproject.neteasynews.common.DefineView;
-import cn.bproject.neteasynews.http.NewsDetailProtocol;
+import cn.bproject.neteasynews.http.DataParse;
+import cn.bproject.neteasynews.http.HttpCallbackListener;
+import cn.bproject.neteasynews.http.HttpHelper;
 
 /**
  * Created by liaozhoubei on 2016/12/28.
@@ -99,9 +101,20 @@ public class NewsDetailActivity extends Activity implements DefineView {
         mThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                NewsDetailProtocol newsDetailProtocol = new NewsDetailProtocol(mDocid);
-                mNewsDetailBeen = newsDetailProtocol.getDetailData(Api.DetailUrl + mDocid + Api.endDetailUrl);
-                handler.sendMessage(handler.obtainMessage());
+                String url = Api.DetailUrl + mDocid + Api.endDetailUrl;
+                HttpHelper.get(url, new HttpCallbackListener() {
+                    @Override
+                    public void onSuccess(String result) {
+                        mNewsDetailBeen = DataParse.NewsDetail(result, mDocid);
+                        handler.sendMessage(handler.obtainMessage());
+                    }
+
+                    @Override
+                    public void onError(String result, Exception e) {
+
+                    }
+                });
+
             }
         });
 

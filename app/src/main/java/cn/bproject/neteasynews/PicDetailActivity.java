@@ -25,7 +25,9 @@ import cn.bproject.neteasynews.bean.ImageDetailBean;
 import cn.bproject.neteasynews.common.Api;
 import cn.bproject.neteasynews.common.DefineView;
 import cn.bproject.neteasynews.fragment.BaseFragment;
-import cn.bproject.neteasynews.http.PicDetailProtocol;
+import cn.bproject.neteasynews.http.DataParse;
+import cn.bproject.neteasynews.http.HttpCallbackListener;
+import cn.bproject.neteasynews.http.HttpHelper;
 
 /**
  * Created by Bei on 2016/12/31.
@@ -44,7 +46,6 @@ public class PicDetailActivity extends AppCompatActivity implements DefineView {
     private ThreadManager.ThreadPool mThreadPool;   // 线程池
     private ImageDetailBean mImageDetailBean;
     private List<ImageDetailBean.PhotosBean> mPhotosBeens;
-    private ImageDetailBean mImageDetailBean1;
     private Context mContext;
     private boolean isGone;
 
@@ -56,15 +57,11 @@ public class PicDetailActivity extends AppCompatActivity implements DefineView {
         initView();
         initValidata();
         initListener();
-//        PicDetailAdapter picDetailAdapter = new PicDetailAdapter(getSupportFragmentManager());
     }
 
     @Override
     public void initView() {
         mViewPager = (ViewPager) findViewById(R.id.vp_pic);
-//        mBaseFragmentArrayList = new ArrayList<>();
-//        BaseFragment  fragment = PicDetailFragment.newInstance(tid,setid);
-//        mBaseFragmentArrayList.add(fragment);
 
     }
 
@@ -98,21 +95,33 @@ public class PicDetailActivity extends AppCompatActivity implements DefineView {
         mThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                PicDetailProtocol picDetailProtocol = new PicDetailProtocol(tid);
-//                String url = Api.PictureDetailUrl + getTid() + "/"+getAllParams(params) + ".json";
-                mImageDetailBean = picDetailProtocol.getDetailData(Api.PictureDetailUrl + tid + "/" + setid + ".json");
+////                String url = Api.PictureDetailUrl + getTid() + "/"+getAllParams(params) + ".json";
 
-                UIUtils.runOnUIThread(new Runnable() {
+                String url = Api.PictureDetailUrl + tid + "/" + setid + ".json";
+                HttpHelper.get(url, new HttpCallbackListener() {
                     @Override
-                    public void run() {
-                        LogUtils.d(TAG, ": 解析id" + mImageDetailBean);
-                        if (mImageDetailBean != null) {
-                            mPhotosBeens = mImageDetailBean.getPhotos();
-                            bindData();
-                        }
+                    public void onSuccess(String result) {
+                        mImageDetailBean = DataParse.ImageDetail(result);
+                        UIUtils.runOnUIThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                LogUtils.d(TAG, ": 解析id" + mImageDetailBean);
+                                if (mImageDetailBean != null) {
+                                    mPhotosBeens = mImageDetailBean.getPhotos();
+                                    bindData();
+                                }
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(String result, Exception e) {
 
                     }
                 });
+
+
             }
         });
 

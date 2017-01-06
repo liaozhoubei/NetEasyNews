@@ -4,9 +4,10 @@ import java.util.List;
 
 /**
  * Created by Bei on 2016/12/27.
+ *
  */
 
-public class lanmu {
+public class Column {
 
     private List<TListBean> tList;
 

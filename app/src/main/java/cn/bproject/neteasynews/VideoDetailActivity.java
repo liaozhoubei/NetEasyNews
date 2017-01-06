@@ -19,7 +19,9 @@ import cn.bproject.neteasynews.bean.VideoBean;
 import cn.bproject.neteasynews.common.Api;
 import cn.bproject.neteasynews.common.DefineView;
 import cn.bproject.neteasynews.fragment.VideoFragment;
-import cn.bproject.neteasynews.http.VideoDetailProtocol;
+import cn.bproject.neteasynews.http.DataParse;
+import cn.bproject.neteasynews.http.HttpCallbackListener;
+import cn.bproject.neteasynews.http.HttpHelper;
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.Vitamio;
 import io.vov.vitamio.widget.MediaController;
@@ -92,30 +94,42 @@ public class VideoDetailActivity extends AppCompatActivity implements DefineView
         mThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                VideoDetailProtocol videoDetailProtocol = new VideoDetailProtocol();
-//                http://c.m.163.com/nc/video/detail/VC8TVUN5N.html
-                mVideoBean = videoDetailProtocol.getDetailData(Api.videoDetailUrl + vid + Api.EndUrlVideoDetailUrl);
-                String title = mVideoBean.getTitle();
-                String m3u8_url = mVideoBean.getM3u8_url();
-                String m3u8Hd_url = mVideoBean.getM3u8Hd_url();
-                mMp4_url = mVideoBean.getMp4_url();
-                String mp4Hd_url = mVideoBean.getMp4Hd_url();
-                String ptime = mVideoBean.getPtime();
-                String vid = mVideoBean.getVid();
-                String videosource = mVideoBean.getVideosource();
-                LogUtils.d(TAG, "requestData: 视频地址为：" + mMp4_url);
-                runOnUiThread(new Runnable() {
+////                http://c.m.163.com/nc/video/detail/VC8TVUN5N.html
+                String url = Api.videoDetailUrl + vid + Api.EndUrlVideoDetailUrl;
+                HttpHelper.get(url, new HttpCallbackListener() {
                     @Override
-                    public void run() {
-                        if (!TextUtils.isEmpty(mMp4_url)){
-                            showNewsPage();
-                            bindData();
-                        } else {
-                            showErroPage();
-                        }
+                    public void onSuccess(String result) {
+                        mVideoBean= DataParse.VideoDetail(result);
+                        String title = mVideoBean.getTitle();
+                        String m3u8_url = mVideoBean.getM3u8_url();
+                        String m3u8Hd_url = mVideoBean.getM3u8Hd_url();
+                        mMp4_url = mVideoBean.getMp4_url();
+                        String mp4Hd_url = mVideoBean.getMp4Hd_url();
+                        String ptime = mVideoBean.getPtime();
+                        String vid = mVideoBean.getVid();
+                        String videosource = mVideoBean.getVideosource();
+                        LogUtils.d(TAG, "requestData: 视频地址为：" + mMp4_url);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (!TextUtils.isEmpty(mMp4_url)){
+                                    showNewsPage();
+                                    bindData();
+                                } else {
+                                    showErroPage();
+                                }
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(String result, Exception e) {
 
                     }
                 });
+
+
             }
         });
     }
