@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,11 +46,17 @@ public class NewsFragment extends Fragment {
         mView = inflater.inflate(R.layout.tablayout_pager, container, false);
         mTabLayout = (TabLayout) mView.findViewById(tab_layout);
         mNewsViewpager = (ViewPager) mView.findViewById(R.id.news_viewpager);
+
+        Toolbar myToolbar = (Toolbar) mView.findViewById(R.id.my_toolbar);
+//        getActivity().setSupportActionBar(myToolbar);
+
         newsBeans = CategoryDataUtils.getNewsCategoryBeans();
 
         initValidata();
         return mView;
     }
+
+
 
     public void initValidata() {
         fixedPagerAdapter = new FixedPagerAdapter(getChildFragmentManager());

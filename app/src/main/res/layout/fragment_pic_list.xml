@@ -5,16 +5,23 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
+    <com.wuxiaolong.pullloadmorerecyclerview.PullLoadMoreRecyclerView
+        android:id="@+id/RecyclerView_news_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
-    <!--图片模块的下拉刷新recyclerView-->
+
+  <!--  &lt;!&ndash;图片模块的下拉刷新recyclerView&ndash;&gt;
     <com.handmark.pulltorefresh.PullToRefreshListView
         android:id="@+id/listView_news_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:nestedScrollingEnabled="true"
         ptr:ptrMode="both"
         />
 
     <com.handmark.pulltorefresh.PullToRefreshGridView
+        android:nestedScrollingEnabled="true"
         android:id="@+id/pull_refresh_grid"
         android:layout_height="fill_parent"
         android:layout_width="fill_parent"
@@ -24,7 +31,7 @@
         android:stretchMode="columnWidth"
         android:gravity="fill"
         ptr:ptrMode="both"
-         />
+         />-->
 
     <FrameLayout
         android:id="@+id/framelayout_news_list"
