@@ -1,4 +1,4 @@
-package cn.bproject.neteasynews;
+package cn.bproject.neteasynews.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.Utils.ThreadManager;
 import cn.bproject.neteasynews.Utils.UIUtils;

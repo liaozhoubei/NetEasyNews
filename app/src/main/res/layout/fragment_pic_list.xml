@@ -1,37 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:ptr="http://schemas.android.com/apk/res-auto"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <com.wuxiaolong.pullloadmorerecyclerview.PullLoadMoreRecyclerView
-        android:id="@+id/RecyclerView_news_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
 
-
-  <!--  &lt;!&ndash;图片模块的下拉刷新recyclerView&ndash;&gt;
-    <com.handmark.pulltorefresh.PullToRefreshListView
-        android:id="@+id/listView_news_list"
+    <com.aspsine.irecyclerview.IRecyclerView
+        android:id="@+id/iRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:nestedScrollingEnabled="true"
-        ptr:ptrMode="both"
+        app:loadMoreEnabled="true"
+        app:loadMoreFooterLayout="@layout/layout_irecyclerview_load_more_footer"
+        app:refreshEnabled="true"
+        app:refreshHeaderLayout="@layout/layout_irecyclerview_refresh_header"
         />
 
-    <com.handmark.pulltorefresh.PullToRefreshGridView
-        android:nestedScrollingEnabled="true"
-        android:id="@+id/pull_refresh_grid"
-        android:layout_height="fill_parent"
-        android:layout_width="fill_parent"
-        android:numColumns="2"
-        android:verticalSpacing="1dp"
-        android:horizontalSpacing="1dp"
-        android:stretchMode="columnWidth"
-        android:gravity="fill"
-        ptr:ptrMode="both"
-         />-->
+
 
     <FrameLayout
         android:id="@+id/framelayout_news_list"

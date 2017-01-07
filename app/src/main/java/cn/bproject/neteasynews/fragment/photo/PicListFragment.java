@@ -3,28 +3,30 @@ package cn.bproject.neteasynews.fragment.photo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.wuxiaolong.pullloadmorerecyclerview.PullLoadMoreRecyclerView;
+import com.aspsine.irecyclerview.IRecyclerView;
+import com.aspsine.irecyclerview.OnLoadMoreListener;
+import com.aspsine.irecyclerview.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.bproject.neteasynews.PicDetailActivity;
 import cn.bproject.neteasynews.R;
+import cn.bproject.neteasynews.Utils.DensityUtils;
 import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.Utils.ThreadManager;
 import cn.bproject.neteasynews.Utils.UIUtils;
+import cn.bproject.neteasynews.activity.PicDetailActivity;
+import cn.bproject.neteasynews.adapter.PicListAdapter;
 import cn.bproject.neteasynews.bean.PicListBean;
 import cn.bproject.neteasynews.common.Api;
 import cn.bproject.neteasynews.common.DefineView;
@@ -32,6 +34,8 @@ import cn.bproject.neteasynews.fragment.BaseFragment;
 import cn.bproject.neteasynews.http.DataParse;
 import cn.bproject.neteasynews.http.HttpCallbackListener;
 import cn.bproject.neteasynews.http.HttpHelper;
+import cn.bproject.neteasynews.widget.ClassicRefreshHeaderView;
+import cn.bproject.neteasynews.widget.LoadMoreFooterView;
 
 /**
  * Created by liaozhoubei on 2016/12/29.
@@ -42,14 +46,11 @@ public class PicListFragment extends BaseFragment implements DefineView {
     private String column;  //   图片的分类
 
     private View mView;
-    //    private PullToRefreshListView mPullToRefreshListView;// 可上拉下拉刷新的listView
-    //    private PullToRefreshGridView mPull_refresh_grid;
-//    private GridView mGridView;
+
     private final String TAG = PicListFragment.class.getSimpleName();
     private static final String KEY_TID = "TID";  //频道id
     private static final String KEY_COLUMN = "COLUMN";
     private static final String SETID = "SETID";  // 图集id
-    //    private PicListAdapter mPicListAdapter;   // ListView的Adapter
     private List<PicListBean> mPicListBeens;   // 启动时获得的数据
     private List<PicListBean> newlist;   // 上拉刷新后获得的数据
     private int mStartIndex = 0;    // 请求数据的起始参数
@@ -64,8 +65,9 @@ public class PicListFragment extends BaseFragment implements DefineView {
     private LinearLayout mEmpty;
     private LinearLayout mError;
     private Button mBtn_retry;
-    private PullLoadMoreRecyclerView mPullLoadMoreRecyclerView;
-    private RecyclerViewAdapter mRecyclerViewAdapter;
+    private IRecyclerView mIRecyclerView;
+    private PicListAdapter mAdapter;
+    private LoadMoreFooterView mLoadMoreFooterView;
 
 
     public static PicListFragment newInstance(String tid, String column) {
@@ -91,12 +93,24 @@ public class PicListFragment extends BaseFragment implements DefineView {
 
     @Override
     public void initView() {
-        mPullLoadMoreRecyclerView = (PullLoadMoreRecyclerView) mView.findViewById(R.id.RecyclerView_news_list);
-        mPullLoadMoreRecyclerView.setGridLayout(2);//参数为列数
+        mIRecyclerView = (IRecyclerView) mView.findViewById(R.id.iRecyclerView);
+        mIRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        mIRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        mLoadMoreFooterView = (LoadMoreFooterView) mIRecyclerView.getLoadMoreFooterView();
+        ClassicRefreshHeaderView classicRefreshHeaderView = new ClassicRefreshHeaderView(getActivity());
+        classicRefreshHeaderView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, DensityUtils.dip2px(getActivity(), 80)));
+        // we can set view
+        mIRecyclerView.setRefreshHeaderView(classicRefreshHeaderView);
 
-//        mPullToRefreshListView = (PullToRefreshListView) mView.findViewById(R.id.listView_news_list);
-//        mPull_refresh_grid = (PullToRefreshGridView) mView.findViewById(R.id.pull_refresh_grid);
-//        mGridView = mPull_refresh_grid.getRefreshableView();
+
+
+        mIRecyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                mIRecyclerView.setRefreshing(true);
+            }
+        });
+
 
         mFramelayout_news_list = (FrameLayout) mView.findViewById(R.id.framelayout_news_list);
         mLoading = (LinearLayout) mView.findViewById(R.id.loading);
@@ -127,8 +141,8 @@ public class PicListFragment extends BaseFragment implements DefineView {
             @Override
             public void run() {
 
-                String url = Api.PictureUrl + tid + column + mStartIndex + Api.endPicture;
-                HttpHelper.get(url, new HttpCallbackListener() {
+                mUrl = Api.PictureUrl + tid + column + mStartIndex + Api.endPicture;
+                HttpHelper.get(mUrl, new HttpCallbackListener() {
                     @Override
                     public void onSuccess(String result) {
                         mPicListBeens = DataParse.PicList(result);
@@ -158,70 +172,54 @@ public class PicListFragment extends BaseFragment implements DefineView {
 
     @Override
     public void initListener() {
-        mPullLoadMoreRecyclerView.setPullRefreshEnable(false);
-
-        mPullLoadMoreRecyclerView.setOnPullLoadMoreListener(new PullLoadMoreRecyclerView.PullLoadMoreListener() {
+        mIRecyclerView.setLoadMoreEnabled(true);
+        mIRecyclerView.setRefreshEnabled(true);
+        mIRecyclerView.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
-
+                mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.GONE);
+                mIRecyclerView.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mIRecyclerView.setRefreshing(false);
+                    }
+                },2000);
             }
-
+        });
+        mIRecyclerView.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
-                PullUpToRefresh();
+                if (mLoadMoreFooterView.canLoadMore() && mAdapter.getItemCount() > 0) {
+                    mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.LOADING);
+                    PullUpToRefresh();
+                }
+
             }
         });
 
-        // ListView上拉和下拉刷新
 
-//        mPullToRefreshListView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
-//            @Override
-//            public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
-//
-//
-//                Toast.makeText(getActivity(), "已经是最新数据了！", Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
-//                PullUpToRefresh();
-//            }
-//        });
-//        // GridView上拉和下拉刷新，与ListView逻辑一样
-//        mPull_refresh_grid.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<GridView>() {
-//            @Override
-//            public void onPullDownToRefresh(PullToRefreshBase<GridView> refreshView) {
-//                Toast.makeText(getActivity(), "已经是最新数据了！", Toast.LENGTH_SHORT).show();
-//
-//            }
-//
-//            @Override
-//            public void onPullUpToRefresh(PullToRefreshBase<GridView> refreshView) {
-//                PullUpToRefresh();
-//            }
-//        });
-//
-//        mPullToRefreshListView.setOnItemClickListener(this);
-//        mGridView.setOnItemClickListener(this);
-//        mPullToRefreshListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                mPicListAdapter.getItem(i);
-//            }
-//        });
     }
 
     @Override
     public void bindData() {
-//        mPicListAdapter = new PicListAdapter(getActivity(), (ArrayList<PicListBean>) mPicListBeens);
-        mRecyclerViewAdapter = new RecyclerViewAdapter((ArrayList<PicListBean>) mPicListBeens);
-        mPullLoadMoreRecyclerView.setAdapter(mRecyclerViewAdapter);
+
+        mAdapter = new PicListAdapter(getActivity(), (ArrayList<PicListBean>) mPicListBeens);
+
+        mIRecyclerView.setIAdapter(mAdapter);
+        mIRecyclerView.setRefreshing(false);
         LogUtils.d(TAG, ": 解析id:" + tid + ":" + mPicListBeens.toString());
-//        if (tid.equals(isListView)) {
-//            mPullToRefreshListView.setAdapter(mPicListAdapter);
-//        } else {
-//            mGridView.setAdapter(mPicListAdapter);
-//        }
+
+        mAdapter.setOnItemClickListener(new PicListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position, Object o, View v) {
+                String id = mPicListBeens.get(position).getSetid();
+                Intent intent = new Intent(getActivity(), PicDetailActivity.class);
+                intent.putExtra(KEY_TID, tid);
+                intent.putExtra(SETID, id);
+                getActivity().startActivity(intent);
+            }
+
+        });
     }
 
     // 下拉刷新
@@ -232,8 +230,8 @@ public class PicListFragment extends BaseFragment implements DefineView {
             @Override
             public void run() {
 
-                String url = Api.PictureUrl + tid + column + 0 + Api.endPicture;
-                HttpHelper.get(url, new HttpCallbackListener() {
+                mUrl = Api.PictureUrl + tid + column + 0 + Api.endPicture;
+                HttpHelper.get(mUrl, new HttpCallbackListener() {
                     @Override
                     public void onSuccess(String result) {
                         newlist = DataParse.PicList(result);
@@ -261,18 +259,25 @@ public class PicListFragment extends BaseFragment implements DefineView {
             @Override
             public void run() {
 
-                String url = Api.PictureUrl + tid + column + mStartIndex + Api.endPicture;
-                HttpHelper.get(url, new HttpCallbackListener() {
+                mUrl = Api.PictureUrl + tid + column + mStartIndex + Api.endPicture;
+                HttpHelper.get(mUrl, new HttpCallbackListener() {
                     @Override
                     public void onSuccess(String result) {
-                        newlist = DataParse.PicList(result);
-                        isPullRefresh = true;
-                        DataChange();
+                        if (TextUtils.isEmpty(result)){
+                            mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.THE_END);
+                        } else {
+                            newlist = DataParse.PicList(result);
+
+//                            isPullRefresh = true;
+                            DataChange();
+                        }
+
                     }
 
                     @Override
                     public void onError(String result, Exception e) {
-
+                        mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.ERROR);
+                        Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -294,13 +299,9 @@ public class PicListFragment extends BaseFragment implements DefineView {
                 } else {
                     Toast.makeText(getActivity(), "数据请求失败", Toast.LENGTH_SHORT).show();
                 }
-                mPullLoadMoreRecyclerView.setPullLoadMoreCompleted();
-                //上拉加载和关闭刷新时间太短会导致mListView.onRefreshComplete()无效的情况，只需要延迟一秒即可：
-//                if (tid.equals(isListView)) {
-//                    mPullToRefreshListView.onRefreshComplete();
-//                } else {
-//                    mPull_refresh_grid.onRefreshComplete();
-//                }
+                mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.GONE);
+                mIRecyclerView.setRefreshing(false);
+
             }
         });
     }
@@ -314,39 +315,23 @@ public class PicListFragment extends BaseFragment implements DefineView {
             newlist.addAll(mPicListBeens);
             mPicListBeens.removeAll(mPicListBeens);
             mPicListBeens.addAll(newlist);
-//            mPicListAdapter.notifyDataSetChanged();
+
         } else {
             // 上拉刷新
             mPicListBeens.addAll(newlist);
-//            mPicListAdapter.notifyDataSetChanged();
-            mRecyclerViewAdapter.notifyDataSetChanged();
+
         }
     }
 
 
-//    @Override
-//    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//        PicListBean picListBean = (PicListBean) mPicListAdapter.getItem(i);
-//        String id = picListBean.getSetid();
-////        String imgSum = picListBean.getImgsum();
-//        Intent intent = new Intent(getActivity(), PicDetailActivity.class);
-//        intent.putExtra(KEY_TID, tid);
-//        intent.putExtra(SETID, id);
-//        getActivity().startActivity(intent);
-//    }
+
 
     /**
      * 如果有新闻就展示新闻页面
      */
     private void showNewsPage() {
-//        if (tid.equals(isListView)) {
-//            mPullToRefreshListView.setVisibility(View.VISIBLE);
-//            mPull_refresh_grid.setVisibility(View.GONE);
-//        } else {
-//            mPullToRefreshListView.setVisibility(View.GONE);
-//            mPull_refresh_grid.setVisibility(View.VISIBLE);
-//        }
-        mPullLoadMoreRecyclerView.setVisibility(View.VISIBLE);
+
+        mIRecyclerView.setVisibility(View.VISIBLE);
         mFramelayout_news_list.setVisibility(View.GONE);
         mLoading.setVisibility(View.GONE);
         mEmpty.setVisibility(View.GONE);
@@ -357,9 +342,8 @@ public class PicListFragment extends BaseFragment implements DefineView {
      * 展示加载页面
      */
     private void showLoadingPage() {
-//        mPullToRefreshListView.setVisibility(View.GONE);
-//        mPull_refresh_grid.setVisibility(View.GONE);
-        mPullLoadMoreRecyclerView.setVisibility(View.GONE);
+
+        mIRecyclerView.setVisibility(View.GONE);
         mFramelayout_news_list.setVisibility(View.VISIBLE);
         mLoading.setVisibility(View.VISIBLE);
         mEmpty.setVisibility(View.GONE);
@@ -371,9 +355,8 @@ public class PicListFragment extends BaseFragment implements DefineView {
      * 如果没有网络就展示空消息页面
      */
     private void showEmptyPage() {
-//        mPullToRefreshListView.setVisibility(View.GONE);
-//        mPull_refresh_grid.setVisibility(View.GONE);
-        mPullLoadMoreRecyclerView.setVisibility(View.GONE);
+
+        mIRecyclerView.setVisibility(View.GONE);
         mFramelayout_news_list.setVisibility(View.VISIBLE);
         mLoading.setVisibility(View.GONE);
         mEmpty.setVisibility(View.VISIBLE);
@@ -382,9 +365,8 @@ public class PicListFragment extends BaseFragment implements DefineView {
     }
 
     private void showErroPage() {
-//        mPullToRefreshListView.setVisibility(View.GONE);
-//        mPull_refresh_grid.setVisibility(View.GONE);
-        mPullLoadMoreRecyclerView.setVisibility(View.GONE);
+
+        mIRecyclerView.setVisibility(View.GONE);
         mFramelayout_news_list.setVisibility(View.VISIBLE);
         mLoading.setVisibility(View.GONE);
         mEmpty.setVisibility(View.GONE);
@@ -392,68 +374,5 @@ public class PicListFragment extends BaseFragment implements DefineView {
 
     }
 
-    public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
-
-        private ArrayList<PicListBean> mPicListBeens;
-
-        public RecyclerViewAdapter(ArrayList<PicListBean> picListBeens) {
-            mPicListBeens = picListBeens;
-        }
-
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_pic_linearlayout, parent, false);
-
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-            final PicListBean picListBean = mPicListBeens.get(position);
-
-            String imageSrc = picListBean.getCover();
-            String title = picListBean.getSetname();
-            String datetime = picListBean.getDatetime();
-
-            holder.tv_title.setText(title);
-
-            Glide.with(getActivity())
-                    .load(imageSrc)
-                    .placeholder(R.drawable.defaultbg)
-                    .crossFade()
-                    .into(holder.iv_pic);
-            holder.rl_root.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String id = picListBean.getSetid();
-                    Intent intent = new Intent(getActivity(), PicDetailActivity.class);
-                    intent.putExtra(KEY_TID, tid);
-                    intent.putExtra(SETID, id);
-                    getActivity().startActivity(intent);
-                }
-            });
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return mPicListBeens.size();
-        }
-
-        public class ViewHolder extends RecyclerView.ViewHolder {
-            private LinearLayout rl_root;
-            private ImageView iv_pic;
-            private TextView tv_title;
-
-            public ViewHolder(View itemView) {
-                super(itemView);
-                rl_root = (LinearLayout) itemView.findViewById(R.id.rl_root);
-                iv_pic = (ImageView) itemView.findViewById(R.id.iv_pic);
-                tv_title = (TextView) itemView.findViewById(R.id.tv_title);
-
-            }
-        }
-    }
 }

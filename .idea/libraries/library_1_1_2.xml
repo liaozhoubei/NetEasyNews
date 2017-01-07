@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="library-1.1.2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/build/intermediates/exploded-aar/com.wuxiaolong.pullloadmorerecyclerview/library/1.1.2/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/app/build/intermediates/exploded-aar/com.wuxiaolong.pullloadmorerecyclerview/library/1.1.2/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.wuxiaolong.pullloadmorerecyclerview/library/1.1.2/b56555037a6dc0a7e7e1dee4fd5c145324f6e89c/library-1.1.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

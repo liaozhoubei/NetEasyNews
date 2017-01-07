@@ -19,6 +19,9 @@ public class UIUtils {
 		return MyApplication.getMainThreadId();
 	}
 
+	public static ThreadManager.ThreadPool getThreadPool() {
+		return MyApplication.getThreadPool();
+	}
 
 	// /////////////////判断是否运行在主线程//////////////////////////
 	public static boolean isRunOnUIThread() {

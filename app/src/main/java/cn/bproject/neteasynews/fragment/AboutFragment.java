@@ -16,8 +16,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import cn.bproject.neteasynews.AboutActivity;
-import cn.bproject.neteasynews.FeedbackActivity;
+import cn.bproject.neteasynews.activity.AboutActivity;
+import cn.bproject.neteasynews.activity.FeedbackActivity;
 import cn.bproject.neteasynews.R;
 
 /**

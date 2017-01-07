@@ -1,7 +1,9 @@
-package cn.bproject.neteasynews;
+package cn.bproject.neteasynews.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+
+import cn.bproject.neteasynews.R;
 
 /**
  * Created by liaozhoubei on 2017/1/5.

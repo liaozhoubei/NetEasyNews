@@ -17,22 +17,22 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".NewsDetailActivity"/>
+        <activity android:name=".activity.NewsDetailActivity"/>
         <activity
-            android:name=".PicDetailActivity"
+            android:name=".activity.PicDetailActivity"
             android:process=":vitamio"/>
 
 
-        <activity android:name=".VideoDetailActivity"/>
-        <activity android:name=".AboutActivity"/>
-        <activity android:name=".FeedbackActivity"/>
+        <activity android:name=".activity.VideoDetailActivity"/>
+        <activity android:name=".activity.AboutActivity"/>
+        <activity android:name=".activity.FeedbackActivity"/>
     </application>
 
 </manifest>

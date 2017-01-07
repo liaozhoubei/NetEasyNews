@@ -1,1 +1,4 @@
-include ':app', ':pulltorefresh', ':InitActivity'
+include ':app'
+include ':library:pulltorefresh'
+include ':library:InitActivity'
+include ':library:irecyclerview'

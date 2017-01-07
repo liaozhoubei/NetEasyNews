@@ -21,8 +21,8 @@ import com.handmark.pulltorefresh.PullToRefreshListView;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.bproject.neteasynews.NewsDetailActivity;
-import cn.bproject.neteasynews.PicDetailActivity;
+import cn.bproject.neteasynews.activity.NewsDetailActivity;
+import cn.bproject.neteasynews.activity.PicDetailActivity;
 import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.Utils.ThreadManager;

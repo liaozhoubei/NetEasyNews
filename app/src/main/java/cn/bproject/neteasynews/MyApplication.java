@@ -14,7 +14,13 @@ public class MyApplication extends Application{
     private static int mainThreadId;
     private static Handler handler;
     private static Context mContext;
-    private ThreadManager.ThreadPool mThreadPool;
+    private static ThreadManager.ThreadPool mThreadPool;
+
+
+
+    public void setThreadPool(ThreadManager.ThreadPool threadPool) {
+        mThreadPool = threadPool;
+    }
 
     @Override
     public void onCreate() {
@@ -22,7 +28,7 @@ public class MyApplication extends Application{
         mContext = getApplicationContext();
         handler = new Handler();
         mainThreadId = android.os.Process.myTid();
-
+        mThreadPool = ThreadManager.getThreadPool();
 //        // 初始化Okhttp
 //        OkHttpClient okHttpClient = new OkHttpClient.Builder()
 ////                .addInterceptor(new LoggerInterceptor("TAG"))
@@ -32,7 +38,7 @@ public class MyApplication extends Application{
 //                .build();
 //        OkHttpUtils.initClient(okHttpClient);
 
-        mThreadPool = ThreadManager.getThreadPool();
+
 
     }
 
@@ -47,5 +53,9 @@ public class MyApplication extends Application{
 
     public static int getMainThreadId() {
         return mainThreadId;
+    }
+
+    public static ThreadManager.ThreadPool getThreadPool() {
+        return mThreadPool;
     }
 }

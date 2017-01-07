@@ -1,4 +1,4 @@
-package cn.bproject.neteasynews;
+package cn.bproject.neteasynews.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.Utils.ThreadManager;
 import cn.bproject.neteasynews.bean.NewsDetailBean;

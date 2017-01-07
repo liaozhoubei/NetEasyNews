@@ -1,4 +1,4 @@
-package cn.bproject.neteasynews;
+package cn.bproject.neteasynews.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.bean.Tab;
 import cn.bproject.neteasynews.fragment.AboutFragment;

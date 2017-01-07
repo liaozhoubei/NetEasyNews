@@ -1,12 +1,14 @@
 package cn.bproject.neteasynews.adapter;
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.aspsine.irecyclerview.IViewHolder;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
@@ -15,83 +17,89 @@ import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.bean.PicListBean;
 
 /**
- * Created by Administrator on 2016/12/26.
+ * Created by liaozhoubei on 2017/1/7.
  */
 
-public class PicListAdapter extends BaseAdapter {
-    private final String TAG = PicListAdapter.class.getSimpleName();
+public class PicListAdapter extends RecyclerView.Adapter<PicListAdapter.ViewHolder> {
 
     private Context mContext;
-
     private ArrayList<PicListBean> mPicListBeens;
+    private OnItemClickListener mOnItemClickListener;
 
     public PicListAdapter(Context context, ArrayList<PicListBean> picListBeens) {
         mContext = context;
         mPicListBeens = picListBeens;
+
     }
 
     @Override
-    public int getCount() {
-        return mPicListBeens.size();
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = View.inflate(mContext, R.layout.item_pic_linearlayout, null);
+        final ViewHolder holder = new ViewHolder(view);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final int position = holder.getIAdapterPosition();
+                final PicListBean picListBean = mPicListBeens.get(position);
+                if (mOnItemClickListener != null) {
+                    mOnItemClickListener.onItemClick(position, picListBean, v);
+                }
+            }
+        });
+        return holder;
     }
 
     @Override
-    public Object getItem(int i) {
-        return mPicListBeens.get(i);
-    }
-
-    @Override
-    public long getItemId(int i) {
-        return i;
-    }
-
-    @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
-        ViewHolder viewHolder = null;
-        if (view == null) {
-            view = View.inflate(mContext, R.layout.item_pic_linearlayout, null);
-            viewHolder = new ViewHolder();
-            viewHolder.iv_pic = (ImageView) view.findViewById(R.id.iv_pic);
-            viewHolder.tv_title = (TextView) view.findViewById(R.id.tv_title);
-            // viewHolder.tv_play_time = (TextView) view.findViewById(R.id.tv_play_time);
-
-            view.setTag(viewHolder);
-        } else {
-            viewHolder = (ViewHolder) view.getTag();
-        }
-
-        PicListBean picListBean = (PicListBean) getItem(i);
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        final PicListBean picListBean = mPicListBeens.get(position);
 
         String imageSrc = picListBean.getCover();
         String title = picListBean.getSetname();
-        String datetime = picListBean.getDatetime();
 
+        holder.tv_title.setText(title);
 
-        viewHolder.tv_title.setText(title);
-        //viewHolder.tv_play_time.setText(datetime);
+        Glide.with(mContext)
+                .load(imageSrc)
+                .placeholder(R.drawable.defaultbg)
+                .crossFade()
+                .into(holder.iv_pic);
 
-        setNetPicture(imageSrc, viewHolder.iv_pic);
-
-        return view;
     }
 
-    class ViewHolder {
-        public ImageView iv_pic;
-        public TextView tv_title;
-        //public TextView tv_play_time;
-
+    @Override
+    public int getItemCount() {
+        return mPicListBeens.size();
     }
 
     /**
-     * 使用Glide加载图片
-     * @param url
-     * @param img
+     * 设置Item点击监听
+     *
+     * @param listener
      */
-    private void setNetPicture(String url, ImageView img){
-        Glide.with(mContext)
-                .load(url)
-                .placeholder(R.drawable.defaultbg)
-                .crossFade()
-                .into(img);
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.mOnItemClickListener = listener;
     }
+
+
+    public interface OnItemClickListener<T> {
+        void onItemClick(int position, T t, View v);
+    }
+
+    public class ViewHolder extends IViewHolder {
+
+        public LinearLayout rl_root;
+        public ImageView iv_pic;
+        public TextView tv_title;
+
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            rl_root = (LinearLayout) itemView.findViewById(R.id.rl_root);
+            iv_pic = (ImageView) itemView.findViewById(R.id.iv_pic);
+            tv_title = (TextView) itemView.findViewById(R.id.tv_title);
+
+        }
+    }
+
+
 }
