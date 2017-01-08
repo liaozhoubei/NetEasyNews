@@ -172,6 +172,7 @@ public class PicDetailActivity extends AppCompatActivity implements DefineView {
             Glide.with(mContext)
                     .load(photosBean.getImgurl())
                     .placeholder(R.drawable.defaultbg)
+                    .centerCrop()
                     .crossFade()
                     .into(iv_pic);
 

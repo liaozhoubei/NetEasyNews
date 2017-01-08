@@ -3,7 +3,7 @@ package cn.bproject.neteasynews.fragment.photo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -94,8 +94,8 @@ public class PicListFragment extends BaseFragment implements DefineView {
     @Override
     public void initView() {
         mIRecyclerView = (IRecyclerView) mView.findViewById(R.id.iRecyclerView);
-        mIRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-//        mIRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+//        mIRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mIRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         mLoadMoreFooterView = (LoadMoreFooterView) mIRecyclerView.getLoadMoreFooterView();
         ClassicRefreshHeaderView classicRefreshHeaderView = new ClassicRefreshHeaderView(getActivity());
         classicRefreshHeaderView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, DensityUtils.dip2px(getActivity(), 80)));
