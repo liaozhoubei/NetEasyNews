@@ -13,40 +13,57 @@
         android:layout_height="match_parent"
         android:clipToPadding="true">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/my_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:elevation="4dp"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:title="图片新闻"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:minHeight="?attr/actionBarSize"
-            android:text="推荐新闻"
-            />
-    </android.support.design.widget.AppBarLayout>
-
-
-    <!--新闻列表页的普通ListView-->
-    <com.aspsine.irecyclerview.IRecyclerView
-        android:id="@+id/iRecyclerView"
+    <RelativeLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:loadMoreEnabled="true"
-        app:loadMoreFooterLayout="@layout/layout_irecyclerview_load_more_footer"
-        app:refreshEnabled="true"
-        app:refreshHeaderLayout="@layout/layout_irecyclerview_refresh_header"
-        />
+        android:orientation="horizontal">
+
+        <cn.bproject.neteasynews.widget.NormalTitleBar
+            android:id="@+id/ntb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!--新闻列表页的普通ListView-->
+        <com.aspsine.irecyclerview.IRecyclerView
+            android:id="@+id/iRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/ntb"
+            app:loadMoreEnabled="true"
+            app:loadMoreFooterLayout="@layout/layout_irecyclerview_load_more_footer"
+            app:refreshEnabled="true"
+            app:refreshHeaderLayout="@layout/layout_irecyclerview_refresh_header"
+            />
+    </RelativeLayout>
+
+
+    <!--<android.support.design.widget.AppBarLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
+
+        <!--<android.support.v7.widget.Toolbar-->
+            <!--android:id="@+id/my_toolbar"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="?attr/actionBarSize"-->
+            <!--android:background="?attr/colorPrimary"-->
+            <!--android:elevation="4dp"-->
+            <!--android:minHeight="?attr/actionBarSize"-->
+            <!--android:theme="@style/ThemeOverlay.AppCompat.ActionBar"-->
+            <!--app:layout_scrollFlags="scroll|enterAlways"-->
+            <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light"-->
+            <!--app:title="图片新闻"/>-->
+        <!--<TextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="?attr/actionBarSize"-->
+            <!--android:minHeight="?attr/actionBarSize"-->
+            <!--android:text="推荐新闻"-->
+            <!--/>-->
+    <!--</android.support.design.widget.AppBarLayout>-->
+
+
+
 
 </android.support.design.widget.CoordinatorLayout>
 <!--</LinearLayout>-->

@@ -3,31 +3,33 @@ package cn.bproject.neteasynews.fragment.news;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Toast;
 
-import com.handmark.pulltorefresh.PullToRefreshBase;
-import com.handmark.pulltorefresh.PullToRefreshListView;
+import com.aspsine.irecyclerview.IRecyclerView;
+import com.aspsine.irecyclerview.OnLoadMoreListener;
+import com.aspsine.irecyclerview.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.bproject.neteasynews.activity.NewsDetailActivity;
-import cn.bproject.neteasynews.activity.PicDetailActivity;
 import cn.bproject.neteasynews.R;
+import cn.bproject.neteasynews.Utils.DensityUtils;
 import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.Utils.ThreadManager;
 import cn.bproject.neteasynews.Utils.UIUtils;
-import cn.bproject.neteasynews.adapter.NewsListAdapter;
+import cn.bproject.neteasynews.activity.NewsDetailActivity;
+import cn.bproject.neteasynews.activity.PicDetailActivity;
+import cn.bproject.neteasynews.adapter.NewsListAdapter1;
 import cn.bproject.neteasynews.bean.NewsListNormalBean;
 import cn.bproject.neteasynews.common.Api;
 import cn.bproject.neteasynews.common.DefineView;
@@ -35,9 +37,10 @@ import cn.bproject.neteasynews.fragment.BaseFragment;
 import cn.bproject.neteasynews.http.DataParse;
 import cn.bproject.neteasynews.http.HttpCallbackListener;
 import cn.bproject.neteasynews.http.HttpHelper;
+import cn.bproject.neteasynews.widget.ClassicRefreshHeaderView;
+import cn.bproject.neteasynews.widget.LoadMoreFooterView;
 
 import static android.content.Context.WINDOW_SERVICE;
-import static cn.bproject.neteasynews.R.id.listView_news_list;
 
 /**
  * Created by Bei on 2016/12/25.
@@ -47,9 +50,7 @@ public class NewsListFragment extends BaseFragment implements DefineView {
 
     private final String TAG = NewsListFragment.class.getSimpleName();
     private static final String KEY = "TID";
-    private NewsListAdapter mNewsListAdapter;   // ListView的Adapter
     private View mView;     // 布局视图
-    private PullToRefreshListView mListView_news_list;      // 可上拉下拉刷新的listView
     private List<NewsListNormalBean> mNewsListNormalBeanList;   // 启动时获得的数据
     private List<NewsListNormalBean> newlist;   // 上拉刷新后获得的数据
     private int mStartIndex = 0;    // 请求数据的起始参数
@@ -62,6 +63,9 @@ public class NewsListFragment extends BaseFragment implements DefineView {
     private LinearLayout mEmpty;
     private LinearLayout mError;
     private Button mBtn_retry;
+    private IRecyclerView mIRecyclerView;
+    private LoadMoreFooterView mLoadMoreFooterView;
+    private NewsListAdapter1 mNewsListAdapter;
 
 
     /**
@@ -101,7 +105,14 @@ public class NewsListFragment extends BaseFragment implements DefineView {
 
     @Override
     public void initView() {
-        mListView_news_list = (PullToRefreshListView) mView.findViewById(listView_news_list);
+        mIRecyclerView = (IRecyclerView) mView.findViewById(R.id.iRecyclerView);
+
+        mIRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mLoadMoreFooterView = (LoadMoreFooterView) mIRecyclerView.getLoadMoreFooterView();
+        ClassicRefreshHeaderView classicRefreshHeaderView = new ClassicRefreshHeaderView(getActivity());
+        classicRefreshHeaderView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, DensityUtils.dip2px(getActivity(), 80)));
+        // we can set view
+        mIRecyclerView.setRefreshHeaderView(classicRefreshHeaderView);
 
         mFramelayout_news_list = (FrameLayout) mView.findViewById(R.id.framelayout_news_list);
         mLoading = (LinearLayout) mView.findViewById(R.id.loading);
@@ -159,7 +170,6 @@ public class NewsListFragment extends BaseFragment implements DefineView {
 
                     }
                 });
-//                mNewsListNormalBeanList = mNewsProtocol.getData(mUrl);
 
             }
         });
@@ -168,71 +178,126 @@ public class NewsListFragment extends BaseFragment implements DefineView {
 
     @Override
     public void initListener() {
-        // 设置是否支持上拉和下拉
-        mListView_news_list.setMode(PullToRefreshBase.Mode.BOTH);
-        mListView_news_list.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
+
+        mIRecyclerView.setLoadMoreEnabled(true);
+        mIRecyclerView.setRefreshEnabled(true);
+        mIRecyclerView.setOnRefreshListener(new OnRefreshListener() {
             @Override
-            public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
-                LogUtils.d(TAG, "onPullDownToRefresh: 下拉刷新了");
-                mUrl = Api.CommonUrl + tid + "/" + 0 + Api.endUrl;
-                mThreadPool.execute(new Runnable() {
+            public void onRefresh() {
+                mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.GONE);
+                mIRecyclerView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-//                        CreateNewsProtocol();
-                        HttpHelper.get(mUrl, new HttpCallbackListener() {
-                            @Override
-                            public void onSuccess(String result) {
-                                newlist = DataParse.NewsList(result, tid);
-                                isPullRefresh = true;
-                                DataChange();
-                            }
-
-                            @Override
-                            public void onError(String result, Exception e) {
-
-                            }
-                        });
-
+                        mIRecyclerView.setRefreshing(false);
                     }
-                });
+                }, 2000);
             }
-
+        });
+        mIRecyclerView.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
-            public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
-                LogUtils.d(TAG, "onPullUpToRefresh: 上拉刷新了");
-                mStartIndex += 20;
+            public void onLoadMore() {
+                if (mLoadMoreFooterView.canLoadMore() && mNewsListAdapter.getItemCount() > 0) {
+                    mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.LOADING);
+                    mStartIndex += 20;
+                    mUrl = Api.CommonUrl + tid + "/" + mStartIndex + Api.endUrl;
+                    mThreadPool.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            HttpHelper.get(mUrl, new HttpCallbackListener() {
+                                @Override
+                                public void onSuccess(String result) {
+                                    Log.d(TAG, "onSuccess: " + mUrl);
+                                    newlist = DataParse.NewsList(result, tid);
+                                    isPullRefresh = false;
+                                    DataChange();
+                                }
 
-                LogUtils.d(TAG, "mStartIndex: " + mStartIndex);
-                mUrl = Api.CommonUrl + tid + "/" + mStartIndex + Api.endUrl;
-
-                mThreadPool.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        HttpHelper.get(mUrl, new HttpCallbackListener() {
-                            @Override
-                            public void onSuccess(String result) {
-                                newlist = DataParse.NewsList(result, tid);
-                                isPullRefresh = false;
-                                DataChange();
-                            }
-
-                            @Override
-                            public void onError(String result, Exception e) {
-
-                            }
-                        });
-
-
-                    }
-                });
-
+                                @Override
+                                public void onError(String result, Exception e) {
+                                    mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.ERROR);
+                                    Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    });
+                }
             }
         });
 
-        mListView_news_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        // 设置是否支持上拉和下拉
+//        mListView_news_list.setMode(PullToRefreshBase.Mode.BOTH);
+//        mListView_news_list.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
+//            @Override
+//            public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
+//                LogUtils.d(TAG, "onPullDownToRefresh: 下拉刷新了");
+//                mUrl = Api.CommonUrl + tid + "/" + 0 + Api.endUrl;
+//                mThreadPool.execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+////                        CreateNewsProtocol();
+//                        HttpHelper.get(mUrl, new HttpCallbackListener() {
+//                            @Override
+//                            public void onSuccess(String result) {
+//                                newlist = DataParse.NewsList(result, tid);
+//                                isPullRefresh = true;
+//                                DataChange();
+//                            }
+//
+//                            @Override
+//                            public void onError(String result, Exception e) {
+//
+//                            }
+//                        });
+//
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
+//                LogUtils.d(TAG, "onPullUpToRefresh: 上拉刷新了");
+//                mStartIndex += 20;
+//
+//                LogUtils.d(TAG, "mStartIndex: " + mStartIndex);
+//                mUrl = Api.CommonUrl + tid + "/" + mStartIndex + Api.endUrl;
+//
+//                mThreadPool.execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        HttpHelper.get(mUrl, new HttpCallbackListener() {
+//                            @Override
+//                            public void onSuccess(String result) {
+//                                newlist = DataParse.NewsList(result, tid);
+//                                isPullRefresh = false;
+//                                DataChange();
+//                            }
+//
+//                            @Override
+//                            public void onError(String result, Exception e) {
+//
+//                            }
+//                        });
+//
+//
+//                    }
+//                });
+//
+//            }
+//        });
+
+
+
+
+    }
+
+    @Override
+    public void bindData() {
+        mNewsListAdapter = new NewsListAdapter1(getActivity(), (ArrayList<NewsListNormalBean>) mNewsListNormalBeanList);
+        mIRecyclerView.setIAdapter(mNewsListAdapter);
+        mNewsListAdapter.setOnItemClickListener(new NewsListAdapter1.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                NewsListNormalBean newsListNormalBean = mNewsListNormalBeanList.get((int) l);
+            public void onItemClick(View v, int position) {
+                NewsListNormalBean newsListNormalBean = mNewsListNormalBeanList.get(position);
                 String photosetID = newsListNormalBean.getPhotosetID();
                 Intent intent;
                 if (photosetID != null) {
@@ -254,19 +319,8 @@ public class NewsListFragment extends BaseFragment implements DefineView {
             }
         });
 
-    }
+}
 
-    @Override
-    public void bindData() {
-        mNewsListAdapter = new NewsListAdapter(getActivity(), (ArrayList<NewsListNormalBean>) mNewsListNormalBeanList);
-        mListView_news_list.setAdapter(mNewsListAdapter);
-    }
-
-//    private void CreateNewsProtocol(){
-//        if(mNewsProtocol == null){
-//            mNewsProtocol = new NewsProtocol(tid);
-//        }
-//    }
 
     /**
      * 上拉或下拉刷新之后更新UI界面
@@ -281,8 +335,8 @@ public class NewsListFragment extends BaseFragment implements DefineView {
                 } else {
                     Toast.makeText(getActivity(), "数据请求失败", Toast.LENGTH_SHORT).show();
                 }
-                //上拉加载和关闭刷新时间太短会导致mListView.onRefreshComplete()无效的情况，只需要延迟一秒即可：
-                mListView_news_list.onRefreshComplete();
+                mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.GONE);
+                mIRecyclerView.setRefreshing(false);
             }
         });
     }
@@ -308,8 +362,7 @@ public class NewsListFragment extends BaseFragment implements DefineView {
      * 如果有新闻就展示新闻页面
      */
     private void showNewsPage() {
-
-        mListView_news_list.setVisibility(View.VISIBLE);
+        mIRecyclerView.setVisibility(View.VISIBLE);
         mFramelayout_news_list.setVisibility(View.GONE);
         mLoading.setVisibility(View.GONE);
         mEmpty.setVisibility(View.GONE);
@@ -320,7 +373,7 @@ public class NewsListFragment extends BaseFragment implements DefineView {
      * 展示加载页面
      */
     private void showLoadingPage() {
-        mListView_news_list.setVisibility(View.GONE);
+        mIRecyclerView.setVisibility(View.GONE);
         mFramelayout_news_list.setVisibility(View.VISIBLE);
         mLoading.setVisibility(View.VISIBLE);
         mEmpty.setVisibility(View.GONE);
@@ -332,7 +385,7 @@ public class NewsListFragment extends BaseFragment implements DefineView {
      * 如果没有网络就展示空消息页面
      */
     private void showEmptyPage() {
-        mListView_news_list.setVisibility(View.GONE);
+        mIRecyclerView.setVisibility(View.GONE);
         mFramelayout_news_list.setVisibility(View.VISIBLE);
         mLoading.setVisibility(View.GONE);
         mEmpty.setVisibility(View.VISIBLE);
@@ -341,7 +394,7 @@ public class NewsListFragment extends BaseFragment implements DefineView {
     }
 
     private void showErroPage() {
-        mListView_news_list.setVisibility(View.GONE);
+        mIRecyclerView.setVisibility(View.GONE);
         mFramelayout_news_list.setVisibility(View.VISIBLE);
         mLoading.setVisibility(View.GONE);
         mEmpty.setVisibility(View.GONE);

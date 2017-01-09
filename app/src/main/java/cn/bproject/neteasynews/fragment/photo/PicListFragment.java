@@ -104,12 +104,12 @@ public class PicListFragment extends BaseFragment implements DefineView {
 
 
 
-        mIRecyclerView.post(new Runnable() {
-            @Override
-            public void run() {
-                mIRecyclerView.setRefreshing(true);
-            }
-        });
+//        mIRecyclerView.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                mIRecyclerView.setRefreshing(true);
+//            }
+//        });
 
 
         mFramelayout_news_list = (FrameLayout) mView.findViewById(R.id.framelayout_news_list);

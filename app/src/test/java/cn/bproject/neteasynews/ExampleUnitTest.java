@@ -3,7 +3,6 @@ package cn.bproject.neteasynews;
 import org.junit.Before;
 import org.junit.Test;
 
-import cn.bproject.neteasynews.http.NewsProtocol;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -13,11 +12,11 @@ import static junit.framework.Assert.assertEquals;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public class ExampleUnitTest {
-    NewsProtocol newsProtocol;
+
 
     @Before
     public void setUp() throws Exception {
-        newsProtocol = new NewsProtocol();
+
     }
 
     @Test
