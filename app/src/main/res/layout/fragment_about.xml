@@ -13,7 +13,7 @@
         app:layout_scrollFlags="scroll|enterAlways"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:title="设置"/>
+        app:title="用户中心"/>
 
     <ListView
         android:id="@+id/lv_about"

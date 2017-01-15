@@ -4,7 +4,24 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="color_head_title">#777777</color>
-    <color name="mask_tags_8">#1da8fe</color>
+    <color name="colorTheme">#1da8fe</color>
+
+    <color name="colorPageBg">#f2f4f5</color>
+
+    <!--首页item文字颜色-->
+    <color name="colorSubtitle">#999</color>
+    <!--item的5.0一下版本选择器颜色-->
+    <color name="itemLowBackground">#d9d9d9</color>
+    <!--暂时用于反馈文字-->
+    <color name="text_common">#191919</color>
+    <!--item的分割线-->
+    <color name="colorLineItem">#FFDDDDDD</color>
+    <!--正文文字颜色-->
+    <color name="colorContent">#ff333333</color>
+    <!--水波纹或5.0以下选择器颜色-->
+    <color name="tabBackground">#777D7D7D</color>
+
+
 
     <color name="white">#ffffff</color>
     <!-- 白色 -->

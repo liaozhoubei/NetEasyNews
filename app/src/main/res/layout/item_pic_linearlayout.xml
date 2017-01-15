@@ -5,8 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
-    app:cardElevation="2dp"
+    android:layout_margin="10dp"
+    app:cardElevation="8dp"
     >
 
     <LinearLayout
@@ -19,7 +19,7 @@
             android:id="@+id/iv_pic"
             android:layout_width="match_parent"
             android:layout_height="@dimen/item_big_image_height"
-            android:scaleType="fitXY"
+            android:scaleType="centerCrop"
             android:layout_gravity="center"
             android:src="@drawable/defaultbg_h"/>
 

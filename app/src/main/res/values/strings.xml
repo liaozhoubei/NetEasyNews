@@ -8,7 +8,7 @@
     <string name="video_fragment">视频</string>
     <string name="about_fragment">我</string>
 
-    <string name="default_text">会武术谁都挡不住——感受进化的力量</string>
+    <string name="default_text">会武术谁都挡不住——感受进化的力量，哇哈哈哈啊哈</string>
     <string name="source_news_text">网易</string>
 
     <string name="string_about_tv_top_name">简单新闻</string>
@@ -16,4 +16,5 @@
 包括首页新闻,详情,发现,活动,实时数据抓取,侧滑效果,第三方登录以及分享,消息推送等相关功能客户端。</string>
     <string name="string_about_tv_bottom_right">来自 宝塔山上的猫</string>
     <string name="string_about_tv_botton_copyright">Copyright ©2015-2017</string>
+    <string name="version_name">当前版本 V</string>
 </resources>

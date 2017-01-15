@@ -48,6 +48,7 @@ public class NewsFragment extends Fragment {
         mNewsViewpager = (ViewPager) mView.findViewById(R.id.news_viewpager);
 
         Toolbar myToolbar = (Toolbar) mView.findViewById(R.id.my_toolbar);
+        myToolbar.setTitle("新闻中心");
 //        getActivity().setSupportActionBar(myToolbar);
 
         newsBeans = CategoryDataUtils.getNewsCategoryBeans();

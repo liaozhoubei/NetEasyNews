@@ -35,23 +35,13 @@ public class PicListAdapter extends RecyclerView.Adapter<PicListAdapter.ViewHold
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = View.inflate(mContext, R.layout.item_pic_linearlayout, null);
-        final ViewHolder holder = new ViewHolder(view);
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final int position = holder.getIAdapterPosition();
-                final PicListBean picListBean = mPicListBeens.get(position);
-                if (mOnItemClickListener != null) {
-                    mOnItemClickListener.onItemClick(position, picListBean, v);
-                }
-            }
-        });
+        ViewHolder holder = new ViewHolder(view);
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        final PicListBean picListBean = mPicListBeens.get(position);
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+        PicListBean picListBean = mPicListBeens.get(position);
 
         String imageSrc = picListBean.getCover();
         String title = picListBean.getSetname();
@@ -63,6 +53,17 @@ public class PicListAdapter extends RecyclerView.Adapter<PicListAdapter.ViewHold
                 .placeholder(R.drawable.defaultbg)
                 .crossFade()
                 .into(holder.iv_pic);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = holder.getIAdapterPosition();
+                final PicListBean picListBean = mPicListBeens.get(position);
+                if (mOnItemClickListener != null) {
+                    mOnItemClickListener.onItemClick(position, picListBean, v);
+                }
+            }
+        });
 
     }
 
@@ -97,7 +98,6 @@ public class PicListAdapter extends RecyclerView.Adapter<PicListAdapter.ViewHold
             rl_root = (LinearLayout) itemView.findViewById(R.id.rl_root);
             iv_pic = (ImageView) itemView.findViewById(R.id.iv_pic);
             tv_title = (TextView) itemView.findViewById(R.id.tv_title);
-
         }
     }
 

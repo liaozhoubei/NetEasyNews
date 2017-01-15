@@ -16,6 +16,8 @@ public class MyApplication extends Application{
     private static Context mContext;
     private static ThreadManager.ThreadPool mThreadPool;
 
+    private static MyApplication sMyApplication;
+
 
 
     public void setThreadPool(ThreadManager.ThreadPool threadPool) {
@@ -40,6 +42,18 @@ public class MyApplication extends Application{
 
 
 
+    }
+
+    public static MyApplication getInstance() {
+        // if语句下是不会走的，Application本身已单例
+        if (sMyApplication == null) {
+            synchronized (MyApplication.class) {
+                if (sMyApplication == null) {
+                    sMyApplication = new MyApplication();
+                }
+            }
+        }
+        return sMyApplication;
     }
 
     public static Context getContext(){

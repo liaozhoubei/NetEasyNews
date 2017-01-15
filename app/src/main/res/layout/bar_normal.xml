@@ -4,7 +4,7 @@
                 android:id="@+id/common_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/mask_tags_8"
+                android:background="@color/colorTheme"
                 android:orientation="horizontal">
 
     <!-- 公共的的标题栏 -->

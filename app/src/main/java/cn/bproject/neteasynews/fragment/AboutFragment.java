@@ -35,8 +35,8 @@ public class AboutFragment extends Fragment{
        View view = inflater.inflate(R.layout.fragment_about, null);
         ListView lv_about = (ListView) view.findViewById(R.id.lv_about);
         mLv_list = new ArrayList<>();
-        mLv_list.add("账号信息");
-        mLv_list.add("意见反馈");
+        mLv_list.add("项目主页");
+        mLv_list.add("问题反馈");
         mLv_list.add("关于App");
         lv_about.setAdapter(new AboutAdapter());
         lv_about.setOnItemClickListener(new AdapterView.OnItemClickListener() {

@@ -15,6 +15,19 @@
         android:orientation="horizontal"
         android:visibility="visible">
 
+        <TextView
+            android:id="@+id/item_news_tv_title"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="4"
+            android:text="@string/default_text"
+            android:textColor="@color/black"/>
+
         <ImageView
             android:id="@+id/item_news_tv_img"
             android:layout_width="fill_parent"
@@ -22,17 +35,6 @@
             android:layout_weight="2"
             android:scaleType="fitXY"
             android:src="@drawable/defaultbg"/>
-
-        <TextView
-            android:id="@+id/item_news_tv_title"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_marginLeft="8dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:maxLines="4"
-            android:text="@string/default_text"
-            android:textColor="@color/black"/>
     </LinearLayout>
 
     <include layout="@layout/item_news_bottom"/>

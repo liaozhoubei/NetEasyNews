@@ -1,60 +1,159 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical" >
-    <ImageView
-        android:id="@+id/about_img_top_icon"
-        android:layout_width="90dip"
-        android:layout_height="90dip"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dip"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPageBg"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="cn.bproject.neteasynews.activity.AboutActivity">
 
-        android:src="@mipmap/ic_launcher" />
+    <include layout="@layout/toolbar_page"/>
 
-    <TextView
-        android:id="@+id/about_tv_top_name"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/ll_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/about_img_top_icon"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dip"
-        android:text="@string/string_about_tv_top_name"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:layout_weight="6"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/about_tv_content"
-        android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="66dp"
+            android:layout_height="66dp"
+            android:layout_gravity="center_horizontal"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/second_logo"/>
+
+        <TextView
+            android:id="@+id/text_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/colorSubtitle"
+
+            android:textSize="13sp"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/about_tv_top_name"
-        android:layout_centerHorizontal="true"
-        android:layout_marginLeft="10dip"
-        android:layout_marginRight="10dip"
-        android:layout_marginTop="15dip"
-        android:text="@string/string_about_tv_content"
-        android:textColor="@color/color_head_title"
-        android:textSize="14sp" />
+        android:background="@color/white"
+        android:orientation="vertical">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+
+            <TextView
+                android:id="@+id/tv_new_version"
+                style="@style/menuItem"
+                android:clickable="true"
+                android:text="检查更新"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="15dp"
+                android:text="1.0"
+                android:textColor="@color/colorSubtitle"
+                android:textSize="13sp"
+                android:visibility="gone"/>
+        </RelativeLayout>
+
+        <View
+            style="@style/horizontalLine"
+            android:layout_marginLeft="10dp"/>
+
+        <TextView
+            android:id="@+id/tv_function"
+            style="@style/menuItem"
+            android:clickable="true"
+            android:text="更新日志"/>
+
+        <View
+            style="@style/horizontalLine"
+            android:layout_marginLeft="10dp"/>
+
+        <TextView
+            android:id="@+id/tv_about_star"
+            style="@style/menuItem"
+            android:clickable="true"
+            android:text="给个Star吧"/>
+
+
+    </LinearLayout>
     <TextView
-        android:id="@+id/about_tv_bottom_right"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:lineSpacingExtra="2dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:text="很高兴您能使用，如感到满意请Star一下吧，我们将继续迭代，增加更多功能，O(∩_∩)O ~"
+        android:textColor="@color/colorSubtitle"
+        android:textSize="14sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="15dip"
-        android:text="@string/string_about_tv_bottom_right"
-        android:textColor="@color/color_head_title" />
+        android:gravity="center"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/about_tv_bottom_copyright"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/about_tv_bottom_right"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="3dip"
-        android:text="@string/string_about_tv_botton_copyright"
-        android:textColor="@color/color_head_title" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-</RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="《"
+                android:textColor="@color/colorContent"
+                android:textSize="13sp"/>
+
+
+            <TextView
+                android:id="@+id/about_tv_bottom_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/string_about_tv_bottom_right"
+                android:textColor="@color/colorContent"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="》"
+                android:textColor="@color/colorContent"
+                android:textSize="13sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:id="@+id/about_tv_bottom_copyright"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/string_about_tv_botton_copyright"
+                android:textColor="@color/colorContent"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

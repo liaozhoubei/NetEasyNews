@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
+              android:layout_height="wrap_content"
               android:orientation="vertical"
               android:layout_marginTop="5dp">
     <!--有三张图片的新闻列表item-->
@@ -11,8 +11,7 @@
         android:id="@+id/item_news_tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_margin="10dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:text="@string/default_text"
@@ -32,6 +31,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:paddingRight="5dp"
+            android:scaleType="fitXY"
             android:src="@drawable/defaultbg"/>
 
         <ImageView
@@ -40,6 +40,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:paddingRight="5dp"
+            android:scaleType="fitXY"
             android:src="@drawable/defaultbg"/>
 
         <ImageView
@@ -47,6 +48,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:scaleType="fitXY"
             android:src="@drawable/defaultbg"/>
 
     </LinearLayout>

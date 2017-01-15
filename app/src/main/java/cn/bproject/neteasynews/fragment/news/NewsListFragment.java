@@ -29,7 +29,7 @@ import cn.bproject.neteasynews.Utils.ThreadManager;
 import cn.bproject.neteasynews.Utils.UIUtils;
 import cn.bproject.neteasynews.activity.NewsDetailActivity;
 import cn.bproject.neteasynews.activity.PicDetailActivity;
-import cn.bproject.neteasynews.adapter.NewsListAdapter1;
+import cn.bproject.neteasynews.adapter.NewsListAdapter;
 import cn.bproject.neteasynews.bean.NewsListNormalBean;
 import cn.bproject.neteasynews.common.Api;
 import cn.bproject.neteasynews.common.DefineView;
@@ -65,7 +65,7 @@ public class NewsListFragment extends BaseFragment implements DefineView {
     private Button mBtn_retry;
     private IRecyclerView mIRecyclerView;
     private LoadMoreFooterView mLoadMoreFooterView;
-    private NewsListAdapter1 mNewsListAdapter;
+    private NewsListAdapter mNewsListAdapter;
 
 
     /**
@@ -160,7 +160,6 @@ public class NewsListFragment extends BaseFragment implements DefineView {
                                 } else {
                                     showEmptyPage();
                                 }
-
                             }
                         });
                     }
@@ -181,18 +180,32 @@ public class NewsListFragment extends BaseFragment implements DefineView {
 
         mIRecyclerView.setLoadMoreEnabled(true);
         mIRecyclerView.setRefreshEnabled(true);
+
         mIRecyclerView.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.GONE);
-                mIRecyclerView.postDelayed(new Runnable() {
+                mUrl = Api.CommonUrl + tid + "/" + 0 + Api.endUrl;
+                mThreadPool.execute(new Runnable() {
                     @Override
                     public void run() {
-                        mIRecyclerView.setRefreshing(false);
+                        HttpHelper.get(mUrl, new HttpCallbackListener() {
+                            @Override
+                            public void onSuccess(String result) {
+                                newlist = DataParse.NewsList(result, tid);
+                                isPullRefresh = true;
+                                DataChange();
+                            }
+
+                            @Override
+                            public void onError(String result, Exception e) {
+
+                            }
+                        });
                     }
-                }, 2000);
+                });
             }
         });
+
         mIRecyclerView.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
@@ -223,78 +236,14 @@ public class NewsListFragment extends BaseFragment implements DefineView {
                 }
             }
         });
-
-        // 设置是否支持上拉和下拉
-//        mListView_news_list.setMode(PullToRefreshBase.Mode.BOTH);
-//        mListView_news_list.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
-//            @Override
-//            public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
-//                LogUtils.d(TAG, "onPullDownToRefresh: 下拉刷新了");
-//                mUrl = Api.CommonUrl + tid + "/" + 0 + Api.endUrl;
-//                mThreadPool.execute(new Runnable() {
-//                    @Override
-//                    public void run() {
-////                        CreateNewsProtocol();
-//                        HttpHelper.get(mUrl, new HttpCallbackListener() {
-//                            @Override
-//                            public void onSuccess(String result) {
-//                                newlist = DataParse.NewsList(result, tid);
-//                                isPullRefresh = true;
-//                                DataChange();
-//                            }
-//
-//                            @Override
-//                            public void onError(String result, Exception e) {
-//
-//                            }
-//                        });
-//
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
-//                LogUtils.d(TAG, "onPullUpToRefresh: 上拉刷新了");
-//                mStartIndex += 20;
-//
-//                LogUtils.d(TAG, "mStartIndex: " + mStartIndex);
-//                mUrl = Api.CommonUrl + tid + "/" + mStartIndex + Api.endUrl;
-//
-//                mThreadPool.execute(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        HttpHelper.get(mUrl, new HttpCallbackListener() {
-//                            @Override
-//                            public void onSuccess(String result) {
-//                                newlist = DataParse.NewsList(result, tid);
-//                                isPullRefresh = false;
-//                                DataChange();
-//                            }
-//
-//                            @Override
-//                            public void onError(String result, Exception e) {
-//
-//                            }
-//                        });
-//
-//
-//                    }
-//                });
-//
-//            }
-//        });
-
-
-
-
     }
 
     @Override
     public void bindData() {
-        mNewsListAdapter = new NewsListAdapter1(getActivity(), (ArrayList<NewsListNormalBean>) mNewsListNormalBeanList);
+        mNewsListAdapter = new NewsListAdapter(getActivity(), (ArrayList<NewsListNormalBean>) mNewsListNormalBeanList);
         mIRecyclerView.setIAdapter(mNewsListAdapter);
-        mNewsListAdapter.setOnItemClickListener(new NewsListAdapter1.OnItemClickListener() {
+        // 设置Item点击跳转事件
+        mNewsListAdapter.setOnItemClickListener(new NewsListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
                 NewsListNormalBean newsListNormalBean = mNewsListNormalBeanList.get(position);

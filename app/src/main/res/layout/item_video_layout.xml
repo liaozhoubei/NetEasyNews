@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="10dp"
     app:cardElevation="2dp"
     >
 
@@ -18,14 +19,9 @@
             android:id="@+id/iv_video"
             android:layout_width="match_parent"
             android:layout_height="@dimen/item_big_image_height"
-            android:scaleType="fitXY"
+            android:scaleType="centerCrop"
             android:src="@drawable/defaultbg_h"/>
 
-        <!--     <FrameLayout
-                 android:layout_width="match_parent"
-                 android:layout_height="40dp"
-                 android:background="@drawable/show"
-                 />-->
 
         <TextView
             android:id="@+id/tv_title"
@@ -47,6 +43,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/iv_video"
             android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:gravity="center"
             tools:text="作者"/>
 
@@ -57,6 +55,8 @@
             android:layout_alignParentRight="true"
             android:layout_below="@+id/iv_video"
             android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:gravity="center"
             tools:text="1111次播放"/>
 
