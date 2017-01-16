@@ -21,6 +21,9 @@
     <!--水波纹或5.0以下选择器颜色-->
     <color name="tabBackground">#777D7D7D</color>
 
+    <color name="color_item_press">#ffff0000</color>
+    <color name="color_item_normal">#44ff0000</color>
+    <color name="black_alpha_40">#66000000</color>
 
 
     <color name="white">#ffffff</color>

@@ -1,19 +1,20 @@
 package cn.bproject.neteasynews.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.util.Log;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.text.TextPaint;
+import android.view.MenuItem;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -29,16 +30,17 @@ import cn.bproject.neteasynews.http.DataParse;
 import cn.bproject.neteasynews.http.HttpCallbackListener;
 import cn.bproject.neteasynews.http.HttpHelper;
 
+import static cn.bproject.neteasynews.R.id.details_content;
+
 /**
  * Created by liaozhoubei on 2016/12/28.
  */
 
-public class NewsDetailActivity extends Activity implements DefineView {
+public class NewsDetailActivity extends AppCompatActivity implements DefineView {
     private final String TAG = NewsDetailActivity.class.getSimpleName();
     private TextView details_title, details_name, details_time;
 
-    private ImageView details_ad;
-    private WebView details_content;
+    private WebView mWebView;
     private FrameLayout home_framelayout;
     private LinearLayout loading, empty, error;
     private String titleUrl, titleId;
@@ -52,7 +54,7 @@ public class NewsDetailActivity extends Activity implements DefineView {
         }
     };
     private WebSettings mWebSettings;
-    private CollapsingToolbarLayout mCollapsingToolbar;
+
     private String mDocid;
     private NewsDetailBean mNewsDetailBeen;
 
@@ -70,11 +72,23 @@ public class NewsDetailActivity extends Activity implements DefineView {
 
     @Override
     public void initView() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.icon_back);
+        }
+
+
         details_title = (TextView) this.findViewById(R.id.details_title);
+        // 设置标题加粗
+        TextPaint tp = details_title.getPaint();
+        tp.setFakeBoldText(true);
         details_name = (TextView) this.findViewById(R.id.details_name);
         details_time = (TextView) this.findViewById(R.id.details_time);
-        details_ad = (ImageView) this.findViewById(R.id.details_ad);
-        details_content = (WebView) this.findViewById(R.id.details_content);
+//        details_ad = (ImageView) this.findViewById(R.id.details_ad);
+        mWebView = (WebView) this.findViewById(details_content);
 
     }
 
@@ -82,9 +96,15 @@ public class NewsDetailActivity extends Activity implements DefineView {
     public void initValidata() {
 
         //设置webview
-        details_content.setWebChromeClient(new MyWebChromeClient());
-        details_content.setWebViewClient(new MyWebViewClient());
-        mWebSettings = details_content.getSettings();
+        mWebView.setWebChromeClient(new MyWebChromeClient());
+        mWebView.setWebViewClient(new MyWebViewClient());
+        mWebSettings = mWebView.getSettings();
+
+        // 打开页面时， 自适应屏幕
+        mWebSettings.setUseWideViewPort(true); //将图片调整到适合webview的大小
+        mWebSettings.setLoadWithOverviewMode(true); // 缩放至屏幕的大小
+        mWebSettings.setSupportZoom(true); //支持缩放
+
         mWebSettings.setJavaScriptEnabled(true);  //开启javascript
         mWebSettings.setDomStorageEnabled(true);  //开启DOM
         mWebSettings.setDefaultTextEncodingName("utf-8"); //设置编码
@@ -130,23 +150,31 @@ public class NewsDetailActivity extends Activity implements DefineView {
     @Override
     public void bindData() {
         if (mNewsDetailBeen != null) {
-//            relative_content.setVisibility(View.VISIBLE);
+
             changeNewsDetail(mNewsDetailBeen);
             String content = mNewsDetailBeen.getBody();
             String title = mNewsDetailBeen.getTitle();
             String ptime = mNewsDetailBeen.getPtime();
-//            mNewsDetailBeen.getUsers();
+            String source = mNewsDetailBeen.getSource();
 
             details_title.setText(title);
-
-
-            details_time.setText(" 发表于" + ptime);
-
+            details_name.setText(source);
+            details_time.setText(ptime);
 
             //details_content.loadData(articleBean.getContext(),"text/html","UTF-8");
-            details_content.loadDataWithBaseURL(Api.host, content, "text/html", "UTF-8", "");
+            mWebView.loadDataWithBaseURL(Api.host, content, "text/html", "UTF-8", "");
 
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return true;
     }
 
     class MyWebChromeClient extends WebChromeClient {
@@ -179,7 +207,7 @@ public class NewsDetailActivity extends Activity implements DefineView {
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            Log.d(TAG, "拦截到URL信息为:" + url);
+            LogUtils.d(TAG, "拦截到URL信息为:" + url);
             return super.shouldOverrideUrlLoading(view, url);
 
         }

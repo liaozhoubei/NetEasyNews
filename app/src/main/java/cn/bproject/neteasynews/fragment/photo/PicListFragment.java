@@ -35,6 +35,7 @@ import cn.bproject.neteasynews.http.DataParse;
 import cn.bproject.neteasynews.http.HttpCallbackListener;
 import cn.bproject.neteasynews.http.HttpHelper;
 import cn.bproject.neteasynews.widget.ClassicRefreshHeaderView;
+import cn.bproject.neteasynews.widget.DividerGridItemDecoration;
 import cn.bproject.neteasynews.widget.LoadMoreFooterView;
 
 /**
@@ -96,6 +97,7 @@ public class PicListFragment extends BaseFragment implements DefineView {
         mIRecyclerView = (IRecyclerView) mView.findViewById(R.id.iRecyclerView);
 //        mIRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mIRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        mIRecyclerView.addItemDecoration(new DividerGridItemDecoration(getActivity()));
         mLoadMoreFooterView = (LoadMoreFooterView) mIRecyclerView.getLoadMoreFooterView();
         ClassicRefreshHeaderView classicRefreshHeaderView = new ClassicRefreshHeaderView(getActivity());
         classicRefreshHeaderView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, DensityUtils.dip2px(getActivity(), 80)));

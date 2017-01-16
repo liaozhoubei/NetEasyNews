@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,7 +18,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.LogUtils;
@@ -46,7 +47,7 @@ public class PicDetailActivity extends AppCompatActivity implements DefineView {
     private static final String SETID = "SETID";
     private ThreadManager.ThreadPool mThreadPool;   // 线程池
     private ImageDetailBean mImageDetailBean;
-    private List<ImageDetailBean.PhotosBean> mPhotosBeens;
+//    private List<ImageDetailBean.PhotosBean> mPhotosBeens;
     private Context mContext;
     private boolean isGone;
 
@@ -62,6 +63,16 @@ public class PicDetailActivity extends AppCompatActivity implements DefineView {
 
     @Override
     public void initView() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowTitleEnabled(false);
+            actionBar.setHomeAsUpIndicator(R.drawable.icon_back);
+        }
+
+
         mViewPager = (ViewPager) findViewById(R.id.vp_pic);
 
     }
@@ -82,9 +93,19 @@ public class PicDetailActivity extends AppCompatActivity implements DefineView {
 
     @Override
     public void bindData() {
-        PicDetailAdapter picDetailAdapter = new PicDetailAdapter(mPhotosBeens);
+        PicDetailAdapter picDetailAdapter = new PicDetailAdapter(mImageDetailBean);
         mViewPager.setAdapter(picDetailAdapter);
         mViewPager.setCurrentItem(0);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return true;
     }
 
     public void requestData() {
@@ -108,10 +129,9 @@ public class PicDetailActivity extends AppCompatActivity implements DefineView {
                             public void run() {
                                 LogUtils.d(TAG, ": 解析id" + mImageDetailBean);
                                 if (mImageDetailBean != null) {
-                                    mPhotosBeens = mImageDetailBean.getPhotos();
+//                                    mPhotosBeens = mImageDetailBean.getPhotos();
                                     bindData();
                                 }
-
                             }
                         });
                     }
@@ -121,8 +141,6 @@ public class PicDetailActivity extends AppCompatActivity implements DefineView {
 
                     }
                 });
-
-
             }
         });
 
@@ -130,16 +148,16 @@ public class PicDetailActivity extends AppCompatActivity implements DefineView {
 
     public class PicDetailAdapter extends PagerAdapter {
 
-        private List<ImageDetailBean.PhotosBean> mPhotosBeens;
-        ;
+//        private List<ImageDetailBean.PhotosBean> mPhotosBeens;
+        private ImageDetailBean mImageDetailBean;
 
-        public PicDetailAdapter(List<ImageDetailBean.PhotosBean> photosBeens) {
-            mPhotosBeens = photosBeens;
+        public PicDetailAdapter(ImageDetailBean imageDetailBean) {
+            mImageDetailBean = imageDetailBean;
         }
 
         @Override
         public int getCount() {
-            return mPhotosBeens.size();
+            return mImageDetailBean.getPhotos().size();
         }
 
         @Override
@@ -155,12 +173,21 @@ public class PicDetailActivity extends AppCompatActivity implements DefineView {
             TextView tv_pic_sum = (TextView) view.findViewById(R.id.tv_pic_sum);
             final ScrollView sv_content = (ScrollView) view.findViewById(R.id.sv_content);
             TextView tv_pic_content = (TextView) view.findViewById(R.id.tv_pic_content);
-            ImageDetailBean.PhotosBean photosBean = mPhotosBeens.get(position);
-            final String title = photosBean.getImgtitle();
-            final String note = photosBean.getNote();
+            String setName = mImageDetailBean.getSetname();
+            String postid = mImageDetailBean.getPostid();
+            ImageDetailBean.PhotosBean photosBean = mImageDetailBean.getPhotos().get(position);
+            LogUtils.d(TAG, setName);
+            String title = photosBean.getImgtitle();
+            String note = photosBean.getNote();
             isGone = false;
+            if (title != null && !title.equals("")) {
+                tv_title.setText(title);
+            } else if (setName != null && !setName.equals("")){
+                tv_title.setText(setName);
+            } else {
+                tv_title.setText(postid);
+            }
 
-            tv_title.setText(title);
             if (note != null) {
                 tv_pic_content.setText(note);
                 isGone = false;
@@ -168,6 +195,8 @@ public class PicDetailActivity extends AppCompatActivity implements DefineView {
                 sv_content.setVisibility(View.GONE);
                 isGone = true;
             }
+
+            tv_pic_sum.setText((position + 1) + "/" + mImageDetailBean.getPhotos().size());
 
             Glide.with(mContext)
                     .load(photosBean.getImgurl())
@@ -179,7 +208,7 @@ public class PicDetailActivity extends AppCompatActivity implements DefineView {
             iv_pic.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d(TAG, "onClick: " + note);
+//                    Log.d(TAG, "onClick: " + note);
                     if (isGone) {
                         sv_content.setVisibility(View.VISIBLE);
                         isGone = false;

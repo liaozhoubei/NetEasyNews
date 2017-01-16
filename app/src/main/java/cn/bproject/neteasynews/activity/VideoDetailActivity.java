@@ -3,9 +3,12 @@ package cn.bproject.neteasynews.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -68,6 +71,16 @@ public class VideoDetailActivity extends AppCompatActivity implements DefineView
 
     @Override
     public void initView() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowTitleEnabled(false);
+            actionBar.setHomeAsUpIndicator(R.drawable.icon_back);
+        }
+
+
         mRl_video = (RelativeLayout) findViewById(R.id.rl_video);
         // 显示缓冲百分比的TextView
         percentTv = (TextView) findViewById(R.id.buffer_percent);
@@ -181,6 +194,16 @@ public class VideoDetailActivity extends AppCompatActivity implements DefineView
             });
 
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return true;
     }
 
     /**

@@ -5,4 +5,7 @@
     <dimen name="item_news_height">90dp</dimen>
 
     <dimen name="item_big_image_height">150dp</dimen>
+
+
+    <dimen name="item_margin">8dp</dimen>
 </resources>

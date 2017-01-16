@@ -34,7 +34,7 @@ public class PicListAdapter extends RecyclerView.Adapter<PicListAdapter.ViewHold
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = View.inflate(mContext, R.layout.item_pic_linearlayout, null);
+        View view = View.inflate(mContext, R.layout.item_pic_layout, null);
         ViewHolder holder = new ViewHolder(view);
         return holder;
     }

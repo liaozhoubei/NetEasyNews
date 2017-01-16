@@ -53,6 +53,16 @@ public class ImageDetailBean {
     private String source;
     // 文章的url地址
     private String url;
+
+    public String getSetname() {
+        return setname;
+    }
+
+    public void setSetname(String setname) {
+        this.setname = setname;
+    }
+
+    private String setname;
     // 图片集合信息
     private List<PhotosBean> photos;
 

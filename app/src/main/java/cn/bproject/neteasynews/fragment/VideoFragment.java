@@ -32,6 +32,7 @@ import cn.bproject.neteasynews.http.DataParse;
 import cn.bproject.neteasynews.http.HttpCallbackListener;
 import cn.bproject.neteasynews.http.HttpHelper;
 import cn.bproject.neteasynews.widget.ClassicRefreshHeaderView;
+import cn.bproject.neteasynews.widget.DividerGridItemDecoration;
 import cn.bproject.neteasynews.widget.LoadMoreFooterView;
 import cn.bproject.neteasynews.widget.NormalTitleBar;
 
@@ -77,6 +78,7 @@ public class VideoFragment extends Fragment implements DefineView {
         mIRecyclerView = (IRecyclerView) mView.findViewById(iRecyclerView);
         mIRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 //        mIRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        mIRecyclerView.addItemDecoration(new DividerGridItemDecoration(getActivity()));
         mLoadMoreFooterView = (LoadMoreFooterView) mIRecyclerView.getLoadMoreFooterView();
         ClassicRefreshHeaderView classicRefreshHeaderView = new ClassicRefreshHeaderView(getActivity());
         classicRefreshHeaderView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, DensityUtils.dip2px(getActivity(), 80)));
