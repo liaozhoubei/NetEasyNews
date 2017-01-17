@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -68,7 +69,15 @@ public class CommonUtils {
     }
 
     public static Resources getResoure() {
-        return MyApplication.getInstance().getResources();
+        MyApplication myApplication = MyApplication.getInstance();
+        Resources resources = null;
+        if (myApplication != null){
+            resources = myApplication.getResources();
+        }else {
+            Log.d("CommonUtils", "getResoure: " + "不得了了，居然是空的");
+        }
+
+        return resources;
     }
 
     public static String[] getStringArray(int resid) {

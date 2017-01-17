@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextPaint;
+import android.util.Log;
 import android.view.MenuItem;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -18,6 +19,9 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import cn.bproject.neteasynews.R;
@@ -94,12 +98,7 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
 
     @Override
     public void initValidata() {
-
-        //设置webview
-        mWebView.setWebChromeClient(new MyWebChromeClient());
-        mWebView.setWebViewClient(new MyWebViewClient());
         mWebSettings = mWebView.getSettings();
-
         // 打开页面时， 自适应屏幕
         mWebSettings.setUseWideViewPort(true); //将图片调整到适合webview的大小
         mWebSettings.setLoadWithOverviewMode(true); // 缩放至屏幕的大小
@@ -115,14 +114,18 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
         mWebSettings.setBlockNetworkImage(true);
         //开启缓存机制
         mWebSettings.setAppCacheEnabled(true);
-
-
+        //设置webview
+        mWebView.setWebChromeClient(new MyWebChromeClient());
+        mWebView.setWebViewClient(new MyWebViewClient());
+        // 将设置好的JavaScriptInterface对象传入，第二个参数则是为这个对象设置名称（可随意）
+        mWebView.addJavascriptInterface(new JavaScriptInterface(), "androidMethod");
         // 创建线程池
         mThreadPool = ThreadManager.getThreadPool();
         mThreadPool.execute(new Runnable() {
             @Override
             public void run() {
                 String url = Api.DetailUrl + mDocid + Api.endDetailUrl;
+                Log.d(TAG, "文章url为: " + url);
                 HttpHelper.get(url, new HttpCallbackListener() {
                     @Override
                     public void onSuccess(String result) {
@@ -162,8 +165,7 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
             details_time.setText(ptime);
 
             //details_content.loadData(articleBean.getContext(),"text/html","UTF-8");
-            mWebView.loadDataWithBaseURL(Api.host, content, "text/html", "UTF-8", "");
-
+            mWebView.loadDataWithBaseURL(null, content, "text/html", "UTF-8", "");
         }
     }
 
@@ -175,6 +177,88 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
                 break;
         }
         return true;
+    }
+
+    /**
+     * 对获得的文章详情判断是否有图片，
+     * 如果有图片则通过替换字符串的方式获取图片url
+     *
+     * @param newsDetail
+     */
+    private void changeNewsDetail(NewsDetailBean newsDetail) {
+        List<NewsDetailBean.ImgBean> imgSrcs = newsDetail.getImg();
+        if (isChange(imgSrcs)) {
+            String newsBody = newsDetail.getBody();
+            newsBody = changeNewsBody(imgSrcs, newsBody);
+            newsDetail.setBody(newsBody);
+        }
+    }
+
+    /**
+     * 判断是否有图片集合
+     * @param imgSrcs
+     * @return
+     */
+    private boolean isChange(List<NewsDetailBean.ImgBean> imgSrcs) {
+        return imgSrcs != null && imgSrcs.size() >= 0;
+    }
+
+    /**
+     * 将图片替换为能够直接使用的标签，即将<!--IMG#3-->  =》<img src="xxx">
+     *
+     * @param imgSrcs  获取到的图片资源数组
+     * @param newsBody 修改后的文章详情
+     * @return
+     */
+    private String changeNewsBody(List<NewsDetailBean.ImgBean> imgSrcs, String newsBody) {
+        String oldChars = "";
+        String newChars = "";
+        for (int i = 0; i < imgSrcs.size(); i++) {
+            oldChars = "<!--IMG#" + i + "-->";
+            // 在客户端解决WebView图片屏幕适配的问题，在<img标签下添加style='max-width:90%;height:auto;'即可
+            newChars = "<img" + " style='max-width:100%;height:auto;' " + "src=\"" + imgSrcs.get(i).getSrc() + "\"" + "/>";
+            newsBody = newsBody.replace(oldChars, newChars);
+        }
+        Log.d(TAG, "changeNewsBody: " + newsBody);
+        return newsBody;
+    }
+
+    /**
+     * 被JavaScript调用的Android方法
+     *  点击webView中的图片能够跳转到PhotoActivity中查看大图
+     */
+    class JavaScriptInterface {
+        /**
+         * 在javaScript中获得html中的图片url
+         * @param imageUrl  图片url
+         */
+        @android.webkit.JavascriptInterface
+        public void startPhotoActivity(String imageUrl) {
+            Intent intent = new Intent(NewsDetailActivity.this, PhotoActivity.class);
+            intent.putExtra("image_url", imageUrl);
+            startActivity(intent);
+        }
+    }
+
+    /**
+     * 读取资源文件，将js方法以字符串方法返回
+     *
+     * @return
+     */
+    private String readJS() {
+        try {
+            InputStream inStream = getAssets().open("js.txt");
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            byte[] bytes = new byte[1024];
+            int len = 0;
+            while ((len = inStream.read(bytes)) > 0) {
+                outStream.write(bytes, 0, len);
+            }
+            return outStream.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     class MyWebChromeClient extends WebChromeClient {
@@ -197,6 +281,9 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
             super.onPageFinished(view, url);
             LogUtils.d(TAG, "网页加载完成..." + url);
             mWebSettings.setBlockNetworkImage(false);
+            // 网页加载完毕后，将其js方法注入到网页中
+            mWebView.loadUrl("javascript:(" + readJS() + ")()");
+
         }
 
         @Override
@@ -209,38 +296,7 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             LogUtils.d(TAG, "拦截到URL信息为:" + url);
             return super.shouldOverrideUrlLoading(view, url);
-
         }
     }
 
-    private void changeNewsDetail(NewsDetailBean newsDetail) {
-        List<NewsDetailBean.ImgBean> imgSrcs = newsDetail.getImg();
-        if (isChange(imgSrcs)) {
-            String newsBody = newsDetail.getBody();
-            newsBody = changeNewsBody(imgSrcs, newsBody);
-            newsDetail.setBody(newsBody);
-        }
-    }
-
-    private boolean isChange(List<NewsDetailBean.ImgBean> imgSrcs) {
-        return imgSrcs != null && imgSrcs.size() >= 2;
-    }
-
-    private String changeNewsBody(List<NewsDetailBean.ImgBean> imgSrcs, String newsBody) {
-        for (int i = 0; i < imgSrcs.size(); i++) {
-            String oldChars = "<!--IMG#" + i + "-->";
-            String newChars;
-            if (i == 0) {
-                newChars = "";
-            } else {
-                // 在客户端解决WebView图片屏幕适配的问题，在<img标签下添加style='max-width:90%;height:auto;'即可
-                newChars = "<img" + " style='max-width:100%;height:auto;' " + "src=\"" + imgSrcs.get(i).getSrc() + "\"" + "/>";
-                LogUtils.d(TAG, "changeNewsBody: " + newChars);
-
-            }
-            newsBody = newsBody.replace(oldChars, newChars);
-
-        }
-        return newsBody;
-    }
 }

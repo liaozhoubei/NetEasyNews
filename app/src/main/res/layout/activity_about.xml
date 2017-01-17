@@ -38,33 +38,18 @@
             android:textSize="13sp"/>
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="vertical">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp">
-
-            <TextView
-                android:id="@+id/tv_new_version"
-                style="@style/menuItem"
-                android:clickable="true"
-                android:text="检查更新"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="15dp"
-                android:text="1.0"
-                android:textColor="@color/colorSubtitle"
-                android:textSize="13sp"
-                android:visibility="gone"/>
-        </RelativeLayout>
+        <TextView
+            android:id="@+id/tv_new_version"
+            style="@style/menuItem"
+            android:clickable="true"
+            android:text="检查更新"/>
 
         <View
             style="@style/horizontalLine"
@@ -88,6 +73,7 @@
 
 
     </LinearLayout>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -153,7 +139,6 @@
         </LinearLayout>
 
     </LinearLayout>
-
 
 
 </LinearLayout>

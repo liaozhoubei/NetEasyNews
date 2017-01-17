@@ -32,6 +32,7 @@
         <activity android:name=".activity.FeedbackActivity"/>
         <activity android:name=".webview.WebViewActivity">
         </activity>
+        <activity android:name=".activity.PhotoActivity"/>
     </application>
 
 </manifest>

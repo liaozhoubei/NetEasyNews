@@ -1,8 +1,10 @@
 package cn.bproject.neteasynews.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -71,17 +73,24 @@ public class AboutActivity extends Activity implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        String url = null;
+        Uri uri = Uri.parse("https://fir.im/cloudreader");
+        Intent intent;
         switch (v.getId()){
             case R.id.tv_new_version:
-
-                Toast.makeText(AboutActivity.this, "检查新版本", Toast.LENGTH_SHORT).show();
+                uri = Uri.parse("https://github.com/liaozhoubei/NetEasyNews");
+                intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+                //Toast.makeText(AboutActivity.this, "检查新版本", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.tv_function:
                 Toast.makeText(AboutActivity.this, "喜欢", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.tv_about_star:
-                Toast.makeText(AboutActivity.this, "关于", Toast.LENGTH_SHORT).show();
+
+               // Toast.makeText(AboutActivity.this, "关于", Toast.LENGTH_SHORT).show();
+                uri = Uri.parse("https://github.com/liaozhoubei/NetEasyNews");
+                intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
                 break;
         }
     }

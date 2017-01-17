@@ -15,9 +15,38 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:title="用户中心"/>
 
-    <ListView
-        android:id="@+id/lv_about"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_new_version"
+            style="@style/menuItem"
+            android:clickable="true"
+            android:text="项目主页"/>
+
+        <View
+            style="@style/horizontalLine"
+            android:layout_marginLeft="10dp"/>
+
+        <TextView
+            android:id="@+id/tv_function"
+            style="@style/menuItem"
+            android:clickable="true"
+            android:text="问题反馈"/>
+
+        <View
+            style="@style/horizontalLine"
+            android:layout_marginLeft="10dp"/>
+
+        <TextView
+            android:id="@+id/tv_about_star"
+            style="@style/menuItem"
+            android:clickable="true"
+            android:text="关于App"/>
+
+    </LinearLayout>
 
 </LinearLayout>
