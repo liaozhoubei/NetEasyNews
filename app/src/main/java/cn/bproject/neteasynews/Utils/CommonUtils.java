@@ -5,7 +5,6 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -14,8 +13,6 @@ import android.view.WindowManager;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
-
-import cn.bproject.neteasynews.MyApplication;
 
 /**
  * Created by jingbin on 2016/11/22.
@@ -69,13 +66,7 @@ public class CommonUtils {
     }
 
     public static Resources getResoure() {
-        MyApplication myApplication = MyApplication.getInstance();
-        Resources resources = null;
-        if (myApplication != null){
-            resources = myApplication.getResources();
-        }else {
-            Log.d("CommonUtils", "getResoure: " + "不得了了，居然是空的");
-        }
+        Resources resources = UIUtils.getContext().getResources();
 
         return resources;
     }

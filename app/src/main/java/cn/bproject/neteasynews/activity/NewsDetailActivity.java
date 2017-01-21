@@ -19,12 +19,10 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import cn.bproject.neteasynews.R;
+import cn.bproject.neteasynews.Utils.IOUtils;
 import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.Utils.ThreadManager;
 import cn.bproject.neteasynews.bean.NewsDetailBean;
@@ -240,27 +238,6 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
         }
     }
 
-    /**
-     * 读取资源文件，将js方法以字符串方法返回
-     *
-     * @return
-     */
-    private String readJS() {
-        try {
-            InputStream inStream = getAssets().open("js.txt");
-            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            byte[] bytes = new byte[1024];
-            int len = 0;
-            while ((len = inStream.read(bytes)) > 0) {
-                outStream.write(bytes, 0, len);
-            }
-            return outStream.toString();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     class MyWebChromeClient extends WebChromeClient {
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
@@ -282,7 +259,7 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
             LogUtils.d(TAG, "网页加载完成..." + url);
             mWebSettings.setBlockNetworkImage(false);
             // 网页加载完毕后，将其js方法注入到网页中
-            mWebView.loadUrl("javascript:(" + readJS() + ")()");
+            mWebView.loadUrl("javascript:(" + IOUtils.readJS("js.txt") + ")()");
 
         }
 

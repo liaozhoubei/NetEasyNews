@@ -2,6 +2,8 @@ package cn.bproject.neteasynews.bean;
 
 /**
  * Created by Ivan on 15/9/25.
+ * 底部标签栏标签
+ * 新闻、图片、视频、我
  */
 public class Tab {
 
