@@ -37,6 +37,6 @@ dependencies {
     compile 'com.github.chrisbanes:PhotoView:latest.release'
     compile project(':library:InitActivity')
     compile project(':library:irecyclerview')
-    compile project(':library:pulltorefresh')
+
     compile project(':channelmanager')
 }

@@ -1,4 +1,3 @@
 include ':app', ':channelmanager'
-include ':library:pulltorefresh'
 include ':library:InitActivity'
 include ':library:irecyclerview'
