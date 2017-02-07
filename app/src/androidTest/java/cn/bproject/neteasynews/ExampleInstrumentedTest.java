@@ -5,11 +5,19 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
+import com.example.channelmanager.ProjectChannelBean;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import cn.bproject.neteasynews.Utils.IOUtils;
 import cn.bproject.neteasynews.bean.ImageDetailBean;
 import cn.bproject.neteasynews.bean.NewsDetailBean;
 import cn.bproject.neteasynews.bean.NewsListNormalBean;
@@ -20,7 +28,6 @@ import cn.bproject.neteasynews.http.DataParse;
 import cn.bproject.neteasynews.http.HttpCallbackListener;
 import cn.bproject.neteasynews.http.HttpHelper;
 
-import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -30,6 +37,8 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
+    public static final String TAG = "ExampleInstrumentedTest";
+
     @Test
     public void useAppContext() throws Exception {
         // Context of the app under test.
@@ -156,6 +165,17 @@ public class ExampleInstrumentedTest {
                 Log.e(TAG, "onError: " + result + "    " + e );
             }
         });
-
     }
+
+    @Test
+    public void getMoreChannelFromAsset(){
+        String moreChannel = IOUtils.readFromFile("projectChannel.txt");
+        List<ProjectChannelBean> projectChannelBeanList = new ArrayList<>();
+        JsonArray array = new JsonParser().parse(moreChannel).getAsJsonArray();
+        for (final JsonElement elem : array) {
+            projectChannelBeanList.add(new Gson().fromJson(elem, ProjectChannelBean.class));
+        }
+        Log.e(TAG, "getMoreChannelFromAsset: " + projectChannelBeanList.get(1).getTname());
+    }
+
 }

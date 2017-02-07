@@ -259,7 +259,7 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
             LogUtils.d(TAG, "网页加载完成..." + url);
             mWebSettings.setBlockNetworkImage(false);
             // 网页加载完毕后，将其js方法注入到网页中
-            mWebView.loadUrl("javascript:(" + IOUtils.readJS("js.txt") + ")()");
+            mWebView.loadUrl("javascript:(" + IOUtils.readFromFile("js.txt") + ")()");
 
         }
 

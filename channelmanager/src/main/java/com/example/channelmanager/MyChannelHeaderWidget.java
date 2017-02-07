@@ -27,7 +27,7 @@ public class MyChannelHeaderWidget implements IChannelType {
     }
 
     @Override
-    public void bindViewHolder(final ChannelAdapter.ChannelViewHolder holder, int position, ChannelBean data) {
+    public void bindViewHolder(final ChannelAdapter.ChannelViewHolder holder, int position, ProjectChannelBean data) {
         final MyChannelHeaderViewHolder viewHolder = (MyChannelHeaderViewHolder) holder;
         // 右侧按键点击时改变样式，如编辑-》完成
         viewHolder.mEditModeTv.setOnClickListener(new View.OnClickListener() {

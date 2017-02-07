@@ -5,13 +5,13 @@ package cn.bproject.neteasynews.bean;
  * 底部标签栏标签
  * 新闻、图片、视频、我
  */
-public class Tab {
+public class BottomTab {
 
     private  int title;
     private  int icon;
     private Class fragment;
 
-    public Tab(Class fragment,int title, int icon) {
+    public BottomTab(Class fragment, int title, int icon) {
         this.title = title;
         this.icon = icon;
         this.fragment = fragment;

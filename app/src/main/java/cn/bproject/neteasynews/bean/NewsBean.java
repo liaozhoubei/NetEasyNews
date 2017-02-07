@@ -7,7 +7,7 @@ package cn.bproject.neteasynews.bean;
 
 public class NewsBean {
     private String title; // 分类Tab名称
-    private String href; // 分类点击地址
+//    private String href; // 分类点击地址
     private String tid; // 分类类型
     private String column;  //  图片的分类
 
@@ -37,13 +37,13 @@ public class NewsBean {
         this.title = title;
     }
 
-    public String getHref() {
-        return href;
-    }
-
-    public void setHref(String href) {
-        this.href = href;
-    }
+//    public String getHref() {
+//        return href;
+//    }
+//
+//    public void setHref(String href) {
+//        this.href = href;
+//    }
 
     public String getTid() {
         return tid;

@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.channelmanager.ProjectChannelBean;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +19,6 @@ import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.CategoryDataUtils;
 import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.adapter.FixedPagerAdapter;
-import cn.bproject.neteasynews.bean.NewsBean;
 import cn.bproject.neteasynews.fragment.photo.PicListFragment;
 
 import static cn.bproject.neteasynews.R.id.tab_layout;
@@ -36,7 +37,7 @@ public class PhotoFragment extends Fragment{
     private View mView;
     private FixedPagerAdapter fixedPagerAdapter;
     private List<BaseFragment> fragments;
-    private static List<NewsBean> newsBeans;
+    private static List<ProjectChannelBean> channelBeanList;
     private BaseFragment mFragment;
 
 
@@ -48,7 +49,7 @@ public class PhotoFragment extends Fragment{
         myToolbar.setTitle("图片中心");
         mTabLayout = (TabLayout) mView.findViewById(tab_layout);
         mNewsViewpager = (ViewPager) mView.findViewById(R.id.news_viewpager);
-        newsBeans = CategoryDataUtils.getPicCategoryBeans();
+        channelBeanList = CategoryDataUtils.getPicCategoryBeans();
 
         initValidata();
         return mView;
@@ -56,13 +57,13 @@ public class PhotoFragment extends Fragment{
 
     public void initValidata() {
         fixedPagerAdapter = new FixedPagerAdapter(getChildFragmentManager());
-        fixedPagerAdapter.setNewsBean(newsBeans);
+        fixedPagerAdapter.setChannelBean(channelBeanList);
         fragments = new ArrayList<BaseFragment>();
-        for (int i = 0; i < newsBeans.size(); i++) {
+        for (int i = 0; i < channelBeanList.size(); i++) {
             // "推荐","","0031"
             // "明星","","0003"使用瀑布流
-            NewsBean newsBean = newsBeans.get(i);
-            BaseFragment  fragment = PicListFragment.newInstance(newsBean.getTid(),newsBean.getColumn());
+            ProjectChannelBean channelBean = channelBeanList.get(i);
+            BaseFragment  fragment = PicListFragment.newInstance(channelBean.getTid(),channelBean.getColumn());
             fragments.add(fragment);
         }
 

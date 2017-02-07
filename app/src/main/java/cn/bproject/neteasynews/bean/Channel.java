@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * Created by Bei on 2016/12/27.
- * 获取频道的bean类
+ * 获取网易新闻频道的bean类
  * 频道URL： http://c.m.163.com/nc/topicset/android/subscribe/manage/listspecial.html
  * 去除一些无法使用及已经使用在图片、视频中的频道，将获取挑选后的json数据放置在assets目录中
  * channel.txt不包含一下栏目：

@@ -20,5 +20,5 @@ public interface IChannelType {
 
     ChannelAdapter.ChannelViewHolder createViewHolder(LayoutInflater mInflater, ViewGroup parent);
 
-    void bindViewHolder(ChannelAdapter.ChannelViewHolder holder, int position, ChannelBean data);
+    void bindViewHolder(ChannelAdapter.ChannelViewHolder holder, int position, ProjectChannelBean data);
 }

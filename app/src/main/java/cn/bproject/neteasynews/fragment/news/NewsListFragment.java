@@ -132,8 +132,6 @@ public class NewsListFragment extends BaseFragment implements DefineView {
         // 创建线程池
         mThreadPool = ThreadManager.getThreadPool();
         requestData();
-
-
     }
 
     public void requestData() {
@@ -254,7 +252,7 @@ public class NewsListFragment extends BaseFragment implements DefineView {
                     String[] str = photosetID.split("\\|");
                     //  图片新闻文章所属的类目id
                     String tid = str[0].substring(4);
-                    // 图片新闻的文章id好
+                    // 图片新闻的文章id号
                     String setid = str[1];
                     intent.putExtra("TID", tid);
                     intent.putExtra("SETID", setid);

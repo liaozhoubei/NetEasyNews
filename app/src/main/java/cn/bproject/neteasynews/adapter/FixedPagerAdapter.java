@@ -4,9 +4,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.ViewGroup;
 
+import com.example.channelmanager.ProjectChannelBean;
+
 import java.util.List;
 
-import cn.bproject.neteasynews.bean.NewsBean;
 import cn.bproject.neteasynews.fragment.BaseFragment;
 
 /**
@@ -14,10 +15,10 @@ import cn.bproject.neteasynews.fragment.BaseFragment;
  */
 
 public class FixedPagerAdapter extends FragmentStatePagerAdapter {
-    private List<NewsBean> newsBeans;
+    private List<ProjectChannelBean> channelBeanList;
 
-    public void setNewsBean(List<NewsBean> newsBeans) {
-        this.newsBeans = newsBeans;
+    public void setChannelBean(List<ProjectChannelBean> newsBeans) {
+        this.channelBeanList = newsBeans;
     }
 
     private List<BaseFragment> fragments;
@@ -57,9 +58,8 @@ public class FixedPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return newsBeans.get(position % newsBeans.size()).getTitle();
+        String tname = channelBeanList.get(position % channelBeanList.size()).getTname();
+        return tname;
     }
-
-
 
 }

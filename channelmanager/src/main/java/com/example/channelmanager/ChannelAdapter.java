@@ -28,8 +28,8 @@ import java.util.List;
 
 public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ChannelViewHolder> implements
         ItemDragListener {
-    private List<ChannelBean> mMyChannelItems;
-    private List<ChannelBean> mOtherChannelItems;
+    private List<ProjectChannelBean> mMyChannelItems;
+    private List<ProjectChannelBean> mOtherChannelItems;
     private int mMyHeaderCount;
     private int mRecHeaderCount;
     private LayoutInflater mInflater;
@@ -42,7 +42,8 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ChannelV
     private static final long SPACE_TIME = 100;
     private ChannelItemClickListener channelItemClickListener;
 
-    public ChannelAdapter(Context context, RecyclerView recyclerView, List<ChannelBean> myChannelItems, List<ChannelBean> otherChannelItems,
+
+    public ChannelAdapter(Context context, RecyclerView recyclerView, List<ProjectChannelBean> myChannelItems, List<ProjectChannelBean> otherChannelItems,
                           int myHeaderCount, int recHeaderCount) {
         this.mItemTouchHelper = new ItemTouchHelper(new ItemDragHelperCallback(this));
         mItemTouchHelper.attachToRecyclerView(recyclerView);
@@ -98,7 +99,7 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ChannelV
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
         if (toPosition > 2) {
-            ChannelBean item = mMyChannelItems.get(fromPosition - mMyHeaderCount);
+            ProjectChannelBean item = mMyChannelItems.get(fromPosition - mMyHeaderCount);
             mMyChannelItems.remove(fromPosition - mMyHeaderCount);
             mMyChannelItems.add(toPosition - mMyHeaderCount, item);
             notifyItemMoved(fromPosition, toPosition);
@@ -250,6 +251,10 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ChannelV
         }
     }
 
+    /**
+     * 开启编辑模式
+     * @param parent
+     */
     private void doStartEditMode(RecyclerView parent) {
         isEditMode = true;
         int visibleChildCount = parent.getChildCount();
@@ -257,8 +262,8 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ChannelV
             View view = parent.getChildAt(i);
             ImageView imgEdit = (ImageView) view.findViewById(R.id.id_delete_icon);
             if (imgEdit != null) {
-                ChannelBean item = mMyChannelItems.get(i - mMyHeaderCount);
-                if (item.getTabType() == 2) {
+                ProjectChannelBean item = mMyChannelItems.get(i - mMyHeaderCount);
+                if (item.getTabType() == APPConst.ITEM_EDIT) {
                     imgEdit.setVisibility(View.VISIBLE);
                 } else {
                     imgEdit.setVisibility(View.INVISIBLE);
@@ -267,7 +272,11 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ChannelV
         }
     }
 
-    private void doCancelEditMode(RecyclerView parent) {
+    /**
+     * 取消编辑模式
+     * @param parent
+     */
+    public void doCancelEditMode(RecyclerView parent) {
         isEditMode = false;
         int visibleChildCount = parent.getChildCount();
         for (int i = 0; i < visibleChildCount; i++) {
@@ -277,16 +286,25 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ChannelV
                 imgEdit.setVisibility(View.INVISIBLE);
             }
         }
+
     }
 
+    /**
+     * 将我的频道的内容移动到更多频道中
+     * @param position
+     */
     private void moveMyToOther(int position) {
         int myPosition = position - mMyHeaderCount;
-        ChannelBean item = mMyChannelItems.get(myPosition);
+        ProjectChannelBean item = mMyChannelItems.get(myPosition);
         mMyChannelItems.remove(myPosition);
         mOtherChannelItems.add(0, item);
         notifyItemMoved(position, mMyChannelItems.size() + mMyHeaderCount + mRecHeaderCount);
     }
 
+    /**
+     * 将更多频道的内容移动到我的频道中
+     * @param position
+     */
     private void moveOtherToMy(int position) {
         int recPosition = processItemRemoveAdd(position);
         if (recPosition == -1) {
@@ -300,7 +318,7 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ChannelV
         if (startPosition > mOtherChannelItems.size() - 1) {
             return -1;
         }
-        ChannelBean item = mOtherChannelItems.get(startPosition);
+        ProjectChannelBean item = mOtherChannelItems.get(startPosition);
         item.setEditStatus(isEditMode ? 1 : 0);
         mOtherChannelItems.remove(startPosition);
         mMyChannelItems.add(item);
@@ -374,6 +392,7 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ChannelV
     }
 
     public interface ChannelItemClickListener {
-        void onChannelItemClick(List<ChannelBean> list, int position);
+        void onChannelItemClick(List<ProjectChannelBean> list, int position);
     }
+
 }

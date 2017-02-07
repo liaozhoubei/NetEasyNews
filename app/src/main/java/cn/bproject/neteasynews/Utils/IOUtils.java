@@ -11,11 +11,13 @@ public class IOUtils {
 	 *
 	 * @return
 	 */
-	public static String readJS(String filename) {
+	public static String readFromFile(String filename) {
 		// "js.txt"
+		InputStream inStream = null;
+		ByteArrayOutputStream outStream =null;
 		try {
-			InputStream inStream = UIUtils.getContext().getAssets().open(filename);
-			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			inStream = UIUtils.getContext().getAssets().open(filename);
+			outStream = new ByteArrayOutputStream();
 			byte[] bytes = new byte[1024];
 			int len = 0;
 			while ((len = inStream.read(bytes)) > 0) {
@@ -24,6 +26,13 @@ public class IOUtils {
 			return outStream.toString();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			if (inStream != null){
+				close(inStream);
+			}
+			if (outStream != null){
+				close(outStream);
+			}
 		}
 		return null;
 	}

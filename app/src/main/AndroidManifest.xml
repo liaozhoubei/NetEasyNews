@@ -33,6 +33,7 @@
         <activity android:name=".webview.WebViewActivity">
         </activity>
         <activity android:name=".activity.PhotoActivity"/>
+        <activity android:name=".activity.ChannelManagerActivity"/>
     </application>
 
 </manifest>

@@ -31,24 +31,26 @@ public class MyChannelWidget implements IChannelType {
     }
 
     @Override
-    public void bindViewHolder(final ChannelAdapter.ChannelViewHolder holder, final int position, final ChannelBean data) {
+    public void bindViewHolder(final ChannelAdapter.ChannelViewHolder holder, final int position, final ProjectChannelBean data) {
         final MyChannelHeaderViewHolder myHolder = (MyChannelHeaderViewHolder) holder;
-        myHolder.mChannelTitleTv.setText(data.getTabName());
+        myHolder.mChannelTitleTv.setText(data.getTname());
         // 设置文字大小，通过判断tab中的文字长度，如果有4或者4个字以上则为16sp大小
-        int textSize = data.getTabName().length() >= 4 ? 14 : 16;
+        int textSize = data.getTname().length() >= 4 ? 14 : 16;
         myHolder.mChannelTitleTv.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
+        // 通过channelbean的type值设置其文字背景颜色
+        int type = data.getTabType();
         // 设置文字背景颜色
-        myHolder.mChannelTitleTv.setBackgroundResource(data.getTabType() == 0 || data.getTabType() == 1 ?
+        myHolder.mChannelTitleTv.setBackgroundResource(type == APPConst.ITEM_DEFAULT || type == APPConst.ITEM_UNEDIT ?
                 R.drawable.channel_fixed_bg_shape : R.drawable.channel_my_bg_shape);
         // 根据tab状态设置文字颜色
-        myHolder.mChannelTitleTv.setTextColor(data.getTabType() == 0 ? Color.RED :
-                data.getTabType() == 1 ? Color.parseColor("#666666") : Color.parseColor("#333333"));
+        myHolder.mChannelTitleTv.setTextColor(type == APPConst.ITEM_DEFAULT ? Color.RED :
+                type == APPConst.ITEM_UNEDIT ? Color.parseColor("#666666") : Color.parseColor("#333333"));
         // 设置右上角删除按钮是否可见
         myHolder.mDeleteIv.setVisibility(data.getEditStatus() == 1 ? View.VISIBLE : View.INVISIBLE);
         myHolder.mChannelTitleTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (editModeHandler != null && data.getTabType() == 2) {
+                if (editModeHandler != null && data.getTabType() == APPConst.ITEM_EDIT) {
                     editModeHandler.clickMyChannel(mRecyclerView, holder);
                 }
             }
@@ -56,7 +58,7 @@ public class MyChannelWidget implements IChannelType {
         myHolder.mChannelTitleTv.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (editModeHandler != null && data.getTabType() == 2) {
+                if (editModeHandler != null && data.getTabType() == APPConst.ITEM_EDIT) {
                     editModeHandler.touchMyChannel(motionEvent, holder);
                 }
                 return false;
@@ -65,7 +67,7 @@ public class MyChannelWidget implements IChannelType {
         myHolder.mChannelTitleTv.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                if (editModeHandler != null && data.getTabType() == 2) {
+                if (editModeHandler != null && data.getTabType() == APPConst.ITEM_EDIT) {
                     editModeHandler.clickLongMyChannel(mRecyclerView, holder);
                 }
                 return true;
