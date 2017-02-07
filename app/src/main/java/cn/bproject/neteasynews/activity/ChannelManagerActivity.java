@@ -8,9 +8,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.channelmanager.APPConst;
-import com.example.channelmanager.ChannelAdapter;
-import com.example.channelmanager.GridItemDecoration;
-import com.example.channelmanager.IChannelType;
+import com.example.channelmanager.adapter.ChannelAdapter;
+import com.example.channelmanager.utils.GridItemDecoration;
+import com.example.channelmanager.base.IChannelType;
 import com.example.channelmanager.ProjectChannelBean;
 
 import java.util.ArrayList;
@@ -56,6 +56,7 @@ public class ChannelManagerActivity extends Activity implements ChannelAdapter.C
         mRecyclerAdapter = new ChannelAdapter(context, mRecyclerView, mMyChannelList, mRecChannelList, 1, 1);
         mRecyclerAdapter.setChannelItemClickListener(this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
+        mRecyclerAdapter.doCancelEditMode(mRecyclerView);
     }
 
     private void getIntentData(){
@@ -90,8 +91,8 @@ public class ChannelManagerActivity extends Activity implements ChannelAdapter.C
         }
 
         mRecChannelList = new ArrayList<>();
-        List<ProjectChannelBean> list2 = listDataSave.getDataList("moreChannel", ProjectChannelBean.class);
-        for (ProjectChannelBean projectChannelBean : list2) {
+        List<ProjectChannelBean> moreChannelList = listDataSave.getDataList("moreChannel", ProjectChannelBean.class);
+        for (ProjectChannelBean projectChannelBean : moreChannelList) {
             mRecChannelList.add(projectChannelBean);
         }
     }

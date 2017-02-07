@@ -1,10 +1,17 @@
-package com.example.channelmanager;
+package com.example.channelmanager.activity;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+
+import com.example.channelmanager.APPConst;
+import com.example.channelmanager.utils.GridItemDecoration;
+import com.example.channelmanager.ProjectChannelBean;
+import com.example.channelmanager.R;
+import com.example.channelmanager.adapter.ChannelAdapter;
+import com.example.channelmanager.base.IChannelType;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.example.channelmanager;
+package com.example.channelmanager.adapter;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -19,6 +19,19 @@ import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.example.channelmanager.APPConst;
+import com.example.channelmanager.ItemDragHelperCallback;
+import com.example.channelmanager.activity.MyChannelHeaderWidget;
+import com.example.channelmanager.activity.MyChannelWidget;
+import com.example.channelmanager.ProjectChannelBean;
+import com.example.channelmanager.R;
+import com.example.channelmanager.activity.RecChannelHeaderWidget;
+import com.example.channelmanager.activity.RecChannelWidget;
+import com.example.channelmanager.base.EditModeHandler;
+import com.example.channelmanager.base.IChannelType;
+import com.example.channelmanager.base.ItemDragListener;
+import com.example.channelmanager.base.ItemDragVHListener;
 
 import java.util.List;
 

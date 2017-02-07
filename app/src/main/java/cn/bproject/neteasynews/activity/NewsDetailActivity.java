@@ -112,6 +112,7 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
         mWebSettings.setBlockNetworkImage(true);
         //开启缓存机制
         mWebSettings.setAppCacheEnabled(true);
+        mWebSettings.setTextSize(WebSettings.TextSize.NORMAL);
         //设置webview
         mWebView.setWebChromeClient(new MyWebChromeClient());
         mWebView.setWebViewClient(new MyWebViewClient());
@@ -153,7 +154,20 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
         if (mNewsDetailBeen != null) {
 
             changeNewsDetail(mNewsDetailBeen);
-            String content = mNewsDetailBeen.getBody();
+            String body = mNewsDetailBeen.getBody();
+            // 使用css样式的方式设置图片大小
+            String css = "<style type=\"text/css\"> img {" +
+                    "width:100%;" +
+                    "height:auto;" +
+                    "}" +
+                    "body {" +
+                    "margin-right:15px;" +
+                    "margin-left:15px;" +
+                    "margin-top:15px;" +
+                    "font-size:45px;" +
+                    "}" +
+                    "</style>";
+            String html = "<html><header>" + css + "</header><body>" + body + "</body></html>";
             String title = mNewsDetailBeen.getTitle();
             String ptime = mNewsDetailBeen.getPtime();
             String source = mNewsDetailBeen.getSource();
@@ -161,9 +175,8 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
             details_title.setText(title);
             details_name.setText(source);
             details_time.setText(ptime);
-
             //details_content.loadData(articleBean.getContext(),"text/html","UTF-8");
-            mWebView.loadDataWithBaseURL(null, content, "text/html", "UTF-8", "");
+            mWebView.loadDataWithBaseURL(null, html, "text/html", "UTF-8", "");
         }
     }
 
@@ -214,7 +227,8 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
         for (int i = 0; i < imgSrcs.size(); i++) {
             oldChars = "<!--IMG#" + i + "-->";
             // 在客户端解决WebView图片屏幕适配的问题，在<img标签下添加style='max-width:90%;height:auto;'即可
-            newChars = "<img" + " style='max-width:100%;height:auto;' " + "src=\"" + imgSrcs.get(i).getSrc() + "\"" + "/>";
+            // 如："<img" + " style=max-width:100%;height:auto; " + "src=\"" + imgSrcs.get(i).getSrc() + "\"" + "/>"
+            newChars = "<img" + " src=\"" + imgSrcs.get(i).getSrc() + "\"" + "/>";
             newsBody = newsBody.replace(oldChars, newChars);
         }
         Log.d(TAG, "changeNewsBody: " + newsBody);

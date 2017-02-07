@@ -1,7 +1,10 @@
-package com.example.channelmanager;
+package com.example.channelmanager.base;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+
+import com.example.channelmanager.adapter.ChannelAdapter;
+import com.example.channelmanager.ProjectChannelBean;
 
 
 /**

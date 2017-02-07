@@ -1,4 +1,4 @@
-package com.example.channelmanager;
+package com.example.channelmanager.utils;
 
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;

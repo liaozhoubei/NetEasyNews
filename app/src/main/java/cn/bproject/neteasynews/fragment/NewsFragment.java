@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
+import com.example.channelmanager.APPConst;
 import com.example.channelmanager.ProjectChannelBean;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -22,6 +23,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import cn.bproject.neteasynews.R;
@@ -116,7 +118,8 @@ public class NewsFragment extends Fragment{
         if (isFirst){
             myChannelList = CategoryDataUtils.getChannelCategoryBeans();
             moreChannelList  = getMoreChannelFromAsset();
-
+            myChannelList = setType(myChannelList);
+            moreChannelList = setType(moreChannelList);
             listDataSave.setDataList("myChannel", myChannelList);
             listDataSave.setDataList("moreChannel", moreChannelList);
             SharedPreferences.Editor edit = sharedPreferences.edit();
@@ -145,7 +148,14 @@ public class NewsFragment extends Fragment{
         mTabLayout.setScrollPosition(tabPosition, 1, true);
     }
 
-
+    private List<ProjectChannelBean> setType(List<ProjectChannelBean> list){
+        Iterator<ProjectChannelBean> iterator = list.iterator();
+        while(iterator.hasNext()){
+            ProjectChannelBean channelBean  = iterator.next();
+            channelBean.setTabType(APPConst.ITEM_EDIT);
+        }
+        return list;
+    }
 
     /**
      * 从Asset目录中读取更多频道

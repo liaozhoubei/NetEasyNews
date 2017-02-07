@@ -1,10 +1,16 @@
-package com.example.channelmanager;
+package com.example.channelmanager.activity;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.channelmanager.ProjectChannelBean;
+import com.example.channelmanager.R;
+import com.example.channelmanager.adapter.ChannelAdapter;
+import com.example.channelmanager.base.EditModeHandler;
+import com.example.channelmanager.base.IChannelType;
 
 
 /**

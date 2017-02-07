@@ -1,7 +1,9 @@
-package com.example.channelmanager;
+package com.example.channelmanager.base;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
+
+import com.example.channelmanager.adapter.ChannelAdapter;
 
 /**
  * Created by 钟光新 on 2016/10/15 0015.
