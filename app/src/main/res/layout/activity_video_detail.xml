@@ -45,17 +45,10 @@
 
     </RelativeLayout>
 
-    <FrameLayout
-        android:id="@+id/framelayout_news_list"
+    <cn.bproject.neteasynews.widget.LoadingPage
+        android:id="@+id/loading_page"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <include layout="@layout/page_loading"/>
-
-        <include layout="@layout/page_empty"/>
-
-        <include layout="@layout/page_error"/>
-    </FrameLayout>
+        android:layout_height="match_parent"/>
 
 
 </LinearLayout>

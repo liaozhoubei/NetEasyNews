@@ -1,5 +1,6 @@
 package cn.bproject.neteasynews.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -11,13 +12,14 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextPaint;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -31,6 +33,7 @@ import cn.bproject.neteasynews.common.DefineView;
 import cn.bproject.neteasynews.http.DataParse;
 import cn.bproject.neteasynews.http.HttpCallbackListener;
 import cn.bproject.neteasynews.http.HttpHelper;
+import cn.bproject.neteasynews.widget.LoadingPage;
 
 import static cn.bproject.neteasynews.R.id.details_content;
 
@@ -41,11 +44,8 @@ import static cn.bproject.neteasynews.R.id.details_content;
 public class NewsDetailActivity extends AppCompatActivity implements DefineView {
     private final String TAG = NewsDetailActivity.class.getSimpleName();
     private TextView details_title, details_name, details_time;
-
+    private Context mContext;
     private WebView mWebView;
-    private FrameLayout home_framelayout;
-    private LinearLayout loading, empty, error;
-    private String titleUrl, titleId;
     private ThreadManager.ThreadPool mThreadPool;   // 线程池
     //    private RelativeLayout relative_content;
     private Handler handler = new Handler() {
@@ -53,18 +53,21 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             bindData();
+            showNewsPage();
         }
     };
     private WebSettings mWebSettings;
 
     private String mDocid;
     private NewsDetailBean mNewsDetailBeen;
+    private LinearLayout mPage_content;
+    private LoadingPage mLoadingPage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_newsdetail);
-
+        mContext = this;
         Intent intent = getIntent();
         mDocid = intent.getStringExtra("DOCID");
         initView();
@@ -82,7 +85,8 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
             actionBar.setHomeAsUpIndicator(R.drawable.icon_back);
         }
 
-
+        mPage_content = (LinearLayout) findViewById(R.id.page_content);
+        mLoadingPage = (LoadingPage) findViewById(R.id.loading_page);
         details_title = (TextView) this.findViewById(R.id.details_title);
         // 设置标题加粗
         TextPaint tp = details_title.getPaint();
@@ -92,10 +96,21 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
 //        details_ad = (ImageView) this.findViewById(R.id.details_ad);
         mWebView = (WebView) this.findViewById(details_content);
 
+        showLoadingPage();
     }
 
     @Override
     public void initValidata() {
+        setWebView();
+        // 将设置好的JavaScriptInterface对象传入，第二个参数则是为这个对象设置名称（可随意）
+        mWebView.addJavascriptInterface(new JavaScriptInterface(), "androidMethod");
+        requestData();
+    }
+
+    /**
+     * 设置WebView相关配置
+     */
+    private void setWebView(){
         mWebSettings = mWebView.getSettings();
         //自适应屏幕
         mWebSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
@@ -103,7 +118,6 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
         // 打开页面时， 自适应屏幕
         mWebSettings.setUseWideViewPort(true); //将图片调整到适合webview的大小
         mWebSettings.setSupportZoom(true); //支持缩放
-
         mWebSettings.setJavaScriptEnabled(true);  //开启javascript
         mWebSettings.setDomStorageEnabled(true);  //开启DOM
         mWebSettings.setDefaultTextEncodingName("utf-8"); //设置编码
@@ -118,8 +132,9 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
         //设置webview
         mWebView.setWebChromeClient(new MyWebChromeClient());
         mWebView.setWebViewClient(new MyWebViewClient());
-        // 将设置好的JavaScriptInterface对象传入，第二个参数则是为这个对象设置名称（可随意）
-        mWebView.addJavascriptInterface(new JavaScriptInterface(), "androidMethod");
+    }
+
+    private void requestData(){
         // 创建线程池
         mThreadPool = ThreadManager.getThreadPool();
         mThreadPool.execute(new Runnable() {
@@ -135,15 +150,20 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
                     }
 
                     @Override
-                    public void onError(String result, Exception e) {
+                    public void onError(final String result, Exception e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(mContext, result, Toast.LENGTH_LONG).show();
+                                showErroPage();
+                            }
+                        });
 
                     }
                 });
 
             }
         });
-
-
     }
 
     @Override
@@ -154,7 +174,6 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
     @Override
     public void bindData() {
         if (mNewsDetailBeen != null) {
-
             changeNewsDetail(mNewsDetailBeen);
             String body = mNewsDetailBeen.getBody();
             // 使用css样式的方式设置图片大小
@@ -180,6 +199,8 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
             details_time.setText(ptime);
             //details_content.loadData(articleBean.getContext(),"text/html","UTF-8");
             mWebView.loadDataWithBaseURL(null, html, "text/html", "UTF-8", "");
+        } else{
+            showEmptyPage();
         }
     }
 
@@ -191,6 +212,41 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
                 break;
         }
         return true;
+    }
+
+    /**
+     * 如果有新闻就展示新闻页面
+     */
+    private void showNewsPage() {
+        mPage_content.setVisibility(View.VISIBLE);
+        mLoadingPage.setSuccessView();
+    }
+
+    /**
+     * 展示加载页面
+     */
+    private void showLoadingPage() {
+        mPage_content.setVisibility(View.INVISIBLE);
+        mLoadingPage.setLoadingView();
+    }
+
+    /**
+     * 如果没有网络就展示空消息页面
+     */
+    private void showEmptyPage() {
+        mPage_content.setVisibility(View.INVISIBLE);
+        mLoadingPage.setEmptyView();
+    }
+
+    private void showErroPage() {
+        mPage_content.setVisibility(View.INVISIBLE);
+        mLoadingPage.setErrorView();
+        mLoadingPage.setLoadingClickListener(new LoadingPage.LoadingClickListener() {
+            @Override
+            public void clickListener() {
+                requestData();
+            }
+        });
     }
 
     /**
@@ -277,7 +333,6 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
             mWebSettings.setBlockNetworkImage(false);
             // 网页加载完毕后，将其js方法注入到网页中
             mWebView.loadUrl("javascript:(" + IOUtils.readFromFile("js.txt") + ")()");
-
         }
 
         @Override

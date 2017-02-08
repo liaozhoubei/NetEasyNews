@@ -10,8 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -39,6 +37,7 @@ import cn.bproject.neteasynews.http.HttpCallbackListener;
 import cn.bproject.neteasynews.http.HttpHelper;
 import cn.bproject.neteasynews.widget.ClassicRefreshHeaderView;
 import cn.bproject.neteasynews.widget.LoadMoreFooterView;
+import cn.bproject.neteasynews.widget.LoadingPage;
 
 import static android.content.Context.WINDOW_SERVICE;
 
@@ -58,14 +57,15 @@ public class NewsListFragment extends BaseFragment implements DefineView {
     private ThreadManager.ThreadPool mThreadPool;   // 线程池
     private boolean isPullRefresh;
     private String tid; // 栏目频道id
-    private FrameLayout mFramelayout_news_list;
-    private LinearLayout mLoading;
-    private LinearLayout mEmpty;
-    private LinearLayout mError;
-    private Button mBtn_retry;
+    //    private FrameLayout mFramelayout_news_list;
+//    private LinearLayout mLoading;
+//    private LinearLayout mEmpty;
+//    private LinearLayout mError;
+//    private Button mBtn_retry;
     private IRecyclerView mIRecyclerView;
     private LoadMoreFooterView mLoadMoreFooterView;
     private NewsListAdapter mNewsListAdapter;
+    private LoadingPage mLoadingPage;
 
 
     /**
@@ -104,6 +104,7 @@ public class NewsListFragment extends BaseFragment implements DefineView {
 
     @Override
     public void initView() {
+        mLoadingPage = (LoadingPage) mView.findViewById(R.id.loading_page);
         mIRecyclerView = (IRecyclerView) mView.findViewById(R.id.iRecyclerView);
 
         mIRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -113,12 +114,6 @@ public class NewsListFragment extends BaseFragment implements DefineView {
         // we can set view
         mIRecyclerView.setRefreshHeaderView(classicRefreshHeaderView);
 
-        mFramelayout_news_list = (FrameLayout) mView.findViewById(R.id.framelayout_news_list);
-        mLoading = (LinearLayout) mView.findViewById(R.id.loading);
-        mEmpty = (LinearLayout) mView.findViewById(R.id.empty);
-        mError = (LinearLayout) mView.findViewById(R.id.error);
-        // 点击重试按键
-        mBtn_retry = (Button) mView.findViewById(R.id.btn_retry);
     }
 
     @Override
@@ -233,6 +228,8 @@ public class NewsListFragment extends BaseFragment implements DefineView {
                 }
             }
         });
+
+
     }
 
     @Override
@@ -265,8 +262,7 @@ public class NewsListFragment extends BaseFragment implements DefineView {
                 getActivity().startActivity(intent);
             }
         });
-
-}
+    }
 
 
     /**
@@ -310,43 +306,35 @@ public class NewsListFragment extends BaseFragment implements DefineView {
      */
     private void showNewsPage() {
         mIRecyclerView.setVisibility(View.VISIBLE);
-        mFramelayout_news_list.setVisibility(View.GONE);
-        mLoading.setVisibility(View.GONE);
-        mEmpty.setVisibility(View.GONE);
-        mError.setVisibility(View.GONE);
+        mLoadingPage.setSuccessView();
+
     }
 
     /**
      * 展示加载页面
      */
     private void showLoadingPage() {
-        mIRecyclerView.setVisibility(View.GONE);
-        mFramelayout_news_list.setVisibility(View.VISIBLE);
-        mLoading.setVisibility(View.VISIBLE);
-        mEmpty.setVisibility(View.GONE);
-        mError.setVisibility(View.GONE);
-
+        mIRecyclerView.setVisibility(View.INVISIBLE);
+        mLoadingPage.setLoadingView();
     }
 
     /**
      * 如果没有网络就展示空消息页面
      */
     private void showEmptyPage() {
-        mIRecyclerView.setVisibility(View.GONE);
-        mFramelayout_news_list.setVisibility(View.VISIBLE);
-        mLoading.setVisibility(View.GONE);
-        mEmpty.setVisibility(View.VISIBLE);
-        mError.setVisibility(View.GONE);
-
+        mIRecyclerView.setVisibility(View.INVISIBLE);
+        mLoadingPage.setEmptyView();
     }
 
     private void showErroPage() {
-        mIRecyclerView.setVisibility(View.GONE);
-        mFramelayout_news_list.setVisibility(View.VISIBLE);
-        mLoading.setVisibility(View.GONE);
-        mEmpty.setVisibility(View.GONE);
-        mError.setVisibility(View.VISIBLE);
-
+        mIRecyclerView.setVisibility(View.INVISIBLE);
+        mLoadingPage.setErrorView();
+        mLoadingPage.setLoadingClickListener(new LoadingPage.LoadingClickListener() {
+            @Override
+            public void clickListener() {
+                requestData();
+            }
+        });
     }
 
 }

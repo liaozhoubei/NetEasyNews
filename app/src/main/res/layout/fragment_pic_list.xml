@@ -1,33 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+              android:layout_height="match_parent">
+
+        <com.aspsine.irecyclerview.IRecyclerView
+            android:id="@+id/iRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:loadMoreEnabled="true"
+            app:loadMoreFooterLayout="@layout/layout_irecyclerview_load_more_footer"
+            app:refreshEnabled="true"
+            app:refreshHeaderLayout="@layout/layout_irecyclerview_refresh_header"
+            />
 
 
-    <com.aspsine.irecyclerview.IRecyclerView
-        android:id="@+id/iRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:loadMoreEnabled="true"
-        app:loadMoreFooterLayout="@layout/layout_irecyclerview_load_more_footer"
-        app:refreshEnabled="true"
-        app:refreshHeaderLayout="@layout/layout_irecyclerview_refresh_header"
-        />
+        <cn.bproject.neteasynews.widget.LoadingPage
+            android:id="@+id/loading_page"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
-
-
-    <FrameLayout
-        android:id="@+id/framelayout_news_list"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
-        <include layout="@layout/page_loading"/>
-        <include layout="@layout/page_empty"/>
-        <include layout="@layout/page_error"/>
-    </FrameLayout>
-
-
-
-</LinearLayout>
+</FrameLayout>

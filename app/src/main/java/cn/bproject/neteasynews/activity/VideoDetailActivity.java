@@ -10,9 +10,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -26,6 +23,7 @@ import cn.bproject.neteasynews.fragment.VideoFragment;
 import cn.bproject.neteasynews.http.DataParse;
 import cn.bproject.neteasynews.http.HttpCallbackListener;
 import cn.bproject.neteasynews.http.HttpHelper;
+import cn.bproject.neteasynews.widget.LoadingPage;
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.Vitamio;
 import io.vov.vitamio.widget.MediaController;
@@ -45,15 +43,12 @@ public class VideoDetailActivity extends AppCompatActivity implements DefineView
     private TextView percentTv;
     private TextView netSpeedTv;
     private VideoView mVideoView;
-    private FrameLayout mFramelayout_news_list;
-    private LinearLayout mLoading;
-    private LinearLayout mEmpty;
-    private LinearLayout mError;
-    private Button mBtn_retry;
+
     private ThreadManager.ThreadPool mThreadPool;   // 线程池
     private VideoBean mVideoBean;
     private String mMp4_url;
     private RelativeLayout mRl_video;
+    private LoadingPage mLoadingPage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,12 +83,8 @@ public class VideoDetailActivity extends AppCompatActivity implements DefineView
         netSpeedTv = (TextView) findViewById(R.id.net_speed);
         mVideoView = (VideoView) findViewById(R.id.vitamio);
 
-        mFramelayout_news_list = (FrameLayout) findViewById(R.id.framelayout_news_list);
-        mLoading = (LinearLayout) findViewById(R.id.loading);
-        mEmpty = (LinearLayout) findViewById(R.id.empty);
-        mError = (LinearLayout) findViewById(R.id.error);
-        // 点击重试按键
-        mBtn_retry = (Button) findViewById(R.id.btn_retry);
+        mLoadingPage = (LoadingPage) findViewById(R.id.loading_page);
+
     }
 
     @Override
@@ -130,7 +121,7 @@ public class VideoDetailActivity extends AppCompatActivity implements DefineView
                                     showNewsPage();
                                     bindData();
                                 } else {
-                                    showErroPage();
+                                    showEmptyPage();
                                 }
 
                             }
@@ -139,7 +130,12 @@ public class VideoDetailActivity extends AppCompatActivity implements DefineView
 
                     @Override
                     public void onError(String result, Exception e) {
-
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                showErroPage();
+                            }
+                        });
                     }
                 });
 
@@ -210,44 +206,35 @@ public class VideoDetailActivity extends AppCompatActivity implements DefineView
      * 如果有新闻就展示新闻页面
      */
     private void showNewsPage() {
-
         mRl_video.setVisibility(View.VISIBLE);
-        mFramelayout_news_list.setVisibility(View.GONE);
-        mLoading.setVisibility(View.GONE);
-        mEmpty.setVisibility(View.GONE);
-        mError.setVisibility(View.GONE);
+        mLoadingPage.setSuccessView();
+
     }
 
     /**
      * 展示加载页面
      */
     private void showLoadingPage() {
-        mRl_video.setVisibility(View.GONE);
-        mFramelayout_news_list.setVisibility(View.VISIBLE);
-        mLoading.setVisibility(View.VISIBLE);
-        mEmpty.setVisibility(View.GONE);
-        mError.setVisibility(View.GONE);
-
+        mRl_video.setVisibility(View.INVISIBLE);
+        mLoadingPage.setLoadingView();
     }
 
     /**
      * 如果没有网络就展示空消息页面
      */
     private void showEmptyPage() {
-        mRl_video.setVisibility(View.GONE);
-        mFramelayout_news_list.setVisibility(View.VISIBLE);
-        mLoading.setVisibility(View.GONE);
-        mEmpty.setVisibility(View.VISIBLE);
-        mError.setVisibility(View.GONE);
-
+        mRl_video.setVisibility(View.INVISIBLE);
+        mLoadingPage.setEmptyView();
     }
 
     private void showErroPage() {
-        mRl_video.setVisibility(View.GONE);
-        mFramelayout_news_list.setVisibility(View.VISIBLE);
-        mLoading.setVisibility(View.GONE);
-        mEmpty.setVisibility(View.GONE);
-        mError.setVisibility(View.VISIBLE);
-
+        mRl_video.setVisibility(View.INVISIBLE);
+        mLoadingPage.setErrorView();
+        mLoadingPage.setLoadingClickListener(new LoadingPage.LoadingClickListener() {
+            @Override
+            public void clickListener() {
+                requestData();
+            }
+        });
     }
 }

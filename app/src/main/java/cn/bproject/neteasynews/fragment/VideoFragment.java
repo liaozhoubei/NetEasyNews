@@ -34,7 +34,7 @@ import cn.bproject.neteasynews.http.HttpHelper;
 import cn.bproject.neteasynews.widget.ClassicRefreshHeaderView;
 import cn.bproject.neteasynews.widget.DividerGridItemDecoration;
 import cn.bproject.neteasynews.widget.LoadMoreFooterView;
-import cn.bproject.neteasynews.widget.NormalTitleBar;
+import cn.bproject.neteasynews.widget.LoadingPage;
 
 import static cn.bproject.neteasynews.R.id.iRecyclerView;
 
@@ -58,7 +58,8 @@ public class VideoFragment extends BaseFragment implements DefineView {
     private final String VID = "VID";
     private LoadMoreFooterView mLoadMoreFooterView;
     private VideoListAdapter mVideoListAdapter;
-    private NormalTitleBar mNormalTitleBar;
+    private LoadingPage mLoadingPage;
+
 
     @Nullable
     @Override
@@ -72,12 +73,9 @@ public class VideoFragment extends BaseFragment implements DefineView {
 
     @Override
     public void initView() {
-//        mNormalTitleBar = (NormalTitleBar) mView.findViewById(R.id.ntb);
-//        mNormalTitleBar.setTvLeftVisiable(false);
-//        mNormalTitleBar.setTitleText("推荐视频");
 
         Toolbar myToolbar = initToolbar(mView, R.id.my_toolbar, R.id.toolbar_title, R.string.video_home);
-
+        mLoadingPage = (LoadingPage) mView.findViewById(R.id.loading_page);
         mIRecyclerView = (IRecyclerView) mView.findViewById(iRecyclerView);
         mIRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 //        mIRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
@@ -87,14 +85,7 @@ public class VideoFragment extends BaseFragment implements DefineView {
         classicRefreshHeaderView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, DensityUtils.dip2px(getActivity(), 80)));
         // we can set view
         mIRecyclerView.setRefreshHeaderView(classicRefreshHeaderView);
-
-//        mIRecyclerView.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                mIRecyclerView.setRefreshing(true);
-//            }
-//        });
-
+        showLoadingPage();
     }
 
 
@@ -124,6 +115,7 @@ public class VideoFragment extends BaseFragment implements DefineView {
                             public void run() {
                                 if (mVideoBeanList != null) {
                                     bindData();
+                                    showNewsPage();
                                 }
                             }
                         });
@@ -158,23 +150,6 @@ public class VideoFragment extends BaseFragment implements DefineView {
                                 Log.d(TAG, "下拉刷新onSuccess: " + result);
                                 isPullRefresh = true;
                                 newlist = DataParse.VideoList(result);
-//                                UIUtils.runOnUIThread(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-////                    mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.THE_END);
-////                                        isPullRefreshView();
-//                                        // 是下拉刷新
-//                                        Log.d(TAG, "isPullRefreshView: " +  mVideoBeanList.toString());
-//                                        newlist.addAll(mVideoBeanList);
-//                                        mVideoBeanList.removeAll(mVideoBeanList);
-//                                        mVideoBeanList.addAll(newlist);
-//                                        mVideoListAdapter.notifyDataSetChanged();
-//                                        Toast.makeText(getActivity(), "数据已更新", Toast.LENGTH_SHORT).show();
-//                                        // 收起刷新视图
-//                                        mIRecyclerView.setRefreshing(false);
-//
-//                                    }
-//                                });
                                 DataChange();
                             }
 
@@ -204,7 +179,6 @@ public class VideoFragment extends BaseFragment implements DefineView {
                             HttpHelper.get(url, new HttpCallbackListener() {
                                 @Override
                                 public void onSuccess(String result) {
-
                                     isPullRefresh = false;
                                     newlist = DataParse.VideoList(result);
                                     DataChange();
@@ -215,85 +189,14 @@ public class VideoFragment extends BaseFragment implements DefineView {
                                     mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.ERROR);
                                     Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show();
                                     e.printStackTrace();
+                                    showErroPage();
                                 }
                             });
-
                         }
                     });
                 }
             }
         });
-
-
-//        mListView.setMode(PullToRefreshBase.Mode.BOTH);
-//        mListView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
-//            @Override
-//            public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
-//                LogUtils.d(TAG, "onPullDownToRefresh: 下拉刷新了");
-//
-//                mThreadPool.execute(new Runnable() {
-//                    @Override
-//                    public void run() {
-//
-//                        String url = Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + 0 + Api.devId;
-//                        HttpHelper.get(url, new HttpCallbackListener() {
-//                            @Override
-//                            public void onSuccess(String result) {
-//                                newlist = DataParse.VideoList(result);
-//                                isPullRefresh = true;
-//                                DataChange();
-//                            }
-//
-//                            @Override
-//                            public void onError(String result, Exception e) {
-//
-//                            }
-//                        });
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
-//                LogUtils.d(TAG, "onPullUpToRefresh: 上拉刷新了");
-//                mStartIndex += 20;
-//
-//                LogUtils.d(TAG, "mStartIndex: " + mStartIndex);
-////                mUrl = Api.CommonUrl + Api.yaowenspecialId + "/" + mStartIndex + Api.endUrl;
-//
-//                mThreadPool.execute(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        String url = Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + mStartIndex + Api.devId;
-//                        HttpHelper.get(url, new HttpCallbackListener() {
-//                            @Override
-//                            public void onSuccess(String result) {
-//                                newlist = DataParse.VideoList(result);
-//                                isPullRefresh = false;
-//                                DataChange();
-//                            }
-//
-//                            @Override
-//                            public void onError(String result, Exception e) {
-//
-//                            }
-//                        });
-//
-//                    }
-//                });
-//            }
-//        });
-
-//        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                Intent intent = new Intent(getActivity(), VideoDetailActivity.class);
-//                intent.putExtra(VID, mVideoBeanList.get((int) l).getVid());
-////                intent.putExtra("VIDEO", mVideoBeanList.get(i));
-//                getActivity().startActivity(intent);
-//            }
-//        });
-
 
     }
 
@@ -326,7 +229,7 @@ public class VideoFragment extends BaseFragment implements DefineView {
                 Toast.makeText(getActivity(), "数据已更新", Toast.LENGTH_SHORT).show();
                 // 收起刷新视图
                 mIRecyclerView.setRefreshing(false);
-
+                showNewsPage();
             }
         });
     }
@@ -336,12 +239,14 @@ public class VideoFragment extends BaseFragment implements DefineView {
      */
     public void isPullRefreshView() {
         if (isPullRefresh) {
-            // 是下拉刷新
-            Log.d(TAG, "isPullRefreshView: " +  mVideoBeanList.toString());
-            newlist.addAll(mVideoBeanList);
-            mVideoBeanList.removeAll(mVideoBeanList);
-            mVideoBeanList.clear();
-            mVideoBeanList.addAll(newlist);
+            if (mVideoBeanList != null){
+                // 是下拉刷新
+                Log.d(TAG, "isPullRefreshView: " +  mVideoBeanList.toString());
+                newlist.addAll(mVideoBeanList);
+                mVideoBeanList.removeAll(mVideoBeanList);
+                mVideoBeanList.clear();
+                mVideoBeanList.addAll(newlist);
+            }
         } else {
             if (newlist == null) {
                 mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.THE_END);
@@ -352,5 +257,41 @@ public class VideoFragment extends BaseFragment implements DefineView {
             }
         }
         mVideoListAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * 如果有新闻就展示新闻页面
+     */
+    private void showNewsPage() {
+        mIRecyclerView.setVisibility(View.VISIBLE);
+        mLoadingPage.setSuccessView();
+
+    }
+
+    /**
+     * 展示加载页面
+     */
+    private void showLoadingPage() {
+        mIRecyclerView.setVisibility(View.INVISIBLE);
+        mLoadingPage.setLoadingView();
+    }
+
+    /**
+     * 如果没有网络就展示空消息页面
+     */
+    private void showEmptyPage() {
+        mIRecyclerView.setVisibility(View.INVISIBLE);
+        mLoadingPage.setEmptyView();
+    }
+
+    private void showErroPage() {
+        mIRecyclerView.setVisibility(View.INVISIBLE);
+        mLoadingPage.setErrorView();
+        mLoadingPage.setLoadingClickListener(new LoadingPage.LoadingClickListener() {
+            @Override
+            public void clickListener() {
+                requestData();
+            }
+        });
     }
 }

@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -124,7 +123,7 @@ public class NewsFragment extends BaseFragment {
         }
         fragments.clear();
         for (int i = 0; i < myChannelList.size(); i++) {
-            Log.d(TAG, "getDataFromSharedPreference: " + myChannelList.get(i).getTname());
+//            Log.d(TAG, "getDataFromSharedPreference: " + myChannelList.get(i).getTname());
             baseFragment = NewsListFragment.newInstance(myChannelList.get(i).getTid());
 
             fragments.add(baseFragment);

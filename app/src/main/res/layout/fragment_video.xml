@@ -6,17 +6,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
     <include layout="@layout/toolbar_page"/>
 
-
-    <!--新闻列表页的普通ListView-->
-    <com.aspsine.irecyclerview.IRecyclerView
-        android:id="@+id/iRecyclerView"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:loadMoreEnabled="true"
-        app:loadMoreFooterLayout="@layout/layout_irecyclerview_load_more_footer"
-        app:refreshEnabled="true"
-        app:refreshHeaderLayout="@layout/layout_irecyclerview_refresh_header" />
+        android:layout_height="match_parent">
+        <!--新闻列表页的普通ListView-->
+        <com.aspsine.irecyclerview.IRecyclerView
+            android:id="@+id/iRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:loadMoreEnabled="true"
+            app:loadMoreFooterLayout="@layout/layout_irecyclerview_load_more_footer"
+            app:refreshEnabled="true"
+            app:refreshHeaderLayout="@layout/layout_irecyclerview_refresh_header" />
+
+        <cn.bproject.neteasynews.widget.LoadingPage
+            android:id="@+id/loading_page"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </FrameLayout>
+
+
 </LinearLayout>
