@@ -3,7 +3,6 @@ package cn.bproject.neteasynews.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -28,7 +27,7 @@ import static cn.bproject.neteasynews.R.id.tab_layout;
  * 图片模块
  */
 
-public class PhotoFragment extends Fragment{
+public class PhotoFragment extends BaseFragment{
 
     private final String TAG = PhotoFragment.class.getSimpleName();
 
@@ -45,14 +44,20 @@ public class PhotoFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.tablayout_pager, container, false);
-        Toolbar myToolbar = (Toolbar) mView.findViewById(R.id.my_toolbar);
-        myToolbar.setTitle("图片中心");
+
+        return mView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Toolbar myToolbar = initToolbar(mView, R.id.my_toolbar, R.id.toolbar_title, R.string.picture_home);
         mTabLayout = (TabLayout) mView.findViewById(tab_layout);
         mNewsViewpager = (ViewPager) mView.findViewById(R.id.news_viewpager);
+        mView.findViewById(R.id.change_channel).setVisibility(View.GONE);
         channelBeanList = CategoryDataUtils.getPicCategoryBeans();
 
         initValidata();
-        return mView;
     }
 
     public void initValidata() {

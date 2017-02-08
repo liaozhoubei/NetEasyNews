@@ -93,7 +93,6 @@ public class NewsListFragment extends BaseFragment implements DefineView {
         windowManager.getDefaultDisplay().getMetrics(outMetrics);// 给白纸设置宽高
         long width = outMetrics.widthPixels;
         long height = outMetrics.heightPixels;
-        LogUtils.d(TAG, "width: " + width + "     height: " + height);
 
         mView = inflater.inflate(R.layout.fragment_news_list, container, false);
         initView();
@@ -151,7 +150,7 @@ public class NewsListFragment extends BaseFragment implements DefineView {
                         UIUtils.runOnUIThread(new Runnable() {
                             @Override
                             public void run() {
-                                LogUtils.d(TAG, ": 解析id" + tid);
+
                                 if (mNewsListNormalBeanList != null) {
                                     showNewsPage();
                                     bindData();
@@ -262,6 +261,7 @@ public class NewsListFragment extends BaseFragment implements DefineView {
                     intent.putExtra("DOCID", newsListNormalBean.getDocid());
 
                 }
+                //论坛、读书、漫画、态度公开课、云课堂 等栏目进入新闻详情页未处理
                 getActivity().startActivity(intent);
             }
         });

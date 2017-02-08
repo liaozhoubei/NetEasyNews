@@ -1,35 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <android.support.design.widget.CoordinatorLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <include layout="@layout/toolbar_page"/>
+
+
+    <!--新闻列表页的普通ListView-->
+    <com.aspsine.irecyclerview.IRecyclerView
+        android:id="@+id/iRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="true">
-
-
-    <RelativeLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-
-        <cn.bproject.neteasynews.widget.NormalTitleBar
-            android:id="@+id/ntb"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <!--新闻列表页的普通ListView-->
-        <com.aspsine.irecyclerview.IRecyclerView
-            android:id="@+id/iRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/ntb"
-            app:loadMoreEnabled="true"
-            app:loadMoreFooterLayout="@layout/layout_irecyclerview_load_more_footer"
-            app:refreshEnabled="true"
-            app:refreshHeaderLayout="@layout/layout_irecyclerview_refresh_header"
-            />
-    </RelativeLayout>
-
-</android.support.design.widget.CoordinatorLayout>
+        app:loadMoreEnabled="true"
+        app:loadMoreFooterLayout="@layout/layout_irecyclerview_load_more_footer"
+        app:refreshEnabled="true"
+        app:refreshHeaderLayout="@layout/layout_irecyclerview_refresh_header" />
+</LinearLayout>

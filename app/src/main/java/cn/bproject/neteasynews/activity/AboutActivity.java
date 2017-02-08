@@ -1,11 +1,11 @@
 package cn.bproject.neteasynews.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
@@ -17,7 +17,7 @@ import cn.bproject.neteasynews.R;
  * Created by liaozhoubei on 2017/1/5.
  */
 
-public class AboutActivity extends Activity implements View.OnClickListener{
+public class AboutActivity extends AppCompatActivity implements View.OnClickListener{
 
     private TextView mTv_new_version;
     private TextView mTv_function;
@@ -33,7 +33,7 @@ public class AboutActivity extends Activity implements View.OnClickListener{
     }
 
     private void initToolbar(){
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         toolbar.setTitle("");
         TextView toolbar_title = (TextView) findViewById(R.id.toolbar_title);
         toolbar_title.setText("关于第二新闻");

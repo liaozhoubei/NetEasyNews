@@ -17,7 +17,6 @@ import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.bean.BottomTab;
 import cn.bproject.neteasynews.fragment.AboutFragment;
-import cn.bproject.neteasynews.fragment.BaseFragment;
 import cn.bproject.neteasynews.fragment.NewsFragment;
 import cn.bproject.neteasynews.fragment.PhotoFragment;
 import cn.bproject.neteasynews.fragment.VideoFragment;
@@ -30,8 +29,6 @@ public class MainActivity extends AppCompatActivity {
     private FragmentTabHost mTabHost;
     private LayoutInflater mInflater;
     private List<BottomTab> mBottomTabs = new ArrayList<>(5);
-    private BaseFragment fragment;
-    private PhotoFragment photoFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

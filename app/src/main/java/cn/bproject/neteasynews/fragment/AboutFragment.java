@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +21,7 @@ import cn.bproject.neteasynews.activity.FeedbackActivity;
  * 我 页面模块
  */
 
-public class AboutFragment extends Fragment implements View.OnClickListener{
+public class AboutFragment extends BaseFragment implements View.OnClickListener{
     private final String TAG = AboutFragment.class.getSimpleName();
     private ArrayList<String> mLv_list;
 
@@ -29,6 +29,7 @@ public class AboutFragment extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
        View view = inflater.inflate(R.layout.fragment_about, null);
+        Toolbar myToolbar = initToolbar(view, R.id.my_toolbar, R.id.toolbar_title, R.string.user_home);
         TextView tv_new_version = (TextView) view.findViewById(R.id.tv_new_version);
         TextView tv_function = (TextView) view.findViewById(R.id.tv_function);
         TextView tv_about_star = (TextView) view.findViewById(R.id.tv_about_star);
@@ -45,7 +46,7 @@ public class AboutFragment extends Fragment implements View.OnClickListener{
         Uri uri;
         switch (v.getId()){
             case R.id.tv_new_version:
-//                url = "https://github.com/liaozhoubei/NetEasyNews";
+//                String url = "https://github.com/liaozhoubei/NetEasyNews";
 //                WebViewActivity.loadUrl(getActivity(), url, "加载中...");
                 uri = Uri.parse("https://github.com/liaozhoubei/NetEasyNews");
                 intent = new Intent(Intent.ACTION_VIEW, uri);

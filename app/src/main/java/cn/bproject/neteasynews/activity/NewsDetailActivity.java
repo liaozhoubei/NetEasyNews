@@ -97,9 +97,11 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
     @Override
     public void initValidata() {
         mWebSettings = mWebView.getSettings();
+        //自适应屏幕
+        mWebSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+        mWebSettings.setLoadWithOverviewMode(true); // 缩放至屏幕的大小
         // 打开页面时， 自适应屏幕
         mWebSettings.setUseWideViewPort(true); //将图片调整到适合webview的大小
-        mWebSettings.setLoadWithOverviewMode(true); // 缩放至屏幕的大小
         mWebSettings.setSupportZoom(true); //支持缩放
 
         mWebSettings.setJavaScriptEnabled(true);  //开启javascript
@@ -112,7 +114,7 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
         mWebSettings.setBlockNetworkImage(true);
         //开启缓存机制
         mWebSettings.setAppCacheEnabled(true);
-        mWebSettings.setTextSize(WebSettings.TextSize.NORMAL);
+//        mWebSettings.setTextSize(WebSettings.TextSize.NORMAL);
         //设置webview
         mWebView.setWebChromeClient(new MyWebChromeClient());
         mWebView.setWebViewClient(new MyWebViewClient());
@@ -164,10 +166,11 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
                     "margin-right:15px;" +
                     "margin-left:15px;" +
                     "margin-top:15px;" +
-                    "font-size:45px;" +
+                    "font-size:24px;" +
                     "}" +
                     "</style>";
             String html = "<html><header>" + css + "</header><body>" + body + "</body></html>";
+            Log.d(TAG, "html: " + html);
             String title = mNewsDetailBeen.getTitle();
             String ptime = mNewsDetailBeen.getPtime();
             String source = mNewsDetailBeen.getSource();

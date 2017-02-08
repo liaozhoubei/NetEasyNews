@@ -174,8 +174,8 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ChannelV
                 View targetView = layoutManager.findViewByPosition(mMyChannelItems.size()
                         + mMyHeaderCount + mRecHeaderCount);
                 View currentView = mRecyclerView.getLayoutManager().findViewByPosition(position);
-                int targetX;
-                int targetY;
+                int targetX = 0;
+                int targetY = 0;
                 if (mRecyclerView.indexOfChild(targetView) >= 0) {
                     int spanCount = ((GridLayoutManager) layoutManager).getSpanCount();
                     targetX = targetView.getLeft();
@@ -189,8 +189,10 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ChannelV
                 } else {
                     View preTargetView = layoutManager.findViewByPosition(mMyChannelItems.size()
                             + mMyHeaderCount + mRecHeaderCount - 1);
-                    targetX = preTargetView.getLeft();
-                    targetY = preTargetView.getTop() + preTargetView.getHeight() + APPConst.ITEM_SPACE;
+                    if (preTargetView != null) {
+                        targetX = preTargetView.getLeft();
+                        targetY = preTargetView.getTop() + preTargetView.getHeight() + APPConst.ITEM_SPACE;
+                    }
                 }
                 moveMyToOther(position);
                 startAnimation(mRecyclerView, currentView, targetX, targetY);
@@ -299,8 +301,7 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ChannelV
                 imgEdit.setVisibility(View.INVISIBLE);
             }
         }
-
-    }
+     }
 
     /**
      * 将我的频道的内容移动到更多频道中

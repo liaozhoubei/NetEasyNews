@@ -3,8 +3,8 @@ package cn.bproject.neteasynews.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,7 +43,7 @@ import static cn.bproject.neteasynews.R.id.iRecyclerView;
  * 视频模块
  */
 
-public class VideoFragment extends Fragment implements DefineView {
+public class VideoFragment extends BaseFragment implements DefineView {
     private final String TAG = VideoFragment.class.getSimpleName();
 
     private View mView;
@@ -72,9 +72,12 @@ public class VideoFragment extends Fragment implements DefineView {
 
     @Override
     public void initView() {
-        mNormalTitleBar = (NormalTitleBar) mView.findViewById(R.id.ntb);
-        mNormalTitleBar.setTvLeftVisiable(false);
-        mNormalTitleBar.setTitleText("推荐视频");
+//        mNormalTitleBar = (NormalTitleBar) mView.findViewById(R.id.ntb);
+//        mNormalTitleBar.setTvLeftVisiable(false);
+//        mNormalTitleBar.setTitleText("推荐视频");
+
+        Toolbar myToolbar = initToolbar(mView, R.id.my_toolbar, R.id.toolbar_title, R.string.video_home);
+
         mIRecyclerView = (IRecyclerView) mView.findViewById(iRecyclerView);
         mIRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 //        mIRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));

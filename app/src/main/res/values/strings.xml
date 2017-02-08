@@ -17,4 +17,10 @@
     <string name="string_about_tv_bottom_right">来自 宝塔山上的猫</string>
     <string name="string_about_tv_botton_copyright">Copyright ©2015-2017</string>
     <string name="version_name">当前版本 V</string>
+
+    <string name="news_home">新闻中心</string>
+    <string name="picture_home">图片中心</string>
+    <string name="video_home">推荐视频</string>
+    <string name="user_home">用户中心</string>
+
 </resources>

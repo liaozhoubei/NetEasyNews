@@ -14,6 +14,7 @@ import com.example.channelmanager.base.IChannelType;
 import com.example.channelmanager.ProjectChannelBean;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import cn.bproject.neteasynews.R;
@@ -56,7 +57,6 @@ public class ChannelManagerActivity extends Activity implements ChannelAdapter.C
         mRecyclerAdapter = new ChannelAdapter(context, mRecyclerView, mMyChannelList, mRecChannelList, 1, 1);
         mRecyclerAdapter.setChannelItemClickListener(this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
-        mRecyclerAdapter.doCancelEditMode(mRecyclerView);
     }
 
     private void getIntentData(){
@@ -99,6 +99,13 @@ public class ChannelManagerActivity extends Activity implements ChannelAdapter.C
 
     @Override
     protected void onPause() {
+
+        Iterator<ProjectChannelBean> iterator = mMyChannelList.iterator();
+        while (iterator.hasNext()){
+            ProjectChannelBean projectChannelBean = iterator.next();
+            // 将当前模式设置为不可编辑状态
+            projectChannelBean.setEditStatus(0);
+        }
         listDataSave.setDataList("myChannel", mMyChannelList);
         listDataSave.setDataList("moreChannel", mRecChannelList);
 
@@ -108,6 +115,7 @@ public class ChannelManagerActivity extends Activity implements ChannelAdapter.C
     @Override
     public void finish() {
         mRecyclerAdapter.doCancelEditMode(mRecyclerView);
+
         for (int i = 0; i < mMyChannelList.size(); i ++) {
             ProjectChannelBean projectChannelBean = mMyChannelList.get(i);
             if (projectChannelBean.getTabType() == 0){

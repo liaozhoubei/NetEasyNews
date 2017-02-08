@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -41,7 +40,7 @@ import static cn.bproject.neteasynews.R.id.tab_layout;
  * 新闻模块
  */
 
-public class NewsFragment extends Fragment{
+public class NewsFragment extends BaseFragment {
 
     private final String TAG = NewsFragment.class.getSimpleName();
 
@@ -65,19 +64,21 @@ public class NewsFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.tablayout_pager, container, false);
+
+        return mView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         mTabLayout = (TabLayout) mView.findViewById(tab_layout);
         mNewsViewpager = (ViewPager) mView.findViewById(R.id.news_viewpager);
         mChange_channel = (ImageButton) mView.findViewById(R.id.change_channel);
 
-        Toolbar myToolbar = (Toolbar) mView.findViewById(R.id.my_toolbar);
-        myToolbar.setTitle("新闻中心");
-//        getActivity().setSupportActionBar(myToolbar);
-
+        Toolbar myToolbar = initToolbar(mView, R.id.my_toolbar, R.id.toolbar_title, R.string.news_home);
         initValidata();
         Listener();
-        return mView;
     }
-
 
 
     private void initValidata() {
@@ -85,27 +86,20 @@ public class NewsFragment extends Fragment{
         listDataSave = new ListDataSave(getActivity(), "channel");
         fragments = new ArrayList<BaseFragment>();
         fixedPagerAdapter = new FixedPagerAdapter(getChildFragmentManager());
-        mTabLayout.setupWithViewPager(mNewsViewpager);
 
+        mTabLayout.setupWithViewPager(mNewsViewpager);
         setData();
     }
 
-    public void setData(){
+    public void setData() {
         getDataFromSharedPreference();
         fixedPagerAdapter.setChannelBean(myChannelList);
+
         fixedPagerAdapter.setFragments(fragments);
         mNewsViewpager.setAdapter(fixedPagerAdapter);
     }
 
-    /**
-     * 在myChannelList发生改变的时候更新ui，在MainActivity调用
-     */
-    public void notifyChannelChange(){
-        getDataFromSharedPreference();
-        fixedPagerAdapter.setChannelBean(myChannelList);
-        fixedPagerAdapter.setFragments(fragments);
-        fixedPagerAdapter.notifyDataSetChanged();
-    }
+
 
 
     /**
@@ -113,11 +107,11 @@ public class NewsFragment extends Fragment{
      * 如果第一次进入，直接获取设置好的频道
      * 如果不是第一次进入，则从sharedPrefered中获取设置好的频道
      */
-    private void getDataFromSharedPreference(){
+    private void getDataFromSharedPreference() {
         isFirst = sharedPreferences.getBoolean("isFirst", true);
-        if (isFirst){
+        if (isFirst) {
             myChannelList = CategoryDataUtils.getChannelCategoryBeans();
-            moreChannelList  = getMoreChannelFromAsset();
+            moreChannelList = getMoreChannelFromAsset();
             myChannelList = setType(myChannelList);
             moreChannelList = setType(moreChannelList);
             listDataSave.setDataList("myChannel", myChannelList);
@@ -127,13 +121,12 @@ public class NewsFragment extends Fragment{
             edit.commit();
         } else {
             myChannelList = listDataSave.getDataList("myChannel", ProjectChannelBean.class);
-            for (ProjectChannelBean bean: myChannelList ) {
-                Log.d(TAG, "getDataFromSharedPreference: " + bean.getTname() + "=>" + bean.getTid());
-            }
         }
         fragments.clear();
         for (int i = 0; i < myChannelList.size(); i++) {
+            Log.d(TAG, "getDataFromSharedPreference: " + myChannelList.get(i).getTname());
             baseFragment = NewsListFragment.newInstance(myChannelList.get(i).getTid());
+
             fragments.add(baseFragment);
         }
         if (myChannelList.size() <= 4) {
@@ -143,15 +136,27 @@ public class NewsFragment extends Fragment{
         }
     }
 
-    public void setCurrentChannel(int tabPosition){
+    public void setCurrentChannel(int tabPosition) {
         mNewsViewpager.setCurrentItem(tabPosition);
         mTabLayout.setScrollPosition(tabPosition, 1, true);
     }
 
-    private List<ProjectChannelBean> setType(List<ProjectChannelBean> list){
+    /**
+     * 在myChannelList发生改变的时候更新ui，在MainActivity调用
+     */
+    public void notifyChannelChange() {
+        getDataFromSharedPreference();
+        fixedPagerAdapter.setChannelBean(myChannelList);
+
+        fixedPagerAdapter.setFragments(fragments);
+        fixedPagerAdapter.notifyDataSetChanged();
+
+    }
+
+    private List<ProjectChannelBean> setType(List<ProjectChannelBean> list) {
         Iterator<ProjectChannelBean> iterator = list.iterator();
-        while(iterator.hasNext()){
-            ProjectChannelBean channelBean  = iterator.next();
+        while (iterator.hasNext()) {
+            ProjectChannelBean channelBean = iterator.next();
             channelBean.setTabType(APPConst.ITEM_EDIT);
         }
         return list;
@@ -159,9 +164,10 @@ public class NewsFragment extends Fragment{
 
     /**
      * 从Asset目录中读取更多频道
+     *
      * @return
      */
-    public List<ProjectChannelBean> getMoreChannelFromAsset(){
+    public List<ProjectChannelBean> getMoreChannelFromAsset() {
         String moreChannel = IOUtils.readFromFile("projectChannel.txt");
         List<ProjectChannelBean> projectChannelBeanList = new ArrayList<>();
         JsonArray array = new JsonParser().parse(moreChannel).getAsJsonArray();
@@ -171,7 +177,7 @@ public class NewsFragment extends Fragment{
         return projectChannelBeanList;
     }
 
-    private void Listener(){
+    private void Listener() {
 //        mNewsViewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 //            @Override
 //            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -217,7 +223,4 @@ public class NewsFragment extends Fragment{
             }
         });
     }
-
-
-
 }
