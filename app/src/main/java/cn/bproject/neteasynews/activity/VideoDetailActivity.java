@@ -208,7 +208,6 @@ public class VideoDetailActivity extends AppCompatActivity implements DefineView
     private void showNewsPage() {
         mRl_video.setVisibility(View.VISIBLE);
         mLoadingPage.setSuccessView();
-
     }
 
     /**
@@ -217,6 +216,7 @@ public class VideoDetailActivity extends AppCompatActivity implements DefineView
     private void showLoadingPage() {
         mRl_video.setVisibility(View.INVISIBLE);
         mLoadingPage.setLoadingView();
+        //
     }
 
     /**
