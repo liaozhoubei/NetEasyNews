@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,7 +23,9 @@ import java.util.List;
 
 import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.DensityUtils;
+import cn.bproject.neteasynews.Utils.LocalCacheUtils;
 import cn.bproject.neteasynews.Utils.LogUtils;
+import cn.bproject.neteasynews.Utils.NetWorkUtil;
 import cn.bproject.neteasynews.Utils.ThreadManager;
 import cn.bproject.neteasynews.Utils.UIUtils;
 import cn.bproject.neteasynews.activity.NewsDetailActivity;
@@ -57,11 +60,8 @@ public class NewsListFragment extends BaseFragment implements DefineView {
     private ThreadManager.ThreadPool mThreadPool;   // 线程池
     private boolean isPullRefresh;
     private String tid; // 栏目频道id
-    //    private FrameLayout mFramelayout_news_list;
-//    private LinearLayout mLoading;
-//    private LinearLayout mEmpty;
-//    private LinearLayout mError;
-//    private Button mBtn_retry;
+    private String NEWS_LIST_SAVE_TIME = "news_list_save_time";
+
     private IRecyclerView mIRecyclerView;
     private LoadMoreFooterView mLoadMoreFooterView;
     private NewsListAdapter mNewsListAdapter;
@@ -113,7 +113,7 @@ public class NewsListFragment extends BaseFragment implements DefineView {
         classicRefreshHeaderView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, DensityUtils.dip2px(getActivity(), 80)));
         // we can set view
         mIRecyclerView.setRefreshHeaderView(classicRefreshHeaderView);
-
+        showLoadingPage();
     }
 
     @Override
@@ -122,43 +122,81 @@ public class NewsListFragment extends BaseFragment implements DefineView {
             //取出保存的频道TID
             tid = getArguments().getString("TID");
         }
-        showLoadingPage();
+
         // 创建线程池
         mThreadPool = ThreadManager.getThreadPool();
-        requestData();
+
+        mUrl = Api.CommonUrl + tid + "/" + mStartIndex + Api.endUrl;
+
+        getNewsFromCache();
+
+        if (NetWorkUtil.isNetworkConnected(getActivity())) {
+            // 有网络的情况下请求网络数据
+            requestData();
+        } else {
+            Toast.makeText(getActivity(), "没有网络", Toast.LENGTH_SHORT).show();
+            showErroPage();
+        }
+    }
+
+    /**
+     * 从缓存中读取并解析显示数据
+     */
+    private void getNewsFromCache() {
+        mThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                final String cache = LocalCacheUtils.getLocalCache(mUrl);
+                if (!TextUtils.isEmpty(cache)) {
+                    mNewsListNormalBeanList = DataParse.NewsList(cache, tid);
+                    if (mNewsListNormalBeanList != null) {
+                        UIUtils.runOnUIThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                bindData();
+                                showNewsPage();
+                            }
+                        });
+                    }
+                }
+            }
+        });
     }
 
     public void requestData() {
-        mUrl = Api.CommonUrl + tid + "/" + mStartIndex + Api.endUrl;
-//        Log.d(TAG, "mUrl地址为: " + mUrl);
+
 //        http://c.m.163.com/nc/article/list/T1467284926140/0-20.html
 //        http://c.m.163.com/nc/article/list/T1348647909107/0-20.html
 
         mThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-//                CreateNewsProtocol();
                 HttpHelper.get(mUrl, new HttpCallbackListener() {
                     @Override
                     public void onSuccess(String result) {
                         mNewsListNormalBeanList = DataParse.NewsList(result, tid);
-                        UIUtils.runOnUIThread(new Runnable() {
-                            @Override
-                            public void run() {
+                        if (mNewsListNormalBeanList != null) {
+                            saveCache(mUrl, result);
 
-                                if (mNewsListNormalBeanList != null) {
-                                    showNewsPage();
+                            UIUtils.runOnUIThread(new Runnable() {
+                                @Override
+                                public void run() {
                                     bindData();
-                                } else {
-                                    showEmptyPage();
+                                    showNewsPage();
                                 }
-                            }
-                        });
+                            });
+                        }
                     }
 
                     @Override
-                    public void onError(String result, Exception e) {
-
+                    public void onError(final String result, final Exception e) {
+                        UIUtils.runOnUIThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getActivity(), result + ":" + e, Toast.LENGTH_SHORT).show();
+                                showErroPage();
+                            }
+                        });
                     }
                 });
 
@@ -166,6 +204,8 @@ public class NewsListFragment extends BaseFragment implements DefineView {
         });
 
     }
+
+
 
     @Override
     public void initListener() {
@@ -185,12 +225,13 @@ public class NewsListFragment extends BaseFragment implements DefineView {
                             public void onSuccess(String result) {
                                 newlist = DataParse.NewsList(result, tid);
                                 isPullRefresh = true;
+                                saveCache(mUrl, result);
                                 DataChange();
                             }
 
                             @Override
                             public void onError(String result, Exception e) {
-
+                                Toast.makeText(getActivity(), result + ":" + e, Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -214,6 +255,7 @@ public class NewsListFragment extends BaseFragment implements DefineView {
                                     Log.d(TAG, "onSuccess: " + mUrl);
                                     newlist = DataParse.NewsList(result, tid);
                                     isPullRefresh = false;
+                                    saveCache(mUrl, result);
                                     DataChange();
                                 }
 

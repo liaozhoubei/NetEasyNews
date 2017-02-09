@@ -133,6 +133,7 @@ public class NewsFragment extends BaseFragment {
         } else {
             mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         }
+
     }
 
     public void setCurrentChannel(int tabPosition) {

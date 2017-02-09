@@ -3,8 +3,12 @@ package cn.bproject.neteasynews.fragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
+import cn.bproject.neteasynews.Utils.LocalCacheUtils;
+import cn.bproject.neteasynews.Utils.PrefUtils;
 
 /**
  * Created by Bei on 2016/12/24.
@@ -13,89 +17,6 @@ import android.widget.TextView;
 public abstract class BaseFragment extends Fragment{
 
     private final String TAG = BaseFragment.class.getSimpleName();
-
-//    private Context mContext;
-//
-//    private LoadingPage mLoadingPage;
-//
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        mContext = context;
-//    }
-//
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                             Bundle savedInstanceState) {
-//        Log.d(TAG, "onCreateView: BaseFragment的构造方法执行了");
-//        mLoadingPage = new LoadingPage(mContext) {
-//
-//            @Override
-//            public View onCreateSuccessView() {
-//                // 注意:此处一定要调用BaseFragment的onCreateSuccessView, 否则栈溢出
-//                View view = BaseFragment.this.onCreateSuccessView();
-//                return view;
-//            }
-//
-//            @Override
-//            public ResultState onLoad() {
-//                Log.d(TAG, "onLoad: BaseFragment执行了");
-//                return BaseFragment.this.onLoad();
-//            }
-//
-//        };
-//
-//        return mLoadingPage;
-//    }
-//
-//    // 加载成功的布局, 必须由子类来实现
-//    public abstract View onCreateSuccessView();
-//
-//    // 加载网络数据, 必须由子类来实现
-//    public abstract ResultState onLoad();
-
-
-//    /**
-//     * 未知bug，如果不在onStart或者  onResume中调用loadData()方法，则第一个fragment会一直处于loading状态
-//     * 原因为loadData()被调用的时候，BaseFragment的onCreateView没有调用，导致mLoadingPage为空。
-//     * 在此次调用的弊端为，每次使用TabLayout标签，loadData()方法会被调用两次，
-//     * 一次为Viewpager的点击事件，一次为fragment创建的时候
-//     */
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        loadData();
-//    }
-//
-//    // 开始加载数据
-//    public void loadData() {
-//        if (mLoadingPage != null) {
-//            Log.d(TAG, "loadData: mLoadingPage执行了");
-//            mLoadingPage.loadData();
-//        } else {
-//            Log.d(TAG, "loadData: mLoadingPage为空");
-//        }
-//    }
-
-
-
-//    // 对网络返回数据的合法性进行校验
-//    public ResultState check(Object obj) {
-//        if (obj != null) {
-//            if (obj instanceof ArrayList) {// 判断是否是集合
-//                ArrayList list = (ArrayList) obj;
-//
-//                if (list.isEmpty()) {
-//                    return ResultState.STATE_EMPTY;
-//                } else {
-//                    return ResultState.STATE_SUCCESS;
-//                }
-//            }
-//        }
-//
-//        return ResultState.STATE_ERROR;
-//
-//    }
 
     /**
      * 设置toolbar标题居中，没有返回键
@@ -118,5 +39,31 @@ public abstract class BaseFragment extends Fragment{
             actionBar.setDisplayShowTitleEnabled(false);
         }
         return toolbar;
+    }
+
+    public boolean isLastNews(String key) {
+        long threeHour = 3 * 60 * 60 * 1000;
+        long currentTime = System.currentTimeMillis();
+        long saveTime = PrefUtils.getLong(getActivity(), key, currentTime);
+        // 判断保存缓存的时间与现在的时间是否超过3小时，没有超过就读取缓存
+        long ll = currentTime - saveTime;
+
+        if (ll < threeHour) {
+            Log.d(TAG, "saveTime  :  " + saveTime + "   ll:  " + ll + " ll < threeHour " + (ll < threeHour));
+            return true;
+        } else {
+            Log.d(TAG, "saveTime  :  " + saveTime + "   ll:  " + ll + " ll > threeHour " + (ll > threeHour));
+            return false;
+        }
+    }
+
+    // 保存缓存
+    public void saveCache(String url, String content){
+        if (LocalCacheUtils.hasCacheFile(url)) {
+            // 清除之前的缓存
+            LocalCacheUtils.removeCache(url);
+        }
+        // 保存缓存
+        LocalCacheUtils.setDiskLruCache(url, content);
     }
 }

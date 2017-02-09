@@ -27,12 +27,8 @@ public class IOUtils {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			if (inStream != null){
-				close(inStream);
-			}
-			if (outStream != null){
-				close(outStream);
-			}
+			close(inStream);
+			close(outStream);
 		}
 		return null;
 	}

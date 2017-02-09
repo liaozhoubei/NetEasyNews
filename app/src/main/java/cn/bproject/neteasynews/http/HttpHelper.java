@@ -88,8 +88,11 @@ public class HttpHelper {
             } catch (Exception e) {
                 IOException ioException = new IOException(e.getMessage());
                 retry = retryHandler.retryRequest(ioException, ++retryCount, httpContext);//把错误异常交给重试机制，以判断是否需要采取从事
-                httpCallbackListener.onError(TAG, e);
                 LogUtils.e(TAG, "重复次数：" + retryCount + "   :"+ e);
+                if (!retry){
+                    httpCallbackListener.onError(TAG, e);
+                }
+
             }
         }
     }

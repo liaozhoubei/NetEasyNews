@@ -12,9 +12,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.LogUtils;
+import cn.bproject.neteasynews.Utils.NetWorkUtil;
 import cn.bproject.neteasynews.Utils.ThreadManager;
 import cn.bproject.neteasynews.bean.VideoBean;
 import cn.bproject.neteasynews.common.Api;
@@ -89,10 +91,14 @@ public class VideoDetailActivity extends AppCompatActivity implements DefineView
 
     @Override
     public void initValidata() {
-// 创建线程池
-        mThreadPool = ThreadManager.getThreadPool();
-        showLoadingPage();
-        requestData();
+        if (NetWorkUtil.isWifiConnected(this)){
+            // 创建线程池
+            mThreadPool = ThreadManager.getThreadPool();
+            showLoadingPage();
+            requestData();
+        } else {
+            Toast.makeText(this, "非WIFI状态", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void requestData() {
