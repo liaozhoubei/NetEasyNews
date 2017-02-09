@@ -69,9 +69,10 @@ public class HttpHelper {
         int retryCount = 0;
         boolean retry = true;
         while (retry) {
+            int stateCode = 404;
             try {
                 HttpResponse response = httpClient.execute(requestBase, httpContext);//访问网络
-                int stateCode  = response.getStatusLine().getStatusCode();
+                stateCode  = response.getStatusLine().getStatusCode();
 //                LogUtils.e(TAG, "http状态码：" + stateCode);
                 if (response != null) {
                     if (stateCode == HttpURLConnection.HTTP_OK){
@@ -90,7 +91,7 @@ public class HttpHelper {
                 retry = retryHandler.retryRequest(ioException, ++retryCount, httpContext);//把错误异常交给重试机制，以判断是否需要采取从事
                 LogUtils.e(TAG, "重复次数：" + retryCount + "   :"+ e);
                 if (!retry){
-                    httpCallbackListener.onError(TAG, e);
+                    httpCallbackListener.onError(HttpRequestCode.ReturnCode(stateCode), e);
                 }
 
             }

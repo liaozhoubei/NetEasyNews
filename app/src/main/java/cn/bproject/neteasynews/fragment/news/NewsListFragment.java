@@ -2,6 +2,8 @@ package cn.bproject.neteasynews.fragment.news;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
@@ -52,20 +54,49 @@ public class NewsListFragment extends BaseFragment implements DefineView {
 
     private final String TAG = NewsListFragment.class.getSimpleName();
     private static final String KEY = "TID";
-    private View mView;     // 布局视图
-    private List<NewsListNormalBean> mNewsListNormalBeanList;   // 启动时获得的数据
-    private List<NewsListNormalBean> newlist;   // 上拉刷新后获得的数据
-    private int mStartIndex = 0;    // 请求数据的起始参数
     private String mUrl;        // 请求网络的url
-    private ThreadManager.ThreadPool mThreadPool;   // 线程池
-    private boolean isPullRefresh;
     private String tid; // 栏目频道id
     private String NEWS_LIST_SAVE_TIME = "news_list_save_time";
 
+    private View mView;     // 布局视图
     private IRecyclerView mIRecyclerView;
     private LoadMoreFooterView mLoadMoreFooterView;
     private NewsListAdapter mNewsListAdapter;
     private LoadingPage mLoadingPage;
+
+    private List<NewsListNormalBean> mNewsListNormalBeanList;   // 启动时获得的数据
+    private List<NewsListNormalBean> newlist;   // 上拉刷新后获得的数据
+
+    private int mStartIndex = 0;    // 请求数据的起始参数
+    private final int SHOW_NEWS = 11;
+    private final int SHOW_ERROR = 12;
+
+
+    private ThreadManager.ThreadPool mThreadPool;   // 线程池
+    private boolean isPullRefresh;
+    private boolean isShowCache = false; // 是否有缓存数据被展示
+
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            int what = message.what;
+            switch (what){
+                case SHOW_NEWS:
+                    bindData();
+                    showNewsPage();
+                    break;
+                case SHOW_ERROR:
+                    String e = (String) message.obj;
+                    Toast.makeText(getActivity(), e, Toast.LENGTH_SHORT).show();
+                    // 如果有缓存内容就不展示错误页面
+                    if (!isShowCache){
+                        showErroPage();
+                    }
+                    break;
+            }
+            return false;
+        }
+    });
 
 
     /**
@@ -135,7 +166,10 @@ public class NewsListFragment extends BaseFragment implements DefineView {
             requestData();
         } else {
             Toast.makeText(getActivity(), "没有网络", Toast.LENGTH_SHORT).show();
-            showErroPage();
+            // 没有网络且没有缓存的时候才设置错误页面
+            if (!isShowCache){
+                showErroPage();
+            }
         }
     }
 
@@ -150,13 +184,10 @@ public class NewsListFragment extends BaseFragment implements DefineView {
                 if (!TextUtils.isEmpty(cache)) {
                     mNewsListNormalBeanList = DataParse.NewsList(cache, tid);
                     if (mNewsListNormalBeanList != null) {
-                        UIUtils.runOnUIThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                bindData();
-                                showNewsPage();
-                            }
-                        });
+                        isShowCache = true;
+                        Message message = mHandler.obtainMessage();
+                        message.what = SHOW_NEWS;
+                        mHandler.sendMessage(message);
                     }
                 }
             }
@@ -177,26 +208,18 @@ public class NewsListFragment extends BaseFragment implements DefineView {
                         mNewsListNormalBeanList = DataParse.NewsList(result, tid);
                         if (mNewsListNormalBeanList != null) {
                             saveCache(mUrl, result);
-
-                            UIUtils.runOnUIThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    bindData();
-                                    showNewsPage();
-                                }
-                            });
+                            Message message = mHandler.obtainMessage();
+                            message.what = SHOW_NEWS;
+                            mHandler.sendMessage(message);
                         }
                     }
 
                     @Override
-                    public void onError(final String result, final Exception e) {
-                        UIUtils.runOnUIThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(getActivity(), result + ":" + e, Toast.LENGTH_SHORT).show();
-                                showErroPage();
-                            }
-                        });
+                    public void onError(String result, Exception e) {
+                        Message message= mHandler.obtainMessage();
+                        message.what = SHOW_ERROR;
+                        message.obj = result;
+                        mHandler.sendMessage(message);
                     }
                 });
 
@@ -261,8 +284,14 @@ public class NewsListFragment extends BaseFragment implements DefineView {
 
                                 @Override
                                 public void onError(String result, Exception e) {
-                                    mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.ERROR);
-                                    Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show();
+                                    UIUtils.runOnUIThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.ERROR);
+                                            Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+
                                 }
                             });
                         }

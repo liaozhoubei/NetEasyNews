@@ -178,24 +178,6 @@ public class NewsFragment extends BaseFragment {
     }
 
     private void Listener() {
-//        mNewsViewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-//            @Override
-//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-//
-//            }
-//
-//            @Override
-//            public void onPageSelected(int position) {
-//                LogUtils.d(TAG, "onPageSelected: mNewsViewpager页面监听执行了" + position);
-//                BaseFragment fragment = fragments.get(position);
-//
-//            }
-//
-//            @Override
-//            public void onPageScrollStateChanged(int state) {
-//
-//            }
-//        });
 
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
