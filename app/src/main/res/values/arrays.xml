@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="array_about_type">
+        <item>项目主页</item>
+        <item>问题反馈</item>
+        <item>设置</item>
+        <item>关于App</item>
+    </string-array>
+
+</resources>

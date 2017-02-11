@@ -2,7 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="10dp"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical">
 
     <LinearLayout
@@ -13,12 +16,15 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="发件人:" />
+            android:textSize="@dimen/text_font_size_normal"
+            android:text="邮件主题:" />
 
         <EditText
+            android:id="@+id/subject_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="abc@163.com" />
+            android:textSize="@dimen/text_font_size_normal"
+            android:hint="概括您的意见或问题（必填）" />
     </LinearLayout>
 
     <LinearLayout
@@ -29,22 +35,36 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="收件人:" />
+            android:textSize="@dimen/text_font_size_normal"
+            android:text="联系方式:" />
 
         <EditText
+            android:id="@+id/contact_information_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="liaozhoubei@163.com" />
+            android:textAppearance="@style/TextAppearancePrimaryItem"
+            android:hint="@string/contact_information_edit_hint" />
     </LinearLayout>
 
+
     <EditText
+        android:id="@+id/feedback_edit_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:hint="反馈信息：我很喜欢这个App" />
+        android:gravity="left|top"
+        android:background="@drawable/bg_edittext"
+        android:autoLink="all"
+        android:linksClickable="false"
+        android:minLines="12"
+        android:textAppearance="@style/TextAppearancePrimaryItem"
+        android:lineSpacingMultiplier="1.2"
+        android:hint="@string/feedback_hint"/>
 
     <Button
+        android:layout_marginTop="8dp"
+        android:id="@+id/send_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="发送" />
+        android:text="提交" />
 </LinearLayout>

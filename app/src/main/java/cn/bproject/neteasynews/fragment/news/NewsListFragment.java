@@ -160,10 +160,10 @@ public class NewsListFragment extends BaseFragment implements DefineView {
         mUrl = Api.CommonUrl + tid + "/" + mStartIndex + Api.endUrl;
 
         getNewsFromCache();
-
+        requestData();
         if (NetWorkUtil.isNetworkConnected(getActivity())) {
             // 有网络的情况下请求网络数据
-            requestData();
+
         } else {
             Toast.makeText(getActivity(), "没有网络", Toast.LENGTH_SHORT).show();
             // 没有网络且没有缓存的时候才设置错误页面
