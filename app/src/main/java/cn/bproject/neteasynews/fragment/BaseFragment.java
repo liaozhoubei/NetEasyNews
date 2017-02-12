@@ -9,12 +9,18 @@ import android.widget.TextView;
 
 import cn.bproject.neteasynews.Utils.LocalCacheUtils;
 import cn.bproject.neteasynews.Utils.PrefUtils;
+import cn.bproject.neteasynews.common.DefineView;
 
 /**
  * Created by Bei on 2016/12/24.
  */
 
-public abstract class BaseFragment extends Fragment{
+public abstract class BaseFragment extends Fragment implements DefineView {
+    public final int HANDLER_SHOW_NEWS = 11;
+    public final int HANDLER_SHOW_ERROR = 12;
+    public final int HANDLER_SHOW_REFRESH_LOADMORE = 13;
+    public final int HANDLER_SHOW_REFRESH_LOADMORE_ERRO = 15;
+
 
     private final String TAG = BaseFragment.class.getSimpleName();
 

@@ -135,7 +135,7 @@ public class VideoDetailActivity extends AppCompatActivity implements DefineView
                     }
 
                     @Override
-                    public void onError(String result, Exception e) {
+                    public void onError( Exception e) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

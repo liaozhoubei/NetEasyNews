@@ -2,6 +2,8 @@ package cn.bproject.neteasynews.fragment.photo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
@@ -20,7 +22,9 @@ import java.util.List;
 
 import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.DensityUtils;
+import cn.bproject.neteasynews.Utils.LocalCacheUtils;
 import cn.bproject.neteasynews.Utils.LogUtils;
+import cn.bproject.neteasynews.Utils.NetWorkUtil;
 import cn.bproject.neteasynews.Utils.ThreadManager;
 import cn.bproject.neteasynews.Utils.UIUtils;
 import cn.bproject.neteasynews.activity.PicDetailActivity;
@@ -57,6 +61,7 @@ public class PicListFragment extends BaseFragment implements DefineView {
     private String mUrl;        // 请求网络的url
     private ThreadManager.ThreadPool mThreadPool;   // 线程池
     private boolean isPullRefresh;
+    private boolean isShowCache = false; // 是否有缓存数据被展示
 
     // 图片新闻的id，推荐和热点都为0001， 新闻和明星是0031，他们是按照column区分的
     private final String isListView = "0001";   // 使用ListView的标志
@@ -64,6 +69,45 @@ public class PicListFragment extends BaseFragment implements DefineView {
     private PicListAdapter mAdapter;
     private LoadMoreFooterView mLoadMoreFooterView;
     private LoadingPage mLoadingPage;
+
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message message) {
+            int what = message.what;
+            String result;
+            String error;
+            switch (what) {
+                case HANDLER_SHOW_NEWS:
+                    bindData();
+                    showNewsPage();
+                    break;
+                case HANDLER_SHOW_ERROR:
+                    error = (String) message.obj;
+                    if (!TextUtils.isEmpty(error) && getActivity() == null){
+                        Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
+                    }
+                    // 如果有缓存内容就不展示错误页面
+                    if (!isShowCache) {
+                        showErroPage();
+                    }
+                    break;
+                case HANDLER_SHOW_REFRESH_LOADMORE:
+                    result = (String) message.obj;
+                    newlist = DataParse.PicList(result);
+                    DataChange();
+                    break;
+                case HANDLER_SHOW_REFRESH_LOADMORE_ERRO:
+                    error = (String) message.obj;
+                    if (!TextUtils.isEmpty(error) && getActivity() == null){
+                        Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
+                    }
+                    mIRecyclerView.setRefreshing(false);
+                    mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.ERROR);
+                    break;
+            }
+            return false;
+        }
+    });
 
 
     public static PicListFragment newInstance(String tid, String column) {
@@ -109,10 +153,48 @@ public class PicListFragment extends BaseFragment implements DefineView {
             tid = getArguments().getString(KEY_TID);
             column = getArguments().getString(KEY_COLUMN);
         }
-        showLoadingPage();
         mThreadPool = ThreadManager.getThreadPool();
-        requestData();
 
+        mUrl = Api.PictureUrl + tid + column + mStartIndex + Api.endPicture;
+        getNewsFromCache();
+
+
+    }
+
+    /**
+     * 从缓存中读取并解析显示数据
+     */
+    private void getNewsFromCache() {
+        mThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                final String cache = LocalCacheUtils.getLocalCache(mUrl);
+                if (!TextUtils.isEmpty(cache)) {
+                    mPicListBeens = DataParse.PicList(cache);
+                    if (mPicListBeens != null) {
+                        isShowCache = true;
+                        Message message = mHandler.obtainMessage();
+                        message.what = HANDLER_SHOW_NEWS;
+                        mHandler.sendMessage(message);
+                    } else {
+                        isShowCache = false;
+                    }
+                }
+                if (NetWorkUtil.isNetworkConnected(getActivity())) {
+                    // 有网络的情况下请求网络数据
+                    requestData();
+                } else {
+                    sendErrorMessage(HANDLER_SHOW_ERROR, "没有网络");
+                }
+            }
+        });
+    }
+
+    public void sendErrorMessage(int what, String e) {
+        Message message = mHandler.obtainMessage();
+        message.what = what;
+        message.obj = e;
+        mHandler.sendMessage(message);
     }
 
     public void requestData() {
@@ -142,8 +224,10 @@ public class PicListFragment extends BaseFragment implements DefineView {
                     }
 
                     @Override
-                    public void onError(String result, Exception e) {
-
+                    public void onError(Exception e) {
+                        // 展示错误页面并尝试重新发出请求
+                        LogUtils.e(TAG, "requestData" + e.toString());
+                        sendErrorMessage(HANDLER_SHOW_ERROR, e.toString());
                     }
                 });
             }
@@ -222,7 +306,7 @@ public class PicListFragment extends BaseFragment implements DefineView {
                     }
 
                     @Override
-                    public void onError(String result, Exception e) {
+                    public void onError(Exception e) {
 
                     }
                 });
@@ -245,21 +329,18 @@ public class PicListFragment extends BaseFragment implements DefineView {
                 HttpHelper.get(mUrl, new HttpCallbackListener() {
                     @Override
                     public void onSuccess(String result) {
-                        if (TextUtils.isEmpty(result)){
-                            mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.THE_END);
-                        } else {
-                            newlist = DataParse.PicList(result);
 
-//                            isPullRefresh = true;
-                            DataChange();
-                        }
+                        saveCache(mUrl, result);
+                        Message message = mHandler.obtainMessage();
+                        message.what = HANDLER_SHOW_REFRESH_LOADMORE;
+                        message.obj = result;
+                        mHandler.sendMessage(message);
 
                     }
 
                     @Override
-                    public void onError(String result, Exception e) {
-                        mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.ERROR);
-                        Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show();
+                    public void onError(Exception e) {
+                        sendErrorMessage(HANDLER_SHOW_REFRESH_LOADMORE_ERRO, e.toString());
                     }
                 });
             }
@@ -272,20 +353,18 @@ public class PicListFragment extends BaseFragment implements DefineView {
      * 上拉或下拉刷新之后更新UI界面
      */
     private void DataChange() {
-        UIUtils.runOnUIThread(new Runnable() {
-            @Override
-            public void run() {
                 if (newlist != null) {
                     isPullRefreshView();
-                    Toast.makeText(getActivity(), "数据已更新", Toast.LENGTH_SHORT).show();
+                    if (getActivity()!= null) {
+                        Toast.makeText(getActivity(), "数据已更新", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(getActivity(), "数据请求失败", Toast.LENGTH_SHORT).show();
+                    if (getActivity()!= null) {
+                        Toast.makeText(getActivity(), "数据请求失败", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.GONE);
                 mIRecyclerView.setRefreshing(false);
-
-            }
-        });
     }
 
     /**

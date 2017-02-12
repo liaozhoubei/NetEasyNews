@@ -70,36 +70,69 @@ public class NewsFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initView();
+    }
+
+
+    @Override
+    public void initView() {
         mTabLayout = (TabLayout) mView.findViewById(tab_layout);
         mNewsViewpager = (ViewPager) mView.findViewById(R.id.news_viewpager);
         mChange_channel = (ImageButton) mView.findViewById(R.id.change_channel);
 
         Toolbar myToolbar = initToolbar(mView, R.id.my_toolbar, R.id.toolbar_title, R.string.news_home);
         initValidata();
-        Listener();
+        initListener();
     }
 
-
-    private void initValidata() {
+    @Override
+    public void initValidata() {
         sharedPreferences = getActivity().getSharedPreferences("Setting", Context.MODE_PRIVATE);
         listDataSave = new ListDataSave(getActivity(), "channel");
         fragments = new ArrayList<BaseFragment>();
         fixedPagerAdapter = new FixedPagerAdapter(getChildFragmentManager());
 
         mTabLayout.setupWithViewPager(mNewsViewpager);
-        setData();
+        bindData();
     }
 
-    public void setData() {
+    @Override
+    public void initListener() {
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                tabPosition = tab.getPosition();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        mChange_channel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ChannelManagerActivity.class);
+                intent.putExtra("TABPOSITION", tabPosition);
+                startActivityForResult(intent, 999);
+            }
+        });
+    }
+
+    @Override
+    public void bindData() {
         getDataFromSharedPreference();
         fixedPagerAdapter.setChannelBean(myChannelList);
 
         fixedPagerAdapter.setFragments(fragments);
         mNewsViewpager.setAdapter(fixedPagerAdapter);
     }
-
-
-
 
     /**
      * 判断是否第一次进入程序
@@ -136,6 +169,10 @@ public class NewsFragment extends BaseFragment {
 
     }
 
+    /**
+     * 在ManiActivty中被调用，当从ChanelActivity返回时设置当前tab的位置
+     * @param tabPosition
+     */
     public void setCurrentChannel(int tabPosition) {
         mNewsViewpager.setCurrentItem(tabPosition);
         mTabLayout.setScrollPosition(tabPosition, 1, true);
@@ -175,34 +212,5 @@ public class NewsFragment extends BaseFragment {
             projectChannelBeanList.add(new Gson().fromJson(elem, ProjectChannelBean.class));
         }
         return projectChannelBeanList;
-    }
-
-    private void Listener() {
-
-        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                tabPosition = tab.getPosition();
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-
-        mChange_channel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ChannelManagerActivity.class);
-                intent.putExtra("TABPOSITION", tabPosition);
-                startActivityForResult(intent, 999);
-            }
-        });
     }
 }

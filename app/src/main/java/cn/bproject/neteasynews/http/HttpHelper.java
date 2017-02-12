@@ -1,5 +1,7 @@
 package cn.bproject.neteasynews.http;
 
+import android.text.TextUtils;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -27,7 +29,7 @@ import cn.bproject.neteasynews.Utils.StringUtils;
  * Created by liaozhoubei on 2017/1/6.
  * HttpClient链接封装
  */
-
+@SuppressWarnings("deprecated")
 public class HttpHelper {
 
     private static final String TAG = HttpHelper.class.getSimpleName();
@@ -69,31 +71,31 @@ public class HttpHelper {
         int retryCount = 0;
         boolean retry = true;
         while (retry) {
-            int stateCode = 404;
             try {
                 HttpResponse response = httpClient.execute(requestBase, httpContext);//访问网络
-                stateCode  = response.getStatusLine().getStatusCode();
+                int stateCode  = response.getStatusLine().getStatusCode();
 //                LogUtils.e(TAG, "http状态码：" + stateCode);
                 if (response != null) {
                     if (stateCode == HttpURLConnection.HTTP_OK){
                         HttpResult httpResult = new HttpResult(response, httpClient, requestBase);
                         String result = httpResult.getString();
-                        if (result != null){
+                        if (!TextUtils.isEmpty(result)){
                             httpCallbackListener.onSuccess(result);
+                            return;
+                        } else {
+                            throw new RuntimeException("数据为空");
                         }
                     } else {
-                        httpCallbackListener.onError(HttpRequestCode.ReturnCode(stateCode), null);
+                        throw new RuntimeException(HttpRequestCode.ReturnCode(stateCode));
                     }
-                    return;
                 }
             } catch (Exception e) {
                 IOException ioException = new IOException(e.getMessage());
                 retry = retryHandler.retryRequest(ioException, ++retryCount, httpContext);//把错误异常交给重试机制，以判断是否需要采取从事
                 LogUtils.e(TAG, "重复次数：" + retryCount + "   :"+ e);
                 if (!retry){
-                    httpCallbackListener.onError(HttpRequestCode.ReturnCode(stateCode), e);
+                    httpCallbackListener.onError(e);
                 }
-
             }
         }
     }

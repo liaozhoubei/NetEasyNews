@@ -27,7 +27,6 @@ import cn.bproject.neteasynews.activity.VideoDetailActivity;
 import cn.bproject.neteasynews.adapter.VideoListAdapter;
 import cn.bproject.neteasynews.bean.VideoBean;
 import cn.bproject.neteasynews.common.Api;
-import cn.bproject.neteasynews.common.DefineView;
 import cn.bproject.neteasynews.http.DataParse;
 import cn.bproject.neteasynews.http.HttpCallbackListener;
 import cn.bproject.neteasynews.http.HttpHelper;
@@ -43,7 +42,7 @@ import static cn.bproject.neteasynews.R.id.iRecyclerView;
  * 视频模块
  */
 
-public class VideoFragment extends BaseFragment implements DefineView {
+public class VideoFragment extends BaseFragment {
     private final String TAG = VideoFragment.class.getSimpleName();
 
     private View mView;
@@ -122,7 +121,7 @@ public class VideoFragment extends BaseFragment implements DefineView {
                     }
 
                     @Override
-                    public void onError(String result, Exception e) {
+                    public void onError(Exception e) {
                         e.printStackTrace();
                     }
                 });
@@ -154,7 +153,7 @@ public class VideoFragment extends BaseFragment implements DefineView {
                             }
 
                             @Override
-                            public void onError(String result, Exception e) {
+                            public void onError(Exception e) {
                                 e.printStackTrace();
                                 mIRecyclerView.setRefreshing(false);
                                 Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show();
@@ -185,7 +184,7 @@ public class VideoFragment extends BaseFragment implements DefineView {
                                 }
 
                                 @Override
-                                public void onError(String result, Exception e) {
+                                public void onError(Exception e) {
                                     mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.ERROR);
                                     Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show();
                                     e.printStackTrace();

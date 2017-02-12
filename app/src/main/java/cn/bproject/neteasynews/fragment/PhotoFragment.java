@@ -27,7 +27,7 @@ import static cn.bproject.neteasynews.R.id.tab_layout;
  * 图片模块
  */
 
-public class PhotoFragment extends BaseFragment{
+public class PhotoFragment extends BaseFragment {
 
     private final String TAG = PhotoFragment.class.getSimpleName();
 
@@ -52,14 +52,19 @@ public class PhotoFragment extends BaseFragment{
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Toolbar myToolbar = initToolbar(mView, R.id.my_toolbar, R.id.toolbar_title, R.string.picture_home);
+        initView();
+    }
+
+    @Override
+    public void initView() {
         mTabLayout = (TabLayout) mView.findViewById(tab_layout);
         mNewsViewpager = (ViewPager) mView.findViewById(R.id.news_viewpager);
         mView.findViewById(R.id.change_channel).setVisibility(View.GONE);
         channelBeanList = CategoryDataUtils.getPicCategoryBeans();
-
         initValidata();
     }
 
+    @Override
     public void initValidata() {
         fixedPagerAdapter = new FixedPagerAdapter(getChildFragmentManager());
         fixedPagerAdapter.setChannelBean(channelBeanList);
@@ -68,7 +73,7 @@ public class PhotoFragment extends BaseFragment{
             // "推荐","","0031"
             // "明星","","0003"使用瀑布流
             ProjectChannelBean channelBean = channelBeanList.get(i);
-            BaseFragment  fragment = PicListFragment.newInstance(channelBean.getTid(),channelBean.getColumn());
+            BaseFragment fragment = PicListFragment.newInstance(channelBean.getTid(), channelBean.getColumn());
             fragments.add(fragment);
         }
 
@@ -78,6 +83,11 @@ public class PhotoFragment extends BaseFragment{
         mTabLayout.setupWithViewPager(mNewsViewpager);
         // mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE); //适合很多tab
         mTabLayout.setTabMode(TabLayout.MODE_FIXED); // tablayout均分，适合少Tablayout
+        initListener();
+    }
+
+    @Override
+    public void initListener() {
         mNewsViewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -96,8 +106,10 @@ public class PhotoFragment extends BaseFragment{
 
             }
         });
+    }
 
-
+    @Override
+    public void bindData() {
 
     }
 

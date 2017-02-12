@@ -150,11 +150,11 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
                     }
 
                     @Override
-                    public void onError(final String result, Exception e) {
+                    public void onError(final Exception e) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(mContext, result, Toast.LENGTH_LONG).show();
+                                Toast.makeText(mContext, e.toString(), Toast.LENGTH_LONG).show();
                                 showErroPage();
                             }
                         });

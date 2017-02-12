@@ -50,19 +50,20 @@ public class ExampleInstrumentedTest {
     @Test
     public void getNewsListDataFromServer() {
         String url = Api.CommonUrl + Api.yaowenspecialId + "/" + 0 + Api.endUrl;
+//        String url = "http://news.sina.com.cn/o/2017-02-11/doc-ifyamkqa5606.shtml";
         // 测试新闻详情
         HttpHelper.get(url, new HttpCallbackListener() {
             @Override
             public void onSuccess(String result) {
                 ArrayList<NewsListNormalBean> content = DataParse.NewsList(result, Api.yaowenspecialId);
                 for (NewsListNormalBean bean : content) {
-                    Log.d("ExampleInstrumentedTest", "getDataFromServer: title :  " + bean);
+                    Log.d("ExampleInstrumentedTest", "getDataFromServer: title :  " + result);
                 }
             }
 
             @Override
-            public void onError(String result, Exception e) {
-                Log.e(TAG, "onError: " + result + "    " + e );
+            public void onError(Exception e) {
+                Log.e(TAG, "onError: " + e );
             }
         });
 
@@ -80,8 +81,8 @@ public class ExampleInstrumentedTest {
             }
 
             @Override
-            public void onError(String result, Exception e) {
-                Log.e(TAG, "onError: " + result + "    " + e );
+            public void onError(Exception e) {
+                Log.e(TAG, "onError: "  + e );
             }
         });
 
@@ -101,8 +102,8 @@ public class ExampleInstrumentedTest {
             }
 
             @Override
-            public void onError(String result, Exception e) {
-                Log.e(TAG, "onError: " + result + "    " + e );
+            public void onError( Exception e) {
+                Log.e(TAG, "onError: "  + e );
             }
         });
 
@@ -122,8 +123,8 @@ public class ExampleInstrumentedTest {
             }
 
             @Override
-            public void onError(String result, Exception e) {
-                Log.e(TAG, "onError: " + result + "    " + e );
+            public void onError(Exception e) {
+                Log.e(TAG, "onError: "  + e );
             }
         });
 
@@ -143,8 +144,8 @@ public class ExampleInstrumentedTest {
             }
 
             @Override
-            public void onError(String result, Exception e) {
-                Log.e(TAG, "onError: " + result + "    " + e );
+            public void onError(Exception e) {
+                Log.e(TAG, "onError: " + e );
             }
         });
 
@@ -161,8 +162,8 @@ public class ExampleInstrumentedTest {
             }
 
             @Override
-            public void onError(String result, Exception e) {
-                Log.e(TAG, "onError: " + result + "    " + e );
+            public void onError(Exception e) {
+                Log.e(TAG, "onError: " +  e );
             }
         });
     }
