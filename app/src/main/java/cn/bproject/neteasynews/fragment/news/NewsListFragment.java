@@ -48,7 +48,7 @@ import static android.content.Context.WINDOW_SERVICE;
  * Created by Bei on 2016/12/25.
  */
 
-public class NewsListFragment extends BaseFragment{
+public class NewsListFragment extends BaseFragment {
 
     private final String TAG = NewsListFragment.class.getSimpleName();
     private static final String KEY = "TID";
@@ -82,7 +82,7 @@ public class NewsListFragment extends BaseFragment{
                     break;
                 case HANDLER_SHOW_ERROR:
                     error = (String) message.obj;
-                    if (!TextUtils.isEmpty(error) && getActivity() == null){
+                    if (!TextUtils.isEmpty(error) && getActivity() == null) {
                         Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
                     }
                     // 如果有缓存内容就不展示错误页面
@@ -97,7 +97,7 @@ public class NewsListFragment extends BaseFragment{
                     break;
                 case HANDLER_SHOW_REFRESH_LOADMORE_ERRO:
                     error = (String) message.obj;
-                    if (!TextUtils.isEmpty(error) && getActivity() == null){
+                    if (!TextUtils.isEmpty(error) && getActivity() == null) {
                         Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
                     }
                     mIRecyclerView.setRefreshing(false);
@@ -139,6 +139,7 @@ public class NewsListFragment extends BaseFragment{
         initView();
         initValidata();
         initListener();
+        LogUtils.d(TAG, "调用了onCreateView" + tid);
         return mView;
     }
 
@@ -163,7 +164,7 @@ public class NewsListFragment extends BaseFragment{
             //取出保存的频道TID
             tid = getArguments().getString("TID");
         }
-
+//        newlist = new ArrayList<NewsListNormalBean>();
         // 创建线程池
         mThreadPool = ThreadManager.getThreadPool();
 
@@ -179,10 +180,11 @@ public class NewsListFragment extends BaseFragment{
         mThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                final String cache = LocalCacheUtils.getLocalCache(mUrl);
+                String cache = LocalCacheUtils.getLocalCache(mUrl);
                 if (!TextUtils.isEmpty(cache)) {
                     mNewsListNormalBeanList = DataParse.NewsList(cache, tid);
                     if (mNewsListNormalBeanList != null) {
+                        LogUtils.d(TAG, "读取缓存成功");
                         isShowCache = true;
                         Message message = mHandler.obtainMessage();
                         message.what = HANDLER_SHOW_NEWS;
@@ -213,11 +215,12 @@ public class NewsListFragment extends BaseFragment{
                     @Override
                     public void onSuccess(String result) {
                         mNewsListNormalBeanList = DataParse.NewsList(result, tid);
+
                         if (mNewsListNormalBeanList != null) {
-                            saveCache(mUrl, result);
                             Message message = mHandler.obtainMessage();
                             message.what = HANDLER_SHOW_NEWS;
                             mHandler.sendMessage(message);
+                            saveCache(mUrl, result);
                         }
                     }
 
@@ -252,7 +255,8 @@ public class NewsListFragment extends BaseFragment{
                         HttpHelper.get(mUrl, new HttpCallbackListener() {
                             @Override
                             public void onSuccess(String result) {
-                                saveCache(mUrl, result);
+                                isPullRefresh = true;
+                                // 无法刷新到新内容
                                 Message message = mHandler.obtainMessage();
                                 message.what = HANDLER_SHOW_REFRESH_LOADMORE;
                                 message.obj = result;
@@ -284,7 +288,8 @@ public class NewsListFragment extends BaseFragment{
                             HttpHelper.get(mUrl, new HttpCallbackListener() {
                                 @Override
                                 public void onSuccess(String result) {
-                                    Log.d(TAG, "onSuccess: " + mUrl);
+                                    Log.d(TAG, "setOnLoadMoreListener: " + result);
+                                    isPullRefresh = false;
                                     saveCache(mUrl, result);
                                     Message message = mHandler.obtainMessage();
                                     message.what = HANDLER_SHOW_REFRESH_LOADMORE;
@@ -314,34 +319,41 @@ public class NewsListFragment extends BaseFragment{
 
     @Override
     public void bindData() {
-        mNewsListAdapter = new NewsListAdapter(getActivity(), (ArrayList<NewsListNormalBean>) mNewsListNormalBeanList);
-        mIRecyclerView.setIAdapter(mNewsListAdapter);
-        // 设置Item点击跳转事件
-        mNewsListAdapter.setOnItemClickListener(new NewsListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View v, int position) {
-                NewsListNormalBean newsListNormalBean = mNewsListNormalBeanList.get(position);
-                String photosetID = newsListNormalBean.getPhotosetID();
-                Intent intent;
-                if (photosetID != null) {
-                    intent = new Intent(getActivity(), PicDetailActivity.class);
-                    String[] str = photosetID.split("\\|");
-                    //  图片新闻文章所属的类目id
-                    String tid = str[0].substring(4);
-                    // 图片新闻的文章id号
-                    String setid = str[1];
-                    intent.putExtra("TID", tid);
-                    intent.putExtra("SETID", setid);
-                    LogUtils.d(TAG, "onItemClick: photosetID:" + photosetID);
-                } else {
-                    intent = new Intent(getActivity(), NewsDetailActivity.class);
-                    intent.putExtra("DOCID", newsListNormalBean.getDocid());
+        if (mNewsListAdapter == null) {
 
+            mNewsListAdapter = new NewsListAdapter(getActivity(), (ArrayList<NewsListNormalBean>) mNewsListNormalBeanList);
+            mIRecyclerView.setIAdapter(mNewsListAdapter);
+            // 设置Item点击跳转事件
+            mNewsListAdapter.setOnItemClickListener(new NewsListAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(View v, int position) {
+                    NewsListNormalBean newsListNormalBean = mNewsListNormalBeanList.get(position);
+                    String photosetID = newsListNormalBean.getPhotosetID();
+                    Intent intent;
+                    if (photosetID != null) {
+                        intent = new Intent(getActivity(), PicDetailActivity.class);
+                        String[] str = photosetID.split("\\|");
+                        //  图片新闻文章所属的类目id
+                        String tid = str[0].substring(4);
+                        // 图片新闻的文章id号
+                        String setid = str[1];
+                        intent.putExtra("TID", tid);
+                        intent.putExtra("SETID", setid);
+                        LogUtils.d(TAG, "onItemClick: photosetID:" + photosetID);
+                    } else {
+                        intent = new Intent(getActivity(), NewsDetailActivity.class);
+                        intent.putExtra("DOCID", newsListNormalBean.getDocid());
+
+                    }
+                    //论坛、读书、漫画、态度公开课、云课堂 等栏目进入新闻详情页未处理
+                    getActivity().startActivity(intent);
                 }
-                //论坛、读书、漫画、态度公开课、云课堂 等栏目进入新闻详情页未处理
-                getActivity().startActivity(intent);
-            }
-        });
+            });
+        } else {
+            mNewsListAdapter.notifyDataSetChanged();
+            mIRecyclerView.setIAdapter(mNewsListAdapter);
+        }
+
     }
 
 
@@ -349,16 +361,14 @@ public class NewsListFragment extends BaseFragment{
      * 上拉或下拉刷新之后更新UI界面
      */
     private void DataChange() {
-        if (getActivity()!= null) {
-            if (newlist != null) {
-                isPullRefreshView();
-                if (getActivity()!= null) {
-                    Toast.makeText(getActivity(), "数据已更新", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                if (getActivity()!= null) {
-                    Toast.makeText(getActivity(), "数据请求失败", Toast.LENGTH_SHORT).show();
-                }
+        if (newlist != null) {
+            isPullRefreshView();
+            if (getActivity() != null) {
+                Toast.makeText(getActivity(), "数据已更新", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            if (getActivity() != null) {
+                Toast.makeText(getActivity(), "数据请求失败", Toast.LENGTH_SHORT).show();
             }
             mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.GONE);
         }
@@ -370,16 +380,16 @@ public class NewsListFragment extends BaseFragment{
      */
     public void isPullRefreshView() {
         if (isPullRefresh) {
-            // 是下拉刷新
-            newlist.addAll(mNewsListNormalBeanList);
-            mNewsListNormalBeanList.removeAll(mNewsListNormalBeanList);
-            mNewsListNormalBeanList.addAll(newlist);
-            mNewsListAdapter.notifyDataSetChanged();
+            // 是下拉刷新，目前无法刷新到新数据
+//            newlist.addAll(mNewsListNormalBeanList);
+//            mNewsListNormalBeanList.removeAll(mNewsListNormalBeanList);
+//            mNewsListNormalBeanList.addAll(newlist);
+//            mNewsListAdapter.notifyDataSetChanged();
         } else {
             // 上拉刷新
             mNewsListNormalBeanList.addAll(newlist);
-            mNewsListAdapter.notifyDataSetChanged();
         }
+        mNewsListAdapter.notifyDataSetChanged();
     }
 
     /**

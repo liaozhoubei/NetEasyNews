@@ -1,12 +1,12 @@
 package cn.bproject.neteasynews.activity;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.support.v7.widget.Toolbar;
 
 import cn.bproject.neteasynews.R;
 
-public class SettingActivity extends PreferenceActivity {
+public class SettingActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

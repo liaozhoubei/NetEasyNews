@@ -129,7 +129,6 @@ public class NewsFragment extends BaseFragment {
     public void bindData() {
         getDataFromSharedPreference();
         fixedPagerAdapter.setChannelBean(myChannelList);
-
         fixedPagerAdapter.setFragments(fragments);
         mNewsViewpager.setAdapter(fixedPagerAdapter);
     }

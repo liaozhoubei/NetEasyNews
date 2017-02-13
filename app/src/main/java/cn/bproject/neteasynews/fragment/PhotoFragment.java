@@ -62,12 +62,13 @@ public class PhotoFragment extends BaseFragment {
         mView.findViewById(R.id.change_channel).setVisibility(View.GONE);
         channelBeanList = CategoryDataUtils.getPicCategoryBeans();
         initValidata();
+        initListener();
     }
 
     @Override
     public void initValidata() {
         fixedPagerAdapter = new FixedPagerAdapter(getChildFragmentManager());
-        fixedPagerAdapter.setChannelBean(channelBeanList);
+
         fragments = new ArrayList<BaseFragment>();
         for (int i = 0; i < channelBeanList.size(); i++) {
             // "推荐","","0031"
@@ -77,13 +78,17 @@ public class PhotoFragment extends BaseFragment {
             fragments.add(fragment);
         }
 
+        fixedPagerAdapter.setChannelBean(channelBeanList);
         fixedPagerAdapter.setFragments(fragments);
 
-        mNewsViewpager.setAdapter(fixedPagerAdapter);
         mTabLayout.setupWithViewPager(mNewsViewpager);
+        mNewsViewpager.setAdapter(fixedPagerAdapter);
         // mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE); //适合很多tab
         mTabLayout.setTabMode(TabLayout.MODE_FIXED); // tablayout均分，适合少Tablayout
-        initListener();
+    }
+
+    @Override
+    public void bindData() {
     }
 
     @Override
@@ -108,9 +113,6 @@ public class PhotoFragment extends BaseFragment {
         });
     }
 
-    @Override
-    public void bindData() {
 
-    }
 
 }

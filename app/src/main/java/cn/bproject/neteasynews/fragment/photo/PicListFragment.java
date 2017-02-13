@@ -22,11 +22,9 @@ import java.util.List;
 
 import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.DensityUtils;
-import cn.bproject.neteasynews.Utils.LocalCacheUtils;
 import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.Utils.NetWorkUtil;
 import cn.bproject.neteasynews.Utils.ThreadManager;
-import cn.bproject.neteasynews.Utils.UIUtils;
 import cn.bproject.neteasynews.activity.PicDetailActivity;
 import cn.bproject.neteasynews.adapter.PicListAdapter;
 import cn.bproject.neteasynews.bean.PicListBean;
@@ -133,6 +131,7 @@ public class PicListFragment extends BaseFragment implements DefineView {
 
     @Override
     public void initView() {
+
         mLoadingPage = (LoadingPage) mView.findViewById(R.id.loading_page);
         mIRecyclerView = (IRecyclerView) mView.findViewById(R.id.iRecyclerView);
 //        mIRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -158,7 +157,6 @@ public class PicListFragment extends BaseFragment implements DefineView {
         mUrl = Api.PictureUrl + tid + column + mStartIndex + Api.endPicture;
         getNewsFromCache();
 
-
     }
 
     /**
@@ -168,18 +166,19 @@ public class PicListFragment extends BaseFragment implements DefineView {
         mThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                final String cache = LocalCacheUtils.getLocalCache(mUrl);
-                if (!TextUtils.isEmpty(cache)) {
-                    mPicListBeens = DataParse.PicList(cache);
-                    if (mPicListBeens != null) {
-                        isShowCache = true;
-                        Message message = mHandler.obtainMessage();
-                        message.what = HANDLER_SHOW_NEWS;
-                        mHandler.sendMessage(message);
-                    } else {
-                        isShowCache = false;
-                    }
-                }
+//                String cache = LocalCacheUtils.getLocalCache(mUrl);
+//                if (!TextUtils.isEmpty(cache)) {
+//                    mPicListBeens = DataParse.PicList(cache);
+//                    if (mPicListBeens != null) {
+//                        LogUtils.d(TAG, "读取缓存成功");
+//                        isShowCache = true;
+//                        Message message = mHandler.obtainMessage();
+//                        message.what = HANDLER_SHOW_NEWS;
+//                        mHandler.sendMessage(message);
+//                    } else {
+//                        isShowCache = false;
+//                    }
+//                }
                 if (NetWorkUtil.isNetworkConnected(getActivity())) {
                     // 有网络的情况下请求网络数据
                     requestData();
@@ -210,17 +209,13 @@ public class PicListFragment extends BaseFragment implements DefineView {
                     @Override
                     public void onSuccess(String result) {
                         mPicListBeens = DataParse.PicList(result);
-                        UIUtils.runOnUIThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (mPicListBeens != null) {
-                                    showNewsPage();
-                                    bindData();
-                                } else {
-                                    showEmptyPage();
-                                }
-                            }
-                        });
+                        if (mPicListBeens != null) {
+                            Message message = mHandler.obtainMessage();
+                            message.what = HANDLER_SHOW_NEWS;
+                            mHandler.sendMessage(message);
+                            saveCache(mUrl, result);
+                        }
+
                     }
 
                     @Override
@@ -243,10 +238,10 @@ public class PicListFragment extends BaseFragment implements DefineView {
         mIRecyclerView.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.GONE);
                 mIRecyclerView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.GONE);
                         mIRecyclerView.setRefreshing(false);
                     }
                 },2000);
@@ -268,24 +263,28 @@ public class PicListFragment extends BaseFragment implements DefineView {
 
     @Override
     public void bindData() {
+//        if (mAdapter == null){
+            mAdapter = new PicListAdapter(getActivity(), (ArrayList<PicListBean>) mPicListBeens);
+            mIRecyclerView.setIAdapter(mAdapter);
+//            mIRecyclerView.setRefreshing(false);
+//            LogUtils.d(TAG, ": 解析id:" + tid + ":" + mPicListBeens.toString());
 
-        mAdapter = new PicListAdapter(getActivity(), (ArrayList<PicListBean>) mPicListBeens);
+            mAdapter.setOnItemClickListener(new PicListAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(int position, Object o, View v) {
+                    String id = mPicListBeens.get(position).getSetid();
+                    Intent intent = new Intent(getActivity(), PicDetailActivity.class);
+                    intent.putExtra(KEY_TID, tid);
+                    intent.putExtra(SETID, id);
+                    getActivity().startActivity(intent);
+                }
 
-        mIRecyclerView.setIAdapter(mAdapter);
-        mIRecyclerView.setRefreshing(false);
-        LogUtils.d(TAG, ": 解析id:" + tid + ":" + mPicListBeens.toString());
+            });
+//        } else {
+//            mAdapter.notifyDataSetChanged();
+//        }
 
-        mAdapter.setOnItemClickListener(new PicListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position, Object o, View v) {
-                String id = mPicListBeens.get(position).getSetid();
-                Intent intent = new Intent(getActivity(), PicDetailActivity.class);
-                intent.putExtra(KEY_TID, tid);
-                intent.putExtra(SETID, id);
-                getActivity().startActivity(intent);
-            }
 
-        });
     }
 
     // 下拉刷新
@@ -329,7 +328,7 @@ public class PicListFragment extends BaseFragment implements DefineView {
                 HttpHelper.get(mUrl, new HttpCallbackListener() {
                     @Override
                     public void onSuccess(String result) {
-
+                        isPullRefresh = false;
                         saveCache(mUrl, result);
                         Message message = mHandler.obtainMessage();
                         message.what = HANDLER_SHOW_REFRESH_LOADMORE;
@@ -380,8 +379,8 @@ public class PicListFragment extends BaseFragment implements DefineView {
         } else {
             // 上拉刷新
             mPicListBeens.addAll(newlist);
-
         }
+        mAdapter.notifyDataSetChanged();
     }
 
 
