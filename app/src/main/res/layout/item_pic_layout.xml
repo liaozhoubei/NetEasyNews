@@ -20,7 +20,6 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/item_big_image_height"
             android:scaleType="centerCrop"
-            android:layout_gravity="center"
             android:src="@drawable/defaultbg_h"/>
 
         <LinearLayout
@@ -37,8 +36,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="3"
-                android:maxLines="1"
                 android:ellipsize="end"
+                android:maxLines="1"
                 tools:text="大家好，我是标题,很牛的标题栏，估计世界上没有我更牛了"
                 />
 
@@ -48,11 +47,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
-                android:gravity="center"
                 android:ellipsize="end"
+                android:gravity="center"
                 android:visibility="gone"
                 tools:text="1111次播放"/>
-            </LinearLayout>
+        </LinearLayout>
 
     </LinearLayout>
 

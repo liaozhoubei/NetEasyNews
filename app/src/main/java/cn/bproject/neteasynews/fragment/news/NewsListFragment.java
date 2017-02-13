@@ -238,6 +238,47 @@ public class NewsListFragment extends BaseFragment {
     }
 
 
+
+
+    @Override
+    public void bindData() {
+        if (mNewsListAdapter == null) {
+
+            mNewsListAdapter = new NewsListAdapter(getActivity(), (ArrayList<NewsListNormalBean>) mNewsListNormalBeanList);
+            mIRecyclerView.setIAdapter(mNewsListAdapter);
+            // 设置Item点击跳转事件
+            mNewsListAdapter.setOnItemClickListener(new NewsListAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(View v, int position) {
+                    NewsListNormalBean newsListNormalBean = mNewsListNormalBeanList.get(position);
+                    String photosetID = newsListNormalBean.getPhotosetID();
+                    Intent intent;
+                    if (photosetID != null) {
+                        intent = new Intent(getActivity(), PicDetailActivity.class);
+                        String[] str = photosetID.split("\\|");
+                        //  图片新闻文章所属的类目id
+                        String tid = str[0].substring(4);
+                        // 图片新闻的文章id号
+                        String setid = str[1];
+                        intent.putExtra("TID", tid);
+                        intent.putExtra("SETID", setid);
+                        LogUtils.d(TAG, "onItemClick: photosetID:" + photosetID);
+                    } else {
+                        intent = new Intent(getActivity(), NewsDetailActivity.class);
+                        intent.putExtra("DOCID", newsListNormalBean.getDocid());
+
+                    }
+                    //论坛、读书、漫画、态度公开课、云课堂 等栏目进入新闻详情页未处理
+                    getActivity().startActivity(intent);
+                }
+            });
+        } else {
+            mNewsListAdapter.notifyDataSetChanged();
+            mIRecyclerView.setIAdapter(mNewsListAdapter);
+        }
+
+    }
+
     @Override
     public void initListener() {
 
@@ -290,7 +331,6 @@ public class NewsListFragment extends BaseFragment {
                                 public void onSuccess(String result) {
                                     Log.d(TAG, "setOnLoadMoreListener: " + result);
                                     isPullRefresh = false;
-                                    saveCache(mUrl, result);
                                     Message message = mHandler.obtainMessage();
                                     message.what = HANDLER_SHOW_REFRESH_LOADMORE;
                                     message.obj = result;
@@ -310,52 +350,13 @@ public class NewsListFragment extends BaseFragment {
         });
     }
 
+
     public void sendErrorMessage(int what, String e) {
         Message message = mHandler.obtainMessage();
         message.what = what;
         message.obj = e;
         mHandler.sendMessage(message);
     }
-
-    @Override
-    public void bindData() {
-        if (mNewsListAdapter == null) {
-
-            mNewsListAdapter = new NewsListAdapter(getActivity(), (ArrayList<NewsListNormalBean>) mNewsListNormalBeanList);
-            mIRecyclerView.setIAdapter(mNewsListAdapter);
-            // 设置Item点击跳转事件
-            mNewsListAdapter.setOnItemClickListener(new NewsListAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(View v, int position) {
-                    NewsListNormalBean newsListNormalBean = mNewsListNormalBeanList.get(position);
-                    String photosetID = newsListNormalBean.getPhotosetID();
-                    Intent intent;
-                    if (photosetID != null) {
-                        intent = new Intent(getActivity(), PicDetailActivity.class);
-                        String[] str = photosetID.split("\\|");
-                        //  图片新闻文章所属的类目id
-                        String tid = str[0].substring(4);
-                        // 图片新闻的文章id号
-                        String setid = str[1];
-                        intent.putExtra("TID", tid);
-                        intent.putExtra("SETID", setid);
-                        LogUtils.d(TAG, "onItemClick: photosetID:" + photosetID);
-                    } else {
-                        intent = new Intent(getActivity(), NewsDetailActivity.class);
-                        intent.putExtra("DOCID", newsListNormalBean.getDocid());
-
-                    }
-                    //论坛、读书、漫画、态度公开课、云课堂 等栏目进入新闻详情页未处理
-                    getActivity().startActivity(intent);
-                }
-            });
-        } else {
-            mNewsListAdapter.notifyDataSetChanged();
-            mIRecyclerView.setIAdapter(mNewsListAdapter);
-        }
-
-    }
-
 
     /**
      * 上拉或下拉刷新之后更新UI界面

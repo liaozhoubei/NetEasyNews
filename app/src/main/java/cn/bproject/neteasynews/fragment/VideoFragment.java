@@ -227,7 +227,6 @@ public class VideoFragment extends BaseFragment {
                                 LogUtils.d(TAG, "下拉刷新onSuccess: " + result);
                                 isPullRefresh = true;
                                 if (result != null) {
-                                    saveCache(mUrl, result);
                                     Message message = mHandler.obtainMessage();
                                     message.what = HANDLER_SHOW_REFRESH_LOADMORE;
                                     message.obj = result;
@@ -262,7 +261,6 @@ public class VideoFragment extends BaseFragment {
                                 public void onSuccess(String result) {
                                     isPullRefresh = false;
                                     if (result != null) {
-                                        saveCache(mUrl, result);
                                         Message message = mHandler.obtainMessage();
                                         message.what = HANDLER_SHOW_REFRESH_LOADMORE;
                                         message.obj = result;
@@ -299,6 +297,8 @@ public class VideoFragment extends BaseFragment {
                     getActivity().startActivity(intent);
                 }
             });
+        } else {
+            mVideoListAdapter.notifyDataSetChanged();
         }
     }
 

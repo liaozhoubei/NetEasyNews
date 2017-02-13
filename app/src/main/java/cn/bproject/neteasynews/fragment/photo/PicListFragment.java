@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +22,7 @@ import java.util.List;
 
 import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.DensityUtils;
+import cn.bproject.neteasynews.Utils.LocalCacheUtils;
 import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.Utils.NetWorkUtil;
 import cn.bproject.neteasynews.Utils.ThreadManager;
@@ -135,7 +136,8 @@ public class PicListFragment extends BaseFragment implements DefineView {
         mLoadingPage = (LoadingPage) mView.findViewById(R.id.loading_page);
         mIRecyclerView = (IRecyclerView) mView.findViewById(R.id.iRecyclerView);
 //        mIRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mIRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+//        mIRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        mIRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
         mIRecyclerView.addItemDecoration(new DividerGridItemDecoration(getActivity()));
         mLoadMoreFooterView = (LoadMoreFooterView) mIRecyclerView.getLoadMoreFooterView();
         ClassicRefreshHeaderView classicRefreshHeaderView = new ClassicRefreshHeaderView(getActivity());
@@ -166,35 +168,31 @@ public class PicListFragment extends BaseFragment implements DefineView {
         mThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-//                String cache = LocalCacheUtils.getLocalCache(mUrl);
-//                if (!TextUtils.isEmpty(cache)) {
-//                    mPicListBeens = DataParse.PicList(cache);
-//                    if (mPicListBeens != null) {
-//                        LogUtils.d(TAG, "读取缓存成功");
-//                        isShowCache = true;
-//                        Message message = mHandler.obtainMessage();
-//                        message.what = HANDLER_SHOW_NEWS;
-//                        mHandler.sendMessage(message);
-//                    } else {
-//                        isShowCache = false;
-//                    }
-//                }
+                String cache = LocalCacheUtils.getLocalCache(mUrl);
+                if (!TextUtils.isEmpty(cache)) {
+                    mPicListBeens = DataParse.PicList(cache);
+                    if (mPicListBeens != null) {
+                        LogUtils.d(TAG, "读取缓存成功");
+                        isShowCache = true;
+                        Message message = mHandler.obtainMessage();
+                        message.what = HANDLER_SHOW_NEWS;
+                        mHandler.sendMessage(message);
+                    } else {
+                        isShowCache = false;
+                    }
+                }
                 if (NetWorkUtil.isNetworkConnected(getActivity())) {
                     // 有网络的情况下请求网络数据
                     requestData();
                 } else {
+
                     sendErrorMessage(HANDLER_SHOW_ERROR, "没有网络");
                 }
             }
         });
     }
 
-    public void sendErrorMessage(int what, String e) {
-        Message message = mHandler.obtainMessage();
-        message.what = what;
-        message.obj = e;
-        mHandler.sendMessage(message);
-    }
+
 
     public void requestData() {
 
@@ -231,39 +229,11 @@ public class PicListFragment extends BaseFragment implements DefineView {
     }
 
 
-    @Override
-    public void initListener() {
-        mIRecyclerView.setLoadMoreEnabled(true);
-        mIRecyclerView.setRefreshEnabled(true);
-        mIRecyclerView.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mIRecyclerView.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.GONE);
-                        mIRecyclerView.setRefreshing(false);
-                    }
-                },2000);
-            }
-        });
-        mIRecyclerView.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-                if (mLoadMoreFooterView.canLoadMore() && mAdapter.getItemCount() > 0) {
-                    mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.LOADING);
-                    PullUpToRefresh();
-                }
 
-            }
-        });
-
-
-    }
 
     @Override
     public void bindData() {
-//        if (mAdapter == null){
+        if (mAdapter == null){
             mAdapter = new PicListAdapter(getActivity(), (ArrayList<PicListBean>) mPicListBeens);
             mIRecyclerView.setIAdapter(mAdapter);
 //            mIRecyclerView.setRefreshing(false);
@@ -280,11 +250,57 @@ public class PicListFragment extends BaseFragment implements DefineView {
                 }
 
             });
-//        } else {
-//            mAdapter.notifyDataSetChanged();
-//        }
+        } else {
+            // 上拉刷新
+            mAdapter.notifyDataSetChanged();
+            mIRecyclerView.setIAdapter(mAdapter);
+        }
+    }
 
+    @Override
+    public void initListener() {
+        mIRecyclerView.setLoadMoreEnabled(true);
+        mIRecyclerView.setRefreshEnabled(true);
+        mIRecyclerView.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                DownToRefresh();
+//                mUrl = Api.PictureUrl + tid + column + 0 + Api.endPicture;
+//                isPullRefresh = true;
+//                mThreadPool.execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        HttpHelper.get(mUrl, new HttpCallbackListener() {
+//                            @Override
+//                            public void onSuccess(String result) {
+//                                isPullRefresh = true;
+//                                // 无法刷新到新内容
+//                                Message message = mHandler.obtainMessage();
+//                                message.what = HANDLER_SHOW_REFRESH_LOADMORE;
+//                                message.obj = result;
+//                                mHandler.sendMessage(message);
+//                            }
+//
+//                            @Override
+//                            public void onError(Exception e) {
+//                                LogUtils.e(TAG, "requestData" + e.toString());
+//                                sendErrorMessage(HANDLER_SHOW_REFRESH_LOADMORE_ERRO, e.toString());
+//                            }
+//                        });
+//                    }
+//                });
+            }
+        });
+        mIRecyclerView.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                if (mLoadMoreFooterView.canLoadMore() && mAdapter.getItemCount() > 0) {
+                    mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.LOADING);
+                    PullUpToRefresh();
+                }
 
+            }
+        });
     }
 
     // 下拉刷新
@@ -299,9 +315,15 @@ public class PicListFragment extends BaseFragment implements DefineView {
                 HttpHelper.get(mUrl, new HttpCallbackListener() {
                     @Override
                     public void onSuccess(String result) {
-                        newlist = DataParse.PicList(result);
-                        isPullRefresh = true;
-                        DataChange();
+//                        newlist = DataParse.PicList(result);
+//                        isPullRefresh = true;
+//                        DataChange();
+                                isPullRefresh = true;
+                                // 无法刷新到新内容
+                                Message message = mHandler.obtainMessage();
+                                message.what = HANDLER_SHOW_REFRESH_LOADMORE;
+                                message.obj = result;
+                                mHandler.sendMessage(message);
                     }
 
                     @Override
@@ -329,7 +351,6 @@ public class PicListFragment extends BaseFragment implements DefineView {
                     @Override
                     public void onSuccess(String result) {
                         isPullRefresh = false;
-                        saveCache(mUrl, result);
                         Message message = mHandler.obtainMessage();
                         message.what = HANDLER_SHOW_REFRESH_LOADMORE;
                         message.obj = result;
@@ -346,7 +367,12 @@ public class PicListFragment extends BaseFragment implements DefineView {
         });
     }
 
-
+    public void sendErrorMessage(int what, String e) {
+        Message message = mHandler.obtainMessage();
+        message.what = what;
+        message.obj = e;
+        mHandler.sendMessage(message);
+    }
 
     /**
      * 上拉或下拉刷新之后更新UI界面
@@ -372,9 +398,9 @@ public class PicListFragment extends BaseFragment implements DefineView {
     public void isPullRefreshView() {
         if (isPullRefresh) {
             // 是下拉刷新
-            newlist.addAll(mPicListBeens);
-            mPicListBeens.removeAll(mPicListBeens);
-            mPicListBeens.addAll(newlist);
+//            newlist.addAll(mPicListBeens);
+//            mPicListBeens.removeAll(mPicListBeens);
+//            mPicListBeens.addAll(newlist);
 
         } else {
             // 上拉刷新
