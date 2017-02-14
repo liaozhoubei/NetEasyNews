@@ -26,6 +26,9 @@
     <string name="user_home">用户中心</string>
     <string name="feedback_hint">描述您意见或者遭遇的问题，如在哪个界面遇到了什么情况（崩溃/闪退等）</string>
     <string name="contact_information_edit_hint">填写您的手机或邮箱</string>
+    <string name="cancel">取消</string>
+    <string name="fire">确定</string>
+    <string name="dialog_fire_missiles">是否清除App缓存</string>
 
 
 </resources>

@@ -265,30 +265,7 @@ public class PicListFragment extends BaseFragment implements DefineView {
             @Override
             public void onRefresh() {
                 DownToRefresh();
-//                mUrl = Api.PictureUrl + tid + column + 0 + Api.endPicture;
-//                isPullRefresh = true;
-//                mThreadPool.execute(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        HttpHelper.get(mUrl, new HttpCallbackListener() {
-//                            @Override
-//                            public void onSuccess(String result) {
-//                                isPullRefresh = true;
-//                                // 无法刷新到新内容
-//                                Message message = mHandler.obtainMessage();
-//                                message.what = HANDLER_SHOW_REFRESH_LOADMORE;
-//                                message.obj = result;
-//                                mHandler.sendMessage(message);
-//                            }
-//
-//                            @Override
-//                            public void onError(Exception e) {
-//                                LogUtils.e(TAG, "requestData" + e.toString());
-//                                sendErrorMessage(HANDLER_SHOW_REFRESH_LOADMORE_ERRO, e.toString());
-//                            }
-//                        });
-//                    }
-//                });
+
             }
         });
         mIRecyclerView.setOnLoadMoreListener(new OnLoadMoreListener() {

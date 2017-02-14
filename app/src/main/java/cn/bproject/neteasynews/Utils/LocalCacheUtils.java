@@ -59,14 +59,22 @@ public class LocalCacheUtils {
 
 
     /**
-     * 获取缓存目录地址
+     * 获取新闻缓存目录地址
      *
      * @param context
      * @param uniqueName
      * @return
      */
     public static File getDiskCacheDir(Context context, String uniqueName) {
+        return new File(getCachePath(context) + File.separator + uniqueName);
+    }
 
+    /**
+     * 获取缓存目录
+     * @param context
+     * @return
+     */
+    public static String getCachePath(Context context){
         String cachePath;
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
                 || !Environment.isExternalStorageRemovable()) {
@@ -77,7 +85,7 @@ public class LocalCacheUtils {
             //  路径为/data/data/<application package>/cache
             cachePath = context.getCacheDir().getPath();
         }
-        return new File(cachePath + File.separator + uniqueName);
+        return cachePath;
     }
 
     /**

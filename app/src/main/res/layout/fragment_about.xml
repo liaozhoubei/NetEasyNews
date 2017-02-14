@@ -1,54 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-    <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar_page" />
+
+    <ListView
+        android:id="@+id/list_item"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <include layout="@layout/toolbar_page"/>
-
-        <ListView
-            android:id="@+id/list_item"
-            android:layout_width="match_parent"
-            android:divider="@color/gray"
-            android:dividerHeight="1px"
-            android:layout_height="wrap_content"></ListView>
+        android:layout_height="wrap_content"
+        android:divider="@color/gray"
+        android:dividerHeight="1px"/>
 
 
-    </LinearLayout>
+</LinearLayout>
 
-
-    <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:background="@color/white"-->
-        <!--android:orientation="vertical">-->
-
-        <!--<TextView-->
-            <!--android:id="@+id/tv_new_version"-->
-            <!--style="@style/menuItem"-->
-            <!--android:clickable="true"-->
-            <!--android:text="项目主页"/>-->
-
-        <!--<View-->
-            <!--style="@style/horizontalLine"-->
-            <!--android:layout_marginLeft="10dp"/>-->
-
-        <!--<TextView-->
-            <!--android:id="@+id/tv_function"-->
-            <!--style="@style/menuItem"-->
-            <!--android:clickable="true"-->
-            <!--android:text="问题反馈"/>-->
-
-        <!--<View-->
-            <!--style="@style/horizontalLine"-->
-            <!--android:layout_marginLeft="10dp"/>-->
-
-        <!--<TextView-->
-            <!--android:id="@+id/tv_about_star"-->
-            <!--style="@style/menuItem"-->
-            <!--android:clickable="true"-->
-            <!--android:text="关于App"/>-->
-
-    <!--</LinearLayout>-->

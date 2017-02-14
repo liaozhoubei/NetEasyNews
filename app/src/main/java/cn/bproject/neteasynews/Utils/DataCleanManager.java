@@ -109,7 +109,10 @@ public class DataCleanManager {
     private static void deleteFilesByDirectory(File directory) {
         if (directory != null && directory.exists() && directory.isDirectory()) {
             for (File item : directory.listFiles()) {
-                item.delete();
+                boolean isdelete = item.delete();
+                if (!isdelete){
+                    LogUtils.d("DataCleanManager", "删除失败");
+                }
             }
         }
     }
