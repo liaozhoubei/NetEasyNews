@@ -26,6 +26,7 @@ import java.util.List;
 import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.IOUtils;
 import cn.bproject.neteasynews.Utils.LogUtils;
+import cn.bproject.neteasynews.Utils.PrefUtils;
 import cn.bproject.neteasynews.Utils.ThreadManager;
 import cn.bproject.neteasynews.bean.NewsDetailBean;
 import cn.bproject.neteasynews.common.Api;
@@ -128,7 +129,7 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
         mWebSettings.setBlockNetworkImage(true);
         //开启缓存机制
         mWebSettings.setAppCacheEnabled(true);
-//        mWebSettings.setTextSize(WebSettings.TextSize.NORMAL);
+        setTextSize();
         //设置webview
         mWebView.setWebChromeClient(new MyWebChromeClient());
         mWebView.setWebViewClient(new MyWebViewClient());
@@ -169,6 +170,36 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
     @Override
     public void initListener() {
 
+    }
+
+    private void setTextSize(){
+        int textSize = PrefUtils.getInt(mContext, getString(R.string.text_size), 2);
+        switch (textSize) {
+            case 0:
+                // 超大字体
+                mWebSettings.setTextSize(WebSettings.TextSize.LARGEST);
+                // settings.setTextZoom(22);
+                break;
+            case 1:
+                // 大字体
+                mWebSettings.setTextSize(WebSettings.TextSize.LARGER);
+                break;
+            case 2:
+                // 正常字体
+                mWebSettings.setTextSize(WebSettings.TextSize.NORMAL);
+                break;
+            case 3:
+                // 小字体
+                mWebSettings.setTextSize(WebSettings.TextSize.SMALLER);
+                break;
+            case 4:
+                // 超小字体
+                mWebSettings.setTextSize(WebSettings.TextSize.SMALLEST);
+                break;
+
+            default:
+                break;
+        }
     }
 
     @Override

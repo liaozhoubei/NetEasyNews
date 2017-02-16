@@ -1,5 +1,7 @@
 package cn.bproject.neteasynews.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -8,7 +10,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import cn.bproject.neteasynews.Utils.LocalCacheUtils;
-import cn.bproject.neteasynews.Utils.PrefUtils;
 import cn.bproject.neteasynews.common.DefineView;
 
 /**
@@ -47,14 +48,19 @@ public abstract class BaseFragment extends Fragment implements DefineView {
         return toolbar;
     }
 
+    /**
+     *
+     * @param key
+     * @return  返回true表示是最新的保存的，返回false表示保存已经超过3个小时
+     */
     public boolean isLastNews(String key) {
         long threeHour = 3 * 60 * 60 * 1000;
         long currentTime = System.currentTimeMillis();
-        long saveTime = PrefUtils.getLong(getActivity(), key, currentTime);
+        long saveTime = getUpdateTime(getActivity(), key, currentTime);
         // 判断保存缓存的时间与现在的时间是否超过3小时，没有超过就读取缓存
         long ll = currentTime - saveTime;
 
-        if (ll < threeHour) {
+        if (ll <= threeHour) {
             Log.d(TAG, "saveTime  :  " + saveTime + "   ll:  " + ll + " ll < threeHour " + (ll < threeHour));
             return true;
         } else {
@@ -71,5 +77,19 @@ public abstract class BaseFragment extends Fragment implements DefineView {
         }
         // 保存缓存
         LocalCacheUtils.setDiskLruCache(url, content);
+    }
+
+    // 设置保存缓存的时间
+    public static void saveUpdateTime(Context ctx, String key, long value) {
+        SharedPreferences sp = ctx.getSharedPreferences("save_time",
+                Context.MODE_PRIVATE);
+        sp.edit().putLong(key, value).commit();
+    }
+
+    // 获取保存缓存的时间
+    public static long getUpdateTime(Context ctx, String key, long defValue) {
+        SharedPreferences sp = ctx.getSharedPreferences("save_time",
+                Context.MODE_PRIVATE);
+        return sp.getLong(key, defValue);
     }
 }

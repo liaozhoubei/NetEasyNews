@@ -181,13 +181,16 @@ public class PicListFragment extends BaseFragment implements DefineView {
                         isShowCache = false;
                     }
                 }
-                if (NetWorkUtil.isNetworkConnected(getActivity())) {
-                    // 有网络的情况下请求网络数据
-                    requestData();
-                } else {
+                if (!isLastNews(tid)|| TextUtils.isEmpty(cache)){
+                    if (NetWorkUtil.isNetworkConnected(getActivity())) {
+                        // 有网络的情况下请求网络数据
+                        requestData();
+                    } else {
 
-                    sendErrorMessage(HANDLER_SHOW_ERROR, "没有网络");
+                        sendErrorMessage(HANDLER_SHOW_ERROR, "没有网络");
+                    }
                 }
+
             }
         });
     }
@@ -211,6 +214,7 @@ public class PicListFragment extends BaseFragment implements DefineView {
                             Message message = mHandler.obtainMessage();
                             message.what = HANDLER_SHOW_NEWS;
                             mHandler.sendMessage(message);
+                            saveUpdateTime(getActivity(), tid, System.currentTimeMillis());
                             saveCache(mUrl, result);
                         }
 
@@ -292,9 +296,6 @@ public class PicListFragment extends BaseFragment implements DefineView {
                 HttpHelper.get(mUrl, new HttpCallbackListener() {
                     @Override
                     public void onSuccess(String result) {
-//                        newlist = DataParse.PicList(result);
-//                        isPullRefresh = true;
-//                        DataChange();
                                 isPullRefresh = true;
                                 // 无法刷新到新内容
                                 Message message = mHandler.obtainMessage();
@@ -374,11 +375,12 @@ public class PicListFragment extends BaseFragment implements DefineView {
      */
     public void isPullRefreshView() {
         if (isPullRefresh) {
-            // 是下拉刷新
-//            newlist.addAll(mPicListBeens);
-//            mPicListBeens.removeAll(mPicListBeens);
-//            mPicListBeens.addAll(newlist);
 
+            // 是下拉刷新
+            newlist.addAll(mPicListBeens);
+            mPicListBeens.removeAll(mPicListBeens);
+            mPicListBeens.addAll(newlist);
+            saveUpdateTime(getActivity(), tid, System.currentTimeMillis());
         } else {
             // 上拉刷新
             mPicListBeens.addAll(newlist);

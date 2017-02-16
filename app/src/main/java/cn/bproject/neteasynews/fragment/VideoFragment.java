@@ -149,7 +149,7 @@ public class VideoFragment extends BaseFragment {
         mThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                mUrl = Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + mStartIndex + Api.devId;
+                mUrl = Api.host + Api.SpecialColumn2 + Api.specialVideoId + Api.SpecialendUrl + mStartIndex + Api.devId;
                 String cache = LocalCacheUtils.getLocalCache(mUrl);
                 if (!TextUtils.isEmpty(cache)) {
                     mVideoBeanList = DataParse.VideoList(cache);
@@ -163,12 +163,15 @@ public class VideoFragment extends BaseFragment {
                         isShowCache = false;
                     }
                 }
-                if (NetWorkUtil.isNetworkConnected(getActivity())) {
-                    // 有网络的情况下请求网络数据
-                    requestData();
-                } else {
-                    sendErrorMessage(HANDLER_SHOW_ERROR, "没有网络");
+                if (!isLastNews(Api.specialVideoId) || TextUtils.isEmpty(cache)) {
+                    if (NetWorkUtil.isNetworkConnected(getActivity())) {
+                        // 有网络的情况下请求网络数据
+                        requestData();
+                    } else {
+                        sendErrorMessage(HANDLER_SHOW_ERROR, "没有网络");
+                    }
                 }
+
             }
         });
     }
@@ -188,10 +191,12 @@ public class VideoFragment extends BaseFragment {
                     public void onSuccess(String result) {
                         mVideoBeanList = DataParse.VideoList(result);
                         if (mVideoBeanList != null) {
-                            saveCache(mUrl, result);
+
                             Message message = mHandler.obtainMessage();
                             message.what = HANDLER_SHOW_NEWS;
                             mHandler.sendMessage(message);
+                            saveCache(mUrl, result);
+                            saveUpdateTime(getActivity(), Api.specialVideoId, System.currentTimeMillis());
                         } else {
                             showEmptyPage();
                         }
@@ -231,6 +236,7 @@ public class VideoFragment extends BaseFragment {
                                     message.what = HANDLER_SHOW_REFRESH_LOADMORE;
                                     message.obj = result;
                                     mHandler.sendMessage(message);
+                                    saveUpdateTime(getActivity(), Api.SpecialColumn2, System.currentTimeMillis());
                                 }
                             }
 

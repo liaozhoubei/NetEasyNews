@@ -8,4 +8,11 @@
         <item>关于App</item>
     </string-array>
 
+    <string-array name="array_text_size">
+        <item>超大号字体</item>
+        <item>大号字体</item>
+        <item>正常字体</item>
+        <item>小号字体</item>
+    </string-array>
+
 </resources>

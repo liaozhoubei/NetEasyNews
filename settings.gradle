@@ -1,3 +1,4 @@
-include ':app', ':channelmanager'
+include ':app'
+include ':channelmanager'
 include ':library:InitActivity'
 include ':library:irecyclerview'

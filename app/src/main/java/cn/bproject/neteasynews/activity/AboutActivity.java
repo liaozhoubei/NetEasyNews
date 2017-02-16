@@ -83,7 +83,7 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
                 //Toast.makeText(AboutActivity.this, "检查新版本", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.tv_function:
-                Toast.makeText(AboutActivity.this, "喜欢", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AboutActivity.this, "暂无", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.tv_about_star:
 

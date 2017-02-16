@@ -11,18 +11,23 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.DataCleanManager;
 import cn.bproject.neteasynews.Utils.LogUtils;
+import cn.bproject.neteasynews.Utils.PrefUtils;
 import cn.bproject.neteasynews.Utils.ThreadManager;
 import cn.bproject.neteasynews.Utils.UIUtils;
 
 public class SettingActivity extends Activity implements View.OnClickListener {
+    private static final String TAG = SettingActivity.class.getSimpleName();
     private Context context;
     private LinearLayout ll_clear_cache;
     private TextView textView;
     private ThreadManager.ThreadPool threadpool;
+    private LinearLayout ll_text_size;
+    private ArrayList<String> mSelectedItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +36,7 @@ public class SettingActivity extends Activity implements View.OnClickListener {
         context = this;
         initToolbar();
         initView();
+        requestData();
     }
 
     private void initToolbar() {
@@ -44,8 +50,15 @@ public class SettingActivity extends Activity implements View.OnClickListener {
     private void initView() {
         ll_clear_cache = (LinearLayout) findViewById(R.id.ll_clear_cache);
         textView = (TextView) findViewById(R.id.tv_clear_cache_context);
+        ll_text_size = (LinearLayout) findViewById(R.id.ll_text_size);
         ll_clear_cache.setOnClickListener(this);
+        ll_text_size.setOnClickListener(this);
 
+
+
+    }
+
+    public void requestData(){
         threadpool.execute(new Runnable() {
             @Override
             public void run() {
@@ -58,7 +71,6 @@ public class SettingActivity extends Activity implements View.OnClickListener {
                 });
             }
         });
-
     }
 
     private String getAllCacheSize(){
@@ -83,11 +95,14 @@ public class SettingActivity extends Activity implements View.OnClickListener {
         return cache;
     }
 
-    public void onCreateDialog() {
+    /**
+     * 弹出清除缓存对话框
+     */
+    public void createClearCacheDialog() {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(R.string.dialog_fire_missiles)
-                .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         threadpool.execute(new Runnable() {
                             @Override
@@ -109,11 +124,47 @@ public class SettingActivity extends Activity implements View.OnClickListener {
         builder.show();
     }
 
+    private int mTextSizeWhich;// 记录临时选择的字体大小(点击确定之前)
+
+    /**
+     * 弹出设置新闻详情页对话框
+     */
+    public void createChangeTextSizeDalog(){
+        // Where we track the selected items
+        mSelectedItems = new ArrayList();
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        final String[] items = getResources().getStringArray(R.array.array_text_size);
+        int fontSize = PrefUtils.getInt(context, getString(R.string.text_size), 2);
+        // Set the dialog title
+        builder.setTitle(R.string.pick_toppings).setSingleChoiceItems(items, fontSize, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mTextSizeWhich = which;
+            }
+        });
+
+        builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // 将设置保存在SharedPreferences中
+                PrefUtils.setInt(context, getString(R.string.text_size), mTextSizeWhich);
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton(getString(R.string.cancel), null);
+        builder.create();
+        builder.show();
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ll_clear_cache:
-                onCreateDialog();
+                createClearCacheDialog();
+                break;
+            case R.id.ll_text_size:
+                createChangeTextSizeDalog();
                 break;
         }
     }

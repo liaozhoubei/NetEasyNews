@@ -193,12 +193,16 @@ public class NewsListFragment extends BaseFragment {
                         isShowCache = false;
                     }
                 }
-                if (NetWorkUtil.isNetworkConnected(getActivity())) {
-                    // 有网络的情况下请求网络数据
-                    requestData();
-                } else {
-                    sendErrorMessage(HANDLER_SHOW_ERROR, "没有网络");
+                if (!isLastNews(tid) || TextUtils.isEmpty(cache)) {
+                    // 先判断当前缓存时间是否超过3个小时，超过则联网刷新
+                    if (NetWorkUtil.isNetworkConnected(getActivity())) {
+                        // 有网络的情况下请求网络数据
+                        requestData();
+                    } else {
+                        sendErrorMessage(HANDLER_SHOW_ERROR, "没有网络");
+                    }
                 }
+
             }
         });
     }
@@ -220,6 +224,7 @@ public class NewsListFragment extends BaseFragment {
                             Message message = mHandler.obtainMessage();
                             message.what = HANDLER_SHOW_NEWS;
                             mHandler.sendMessage(message);
+                            saveUpdateTime(getActivity(), tid, System.currentTimeMillis());
                             saveCache(mUrl, result);
                         }
                     }
@@ -236,8 +241,6 @@ public class NewsListFragment extends BaseFragment {
         });
 
     }
-
-
 
 
     @Override
@@ -302,6 +305,7 @@ public class NewsListFragment extends BaseFragment {
                                 message.what = HANDLER_SHOW_REFRESH_LOADMORE;
                                 message.obj = result;
                                 mHandler.sendMessage(message);
+                                saveUpdateTime(getActivity(), tid, System.currentTimeMillis());
                             }
 
                             @Override
@@ -382,10 +386,10 @@ public class NewsListFragment extends BaseFragment {
     public void isPullRefreshView() {
         if (isPullRefresh) {
             // 是下拉刷新，目前无法刷新到新数据
-//            newlist.addAll(mNewsListNormalBeanList);
-//            mNewsListNormalBeanList.removeAll(mNewsListNormalBeanList);
-//            mNewsListNormalBeanList.addAll(newlist);
-//            mNewsListAdapter.notifyDataSetChanged();
+            newlist.addAll(mNewsListNormalBeanList);
+            mNewsListNormalBeanList.removeAll(mNewsListNormalBeanList);
+            mNewsListNormalBeanList.addAll(newlist);
+            mNewsListAdapter.notifyDataSetChanged();
         } else {
             // 上拉刷新
             mNewsListNormalBeanList.addAll(newlist);
