@@ -1,5 +1,5 @@
 # NetEasyNews
-仿网易新闻
+仿网易新闻项目
 
 # 已知错误信息
 如果采用Okhttp进行获取网易api数据，将会有几率返回403：服务器拒绝的问题。
@@ -15,3 +15,19 @@
 
 解决方案：
 采用httpClien作为网络请求库。
+
+# version 1.0完成
+《第二新闻》安卓客户端-是一个资讯类新闻客户端，包括首页新闻、详情、图片浏览、视频观看等，实时数据抓取新闻等相关功能客户端。
+
+    1.本项目使用了FragmentTabHost +  Tablayout + Viewpager进行搭建
+    2.使用了MVC模式。
+    3.网络上使用个人封装的httpClient请求来进行网络请求。
+    4.使用glide:3.7.0作为图片加载库
+    5.使用com.github.chrisbanes:PhotoView:latest.release扩展ImageView 支持通过单点/多点触摸来进行图片缩放
+    6.使用可上拉、下拉加载的irecyclerview扩展RecyclerView
+    7.使用Vitamio 作为在线视频观看的第三方库
+    8.使用com.tencent.bugly作为异常上报的第三方库
+
+下一次更新的版本将会使用MVP模型实现data与view的解耦，还会添加屏幕适配等功能，至于什么时候能更新，就看心情吧O(∩_∩)O哈哈~
+
+

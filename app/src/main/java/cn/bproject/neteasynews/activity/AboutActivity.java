@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import cn.bproject.neteasynews.R;
 
@@ -20,7 +19,7 @@ import cn.bproject.neteasynews.R;
 public class AboutActivity extends AppCompatActivity implements View.OnClickListener{
 
     private TextView mTv_new_version;
-    private TextView mTv_function;
+    private TextView tv_updata_note;
     private TextView mTv_about_star;
 
     @Override
@@ -42,14 +41,14 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
     private void initView(){
         TextView text_version = (TextView) findViewById(R.id.text_version);
         mTv_new_version = (TextView) findViewById(R.id.tv_new_version);
-        mTv_function = (TextView) findViewById(R.id.tv_function);
+        tv_updata_note = (TextView) findViewById(R.id.tv_updata_note);
         mTv_about_star = (TextView) findViewById(R.id.tv_about_star);
         text_version.setText(getVersion());
     }
 
     private void initListener(){
         mTv_new_version.setOnClickListener(this);
-        mTv_function.setOnClickListener(this);
+        tv_updata_note.setOnClickListener(this);
         mTv_about_star.setOnClickListener(this);
     }
 
@@ -80,14 +79,14 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
                 uri = Uri.parse("https://github.com/liaozhoubei/NetEasyNews");
                 intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
-                //Toast.makeText(AboutActivity.this, "检查新版本", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.tv_function:
-                Toast.makeText(AboutActivity.this, "暂无", Toast.LENGTH_SHORT).show();
+            case R.id.tv_updata_note:
+                uri = Uri.parse("https://github.com/liaozhoubei/NetEasyNews/blob/master/README.md");
+                intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
                 break;
             case R.id.tv_about_star:
 
-               // Toast.makeText(AboutActivity.this, "关于", Toast.LENGTH_SHORT).show();
                 uri = Uri.parse("https://github.com/liaozhoubei/NetEasyNews");
                 intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);

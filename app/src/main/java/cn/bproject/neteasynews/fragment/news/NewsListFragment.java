@@ -7,12 +7,10 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -41,8 +39,6 @@ import cn.bproject.neteasynews.http.HttpHelper;
 import cn.bproject.neteasynews.widget.ClassicRefreshHeaderView;
 import cn.bproject.neteasynews.widget.LoadMoreFooterView;
 import cn.bproject.neteasynews.widget.LoadingPage;
-
-import static android.content.Context.WINDOW_SERVICE;
 
 /**
  * Created by Bei on 2016/12/25.
@@ -127,14 +123,6 @@ public class NewsListFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        // 获取屏幕的宽度
-        WindowManager windowManager = (WindowManager) getActivity().getSystemService(WINDOW_SERVICE);
-        // windowManager.getDefaultDisplay().getWidth();
-        DisplayMetrics outMetrics = new DisplayMetrics();// 创建了一张白纸
-        windowManager.getDefaultDisplay().getMetrics(outMetrics);// 给白纸设置宽高
-        long width = outMetrics.widthPixels;
-        long height = outMetrics.heightPixels;
-
         mView = inflater.inflate(R.layout.fragment_news_list, container, false);
         initView();
         initValidata();
@@ -164,7 +152,6 @@ public class NewsListFragment extends BaseFragment {
             //取出保存的频道TID
             tid = getArguments().getString("TID");
         }
-//        newlist = new ArrayList<NewsListNormalBean>();
         // 创建线程池
         mThreadPool = ThreadManager.getThreadPool();
 

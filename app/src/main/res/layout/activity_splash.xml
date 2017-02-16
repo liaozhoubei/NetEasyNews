@@ -10,14 +10,9 @@
     tools:context="cn.bproject.neteasynews.activity.SplashActivity">
 
     <ImageView
-        android:layout_width="72dp"
-        android:layout_height="72dp"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
         android:src="@mipmap/second_logo"/>
 
-<!--    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="haha"
-        android:onClick="oneclick"/>-->
 
 </LinearLayout>

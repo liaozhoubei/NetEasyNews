@@ -54,7 +54,7 @@
             android:layout_marginLeft="10dp" />
 
         <TextView
-            android:id="@+id/tv_function"
+            android:id="@+id/tv_updata_note"
             style="@style/menuItem"
             android:clickable="true"
             android:text="更新日志" />

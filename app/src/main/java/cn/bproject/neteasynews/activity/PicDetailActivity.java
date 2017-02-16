@@ -47,7 +47,6 @@ public class PicDetailActivity extends AppCompatActivity implements DefineView {
     private static final String SETID = "SETID";
     private ThreadManager.ThreadPool mThreadPool;   // 线程池
     private ImageDetailBean mImageDetailBean;
-//    private List<ImageDetailBean.PhotosBean> mPhotosBeens;
     private Context mContext;
     private boolean isGone;
 
@@ -148,7 +147,6 @@ public class PicDetailActivity extends AppCompatActivity implements DefineView {
 
     public class PicDetailAdapter extends PagerAdapter {
 
-//        private List<ImageDetailBean.PhotosBean> mPhotosBeens;
         private ImageDetailBean mImageDetailBean;
 
         public PicDetailAdapter(ImageDetailBean imageDetailBean) {
@@ -208,7 +206,6 @@ public class PicDetailActivity extends AppCompatActivity implements DefineView {
             iv_pic.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Log.d(TAG, "onClick: " + note);
                     if (isGone) {
                         sv_content.setVisibility(View.VISIBLE);
                         isGone = false;

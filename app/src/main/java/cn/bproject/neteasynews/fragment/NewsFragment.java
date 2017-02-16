@@ -155,7 +155,6 @@ public class NewsFragment extends BaseFragment {
         }
         fragments.clear();
         for (int i = 0; i < myChannelList.size(); i++) {
-//            Log.d(TAG, "getDataFromSharedPreference: " + myChannelList.get(i).getTname());
             baseFragment = NewsListFragment.newInstance(myChannelList.get(i).getTid());
 
             fragments.add(baseFragment);

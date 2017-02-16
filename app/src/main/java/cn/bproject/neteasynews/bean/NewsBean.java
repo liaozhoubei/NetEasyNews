@@ -37,13 +37,6 @@ public class NewsBean {
         this.title = title;
     }
 
-//    public String getHref() {
-//        return href;
-//    }
-//
-//    public void setHref(String href) {
-//        this.href = href;
-//    }
 
     public String getTid() {
         return tid;

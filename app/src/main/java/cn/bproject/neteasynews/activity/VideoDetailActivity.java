@@ -1,18 +1,21 @@
 package cn.bproject.neteasynews.activity;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.LogUtils;
@@ -42,6 +45,8 @@ public class VideoDetailActivity extends AppCompatActivity implements DefineView
     private final String VID = "VID";
     private String vid;
 
+    private Context mContext;
+
     private TextView percentTv;
     private TextView netSpeedTv;
     private VideoView mVideoView;
@@ -51,11 +56,15 @@ public class VideoDetailActivity extends AppCompatActivity implements DefineView
     private String mMp4_url;
     private RelativeLayout mRl_video;
     private LoadingPage mLoadingPage;
+    private ImageView video_cover;
+
+    private boolean isShowVideo = true; // 判断是否播放视频
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_detail);
+        mContext = this;
         Intent intent = getIntent();
         if (intent != null) {
             vid = intent.getStringExtra(VID);
@@ -85,20 +94,56 @@ public class VideoDetailActivity extends AppCompatActivity implements DefineView
         netSpeedTv = (TextView) findViewById(R.id.net_speed);
         mVideoView = (VideoView) findViewById(R.id.vitamio);
 
+        video_cover = (ImageView) findViewById(R.id.video_cover);
+
         mLoadingPage = (LoadingPage) findViewById(R.id.loading_page);
+
+        video_cover.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showVideoDialog();
+            }
+        });
 
     }
 
     @Override
     public void initValidata() {
-        if (NetWorkUtil.isWifiConnected(this)){
-            // 创建线程池
-            mThreadPool = ThreadManager.getThreadPool();
+        // 创建线程池
+        mThreadPool = ThreadManager.getThreadPool();
+        if (NetWorkUtil.isWifiConnected(this)) {
+            isShowVideo = true;
             showLoadingPage();
             requestData();
         } else {
-            Toast.makeText(this, "非WIFI状态", Toast.LENGTH_SHORT).show();
+            showVideoDialog();
         }
+    }
+
+    /**
+     * 弹出清除缓存对话框
+     */
+    public void showVideoDialog() {
+        // Use the Builder class for convenient dialog construction
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setMessage(R.string.show_video_without_wifi)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        isShowVideo = true;
+
+                        showLoadingPage();
+                        requestData();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        isShowVideo = false;
+
+                    }
+                });
+        // Create the AlertDialog object and return it
+        builder.create();
+        builder.show();
     }
 
     public void requestData() {
@@ -110,32 +155,15 @@ public class VideoDetailActivity extends AppCompatActivity implements DefineView
                 HttpHelper.get(url, new HttpCallbackListener() {
                     @Override
                     public void onSuccess(String result) {
-                        mVideoBean= DataParse.VideoDetail(result);
-                        String title = mVideoBean.getTitle();
-                        String m3u8_url = mVideoBean.getM3u8_url();
-                        String m3u8Hd_url = mVideoBean.getM3u8Hd_url();
+                        mVideoBean = DataParse.VideoDetail(result);
+                        String cover_url = mVideoBean.getCover();
                         mMp4_url = mVideoBean.getMp4_url();
-                        String mp4Hd_url = mVideoBean.getMp4Hd_url();
-                        String ptime = mVideoBean.getPtime();
-                        String vid = mVideoBean.getVid();
-                        String videosource = mVideoBean.getVideosource();
                         LogUtils.d(TAG, "requestData: 视频地址为：" + mMp4_url);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (!TextUtils.isEmpty(mMp4_url)){
-                                    showNewsPage();
-                                    bindData();
-                                } else {
-                                    showEmptyPage();
-                                }
-
-                            }
-                        });
+                        showVideoPage();
                     }
 
                     @Override
-                    public void onError( Exception e) {
+                    public void onError(Exception e) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -148,6 +176,30 @@ public class VideoDetailActivity extends AppCompatActivity implements DefineView
 
             }
         });
+    }
+
+    /**
+     * 判断是否要加载视频内容
+     */
+    public void showVideoPage(){
+        if (isShowVideo) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    video_cover.setVisibility(View.INVISIBLE);
+                    mVideoView.setVisibility(View.VISIBLE);
+                    if (!TextUtils.isEmpty(mMp4_url)) {
+                        showNewsPage();
+                        bindData();
+                    } else {
+                        showEmptyPage();
+                    }
+                }
+            });
+        } else {
+            video_cover.setVisibility(View.VISIBLE);
+            mVideoView.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -164,8 +216,8 @@ public class VideoDetailActivity extends AppCompatActivity implements DefineView
                         break;
                     //缓冲结束
                     case MediaPlayer.MEDIA_INFO_BUFFERING_END:
-                        percentTv.setVisibility(View.GONE);
-                        netSpeedTv.setVisibility(View.GONE);
+                        percentTv.setVisibility(View.INVISIBLE);
+                        netSpeedTv.setVisibility(View.INVISIBLE);
                         mp.start();
                         break;
                     //正在缓冲
@@ -180,6 +232,7 @@ public class VideoDetailActivity extends AppCompatActivity implements DefineView
 
     @Override
     public void bindData() {
+        // 初始化Vitamio
         if (Vitamio.isInitialized(this)) {
 
             // 测试Url：  http://flv2.bn.netease.com/tvmrepo/2017/1/4/V/EC8TVS34V/SD/EC8TVS34V-mobile.mp4
@@ -197,6 +250,7 @@ public class VideoDetailActivity extends AppCompatActivity implements DefineView
 
         }
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -32,5 +32,6 @@
     <string name="pick_toppings">字体设置</string>
     <string name="text_size">textSize</string>
 
+    <string name="show_video_without_wifi">是否在非wifi状态下观看视频</string>
 
 </resources>

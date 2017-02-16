@@ -11,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@drawable/background_toolbar_translucent"
-        app:layout_scrollFlags="scroll|enterAlways|snap"
         />
 
     <RelativeLayout
@@ -24,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_centerVertical="true"
-            android:layout_marginTop="24dp"/>
+            />
 
         <TextView
             android:id="@+id/buffer_percent"
@@ -43,7 +42,18 @@
             android:layout_toRightOf="@id/buffer_percent"
             android:textColor="#04fa00"/>
 
+        <ImageView
+            android:id="@+id/video_cover"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_alignTop="@+id/vitamio"
+            android:scaleType="centerCrop"
+            android:src="@drawable/video_cover"
+            android:layout_centerVertical="true" />
+
     </RelativeLayout>
+
+
 
     <cn.bproject.neteasynews.widget.LoadingPage
         android:id="@+id/loading_page"

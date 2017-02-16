@@ -13,6 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.activity.AboutActivity;
@@ -75,6 +76,7 @@ public class AboutFragment extends BaseFragment{
                 switch (position) {
                     case 0:
                         // 用户界面
+                        Toast.makeText(getActivity(), "未实现登陆功能", Toast.LENGTH_SHORT).show();
                         break;
                     case 1:
                         // 进入项目主页

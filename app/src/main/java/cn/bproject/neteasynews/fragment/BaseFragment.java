@@ -5,11 +5,11 @@ import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import cn.bproject.neteasynews.Utils.LocalCacheUtils;
+import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.common.DefineView;
 
 /**
@@ -61,10 +61,10 @@ public abstract class BaseFragment extends Fragment implements DefineView {
         long ll = currentTime - saveTime;
 
         if (ll <= threeHour) {
-            Log.d(TAG, "saveTime  :  " + saveTime + "   ll:  " + ll + " ll < threeHour " + (ll < threeHour));
+            LogUtils.d(TAG, "saveTime  :  " + saveTime + "   ll:  " + ll + " ll < threeHour " + (ll < threeHour));
             return true;
         } else {
-            Log.d(TAG, "saveTime  :  " + saveTime + "   ll:  " + ll + " ll > threeHour " + (ll > threeHour));
+            LogUtils.d(TAG, "saveTime  :  " + saveTime + "   ll:  " + ll + " ll > threeHour " + (ll > threeHour));
             return false;
         }
     }

@@ -92,7 +92,6 @@ public class DataParse {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 PicListBean picListbean = gson.fromJson(jsonObject.toString(), PicListBean.class);
-                //LogUtils.d("图片返回的数据", "parseData: " + picListbean);
                 PicListBeans.add(picListbean);
             }
             return PicListBeans;

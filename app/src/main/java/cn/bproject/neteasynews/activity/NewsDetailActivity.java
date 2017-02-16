@@ -48,7 +48,6 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
     private Context mContext;
     private WebView mWebView;
     private ThreadManager.ThreadPool mThreadPool;   // 线程池
-    //    private RelativeLayout relative_content;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -94,7 +93,6 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
         tp.setFakeBoldText(true);
         details_name = (TextView) this.findViewById(R.id.details_name);
         details_time = (TextView) this.findViewById(R.id.details_time);
-//        details_ad = (ImageView) this.findViewById(R.id.details_ad);
         mWebView = (WebView) this.findViewById(details_content);
 
         showLoadingPage();

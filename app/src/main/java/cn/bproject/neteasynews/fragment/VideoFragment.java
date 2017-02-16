@@ -52,9 +52,7 @@ public class VideoFragment extends BaseFragment {
     private final String TAG = VideoFragment.class.getSimpleName();
 
     private View mView;
-    //    private PullToRefreshListView mListView;
     private ArrayList<VideoBean> mVideoBeanList;
-    //    private VideoListAdapter mVideoListAdapter;
     private IRecyclerView mIRecyclerView;
     private ThreadManager.ThreadPool mThreadPool;   // 线程池
     private int mStartIndex = 0;
@@ -299,7 +297,6 @@ public class VideoFragment extends BaseFragment {
                 public void onItemClick(int position, Object o, View v) {
                     Intent intent = new Intent(getActivity(), VideoDetailActivity.class);
                     intent.putExtra(VID, mVideoBeanList.get(position).getVid());
-//                intent.putExtra("VIDEO", mVideoBeanList.get(i));
                     getActivity().startActivity(intent);
                 }
             });

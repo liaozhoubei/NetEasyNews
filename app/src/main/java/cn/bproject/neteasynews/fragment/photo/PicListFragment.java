@@ -135,8 +135,6 @@ public class PicListFragment extends BaseFragment implements DefineView {
 
         mLoadingPage = (LoadingPage) mView.findViewById(R.id.loading_page);
         mIRecyclerView = (IRecyclerView) mView.findViewById(R.id.iRecyclerView);
-//        mIRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-//        mIRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         mIRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
         mIRecyclerView.addItemDecoration(new DividerGridItemDecoration(getActivity()));
         mLoadMoreFooterView = (LoadMoreFooterView) mIRecyclerView.getLoadMoreFooterView();
@@ -240,8 +238,6 @@ public class PicListFragment extends BaseFragment implements DefineView {
         if (mAdapter == null){
             mAdapter = new PicListAdapter(getActivity(), (ArrayList<PicListBean>) mPicListBeens);
             mIRecyclerView.setIAdapter(mAdapter);
-//            mIRecyclerView.setRefreshing(false);
-//            LogUtils.d(TAG, ": 解析id:" + tid + ":" + mPicListBeens.toString());
 
             mAdapter.setOnItemClickListener(new PicListAdapter.OnItemClickListener() {
                 @Override

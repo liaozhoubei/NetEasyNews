@@ -22,7 +22,5 @@ public class SplashActivity extends AppCompatActivity {
         }, 3000);
     }
 
-//    public void oneclick(View v){
-//        CrashReport.testJavaCrash();
-//    }
+
 }
