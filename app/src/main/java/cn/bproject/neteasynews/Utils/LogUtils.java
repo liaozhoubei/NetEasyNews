@@ -34,7 +34,7 @@ public class LogUtils {
     /**
      * 是否允许输出log
      */
-    private static int mDebuggable = LEVEL_ERROR;
+    private static int mDebuggable = LEVEL_DEBUG;
 
     /**
      * 以级别为 d 的形式输出LOG

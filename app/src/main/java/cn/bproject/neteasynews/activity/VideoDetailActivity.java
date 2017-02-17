@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -39,7 +38,7 @@ import io.vov.vitamio.widget.VideoView;
  * Created by liaozhoubei on 2017/1/3.
  */
 
-public class VideoDetailActivity extends AppCompatActivity implements DefineView {
+public class VideoDetailActivity extends BaseActivity implements DefineView {
     private final String TAG = VideoFragment.class.getSimpleName();
 
     private final String VID = "VID";

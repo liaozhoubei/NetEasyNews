@@ -6,9 +6,7 @@ import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -35,7 +33,7 @@ import cn.bproject.neteasynews.http.HttpHelper;
  * Created by Bei on 2016/12/31.
  */
 
-public class PicDetailActivity extends AppCompatActivity implements DefineView {
+public class PicDetailActivity extends BaseActivity implements DefineView {
     private final String TAG = PicDetailActivity.class.getSimpleName();
 
     private String tid; // 图片频道id，用于打开新闻详情页
@@ -97,15 +95,6 @@ public class PicDetailActivity extends AppCompatActivity implements DefineView {
         mViewPager.setCurrentItem(0);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-        }
-        return true;
-    }
 
     public void requestData() {
 //        mUrl = Api.CommonUrl + Api.toutiaoId + "/" + mStartIndex + Api.endUrl;

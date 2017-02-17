@@ -37,6 +37,7 @@ import cn.bproject.neteasynews.http.DataParse;
 import cn.bproject.neteasynews.http.HttpCallbackListener;
 import cn.bproject.neteasynews.http.HttpHelper;
 import cn.bproject.neteasynews.widget.ClassicRefreshHeaderView;
+import cn.bproject.neteasynews.widget.DividerGridItemDecoration;
 import cn.bproject.neteasynews.widget.LoadMoreFooterView;
 import cn.bproject.neteasynews.widget.LoadingPage;
 
@@ -138,6 +139,7 @@ public class NewsListFragment extends BaseFragment {
         mIRecyclerView = (IRecyclerView) mView.findViewById(R.id.iRecyclerView);
 
         mIRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mIRecyclerView.addItemDecoration(new DividerGridItemDecoration(getActivity()));
         mLoadMoreFooterView = (LoadMoreFooterView) mIRecyclerView.getLoadMoreFooterView();
         ClassicRefreshHeaderView classicRefreshHeaderView = new ClassicRefreshHeaderView(getActivity());
         classicRefreshHeaderView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, DensityUtils.dip2px(getActivity(), 80)));
@@ -272,14 +274,14 @@ public class NewsListFragment extends BaseFragment {
     @Override
     public void initListener() {
 
-        mIRecyclerView.setLoadMoreEnabled(true);
-        mIRecyclerView.setRefreshEnabled(true);
+//        mIRecyclerView.setLoadMoreEnabled(true);
+//        mIRecyclerView.setRefreshEnabled(true);
 
         mIRecyclerView.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mUrl = Api.CommonUrl + tid + "/" + 0 + Api.endUrl;
-                isPullRefresh = true;
+//                isPullRefresh = true;
                 mThreadPool.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -288,11 +290,13 @@ public class NewsListFragment extends BaseFragment {
                             public void onSuccess(String result) {
                                 isPullRefresh = true;
                                 // 无法刷新到新内容
-                                Message message = mHandler.obtainMessage();
-                                message.what = HANDLER_SHOW_REFRESH_LOADMORE;
-                                message.obj = result;
-                                mHandler.sendMessage(message);
-                                saveUpdateTime(getActivity(), tid, System.currentTimeMillis());
+                                if (result != null){
+                                    Message message = mHandler.obtainMessage();
+                                    message.what = HANDLER_SHOW_REFRESH_LOADMORE;
+                                    message.obj = result;
+                                    mHandler.sendMessage(message);
+                                    saveUpdateTime(getActivity(), tid, System.currentTimeMillis());
+                                }
                             }
 
                             @Override
@@ -311,7 +315,6 @@ public class NewsListFragment extends BaseFragment {
             public void onLoadMore() {
                 if (mLoadMoreFooterView.canLoadMore() && mNewsListAdapter.getItemCount() > 0) {
                     mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.LOADING);
-                    isPullRefresh = false;
                     mStartIndex += 20;
                     mUrl = Api.CommonUrl + tid + "/" + mStartIndex + Api.endUrl;
                     mThreadPool.execute(new Runnable() {
@@ -362,7 +365,6 @@ public class NewsListFragment extends BaseFragment {
             if (getActivity() != null) {
                 Toast.makeText(getActivity(), "数据请求失败", Toast.LENGTH_SHORT).show();
             }
-            mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.GONE);
         }
         mIRecyclerView.setRefreshing(false);
     }
@@ -380,6 +382,7 @@ public class NewsListFragment extends BaseFragment {
         } else {
             // 上拉刷新
             mNewsListNormalBeanList.addAll(newlist);
+            mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.GONE);
         }
         mNewsListAdapter.notifyDataSetChanged();
     }

@@ -2,16 +2,16 @@ package cn.bproject.neteasynews.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextPaint;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -26,7 +26,6 @@ import java.util.List;
 import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.IOUtils;
 import cn.bproject.neteasynews.Utils.LogUtils;
-import cn.bproject.neteasynews.Utils.PrefUtils;
 import cn.bproject.neteasynews.Utils.ThreadManager;
 import cn.bproject.neteasynews.bean.NewsDetailBean;
 import cn.bproject.neteasynews.common.Api;
@@ -42,12 +41,22 @@ import static cn.bproject.neteasynews.R.id.details_content;
  * Created by liaozhoubei on 2016/12/28.
  */
 
-public class NewsDetailActivity extends AppCompatActivity implements DefineView {
+public class NewsDetailActivity extends BaseActivity implements DefineView {
     private final String TAG = NewsDetailActivity.class.getSimpleName();
     private TextView details_title, details_name, details_time;
     private Context mContext;
     private WebView mWebView;
     private ThreadManager.ThreadPool mThreadPool;   // 线程池
+
+    private WebSettings mWebSettings;
+
+    private SharedPreferences sharedPreferences;
+
+    private String mDocid;
+    private NewsDetailBean mNewsDetailBeen;
+    private LinearLayout mPage_content;
+    private LoadingPage mLoadingPage;
+
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -56,12 +65,6 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
             showNewsPage();
         }
     };
-    private WebSettings mWebSettings;
-
-    private String mDocid;
-    private NewsDetailBean mNewsDetailBeen;
-    private LinearLayout mPage_content;
-    private LoadingPage mLoadingPage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,16 +78,12 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
         initListener();
     }
 
+
+
     @Override
     public void initView() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.icon_back);
-        }
-
+        initToolbar();
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         mPage_content = (LinearLayout) findViewById(R.id.page_content);
         mLoadingPage = (LoadingPage) findViewById(R.id.loading_page);
         details_title = (TextView) this.findViewById(R.id.details_title);
@@ -96,6 +95,16 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
         mWebView = (WebView) this.findViewById(details_content);
 
         showLoadingPage();
+    }
+
+    private void initToolbar(){
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.icon_back);
+        }
     }
 
     @Override
@@ -171,7 +180,7 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
     }
 
     private void setTextSize(){
-        int textSize = PrefUtils.getInt(mContext, getString(R.string.text_size), 2);
+        int textSize = Integer.valueOf(sharedPreferences.getString("text_size", "2"));
         switch (textSize) {
             case 0:
                 // 超大字体
@@ -231,16 +240,6 @@ public class NewsDetailActivity extends AppCompatActivity implements DefineView 
         } else{
             showEmptyPage();
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-        }
-        return true;
     }
 
     /**

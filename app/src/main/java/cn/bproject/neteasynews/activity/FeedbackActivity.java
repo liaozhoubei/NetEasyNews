@@ -1,9 +1,9 @@
 package cn.bproject.neteasynews.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
@@ -17,7 +17,7 @@ import cn.bproject.neteasynews.R;
  * Created by liaozhoubei on 2017/1/5.
  */
 
-public class FeedbackActivity extends Activity implements View.OnClickListener{
+public class FeedbackActivity extends BaseActivity implements View.OnClickListener{
 
     private EditText subject_edit_text; // 邮件主题
     private EditText contact_information_edit_text;  // 联系方式
@@ -44,6 +44,12 @@ public class FeedbackActivity extends Activity implements View.OnClickListener{
         toolbar.setTitle("");
         TextView toolbar_title = (TextView) findViewById(R.id.toolbar_title);
         toolbar_title.setText("信息反馈");
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.icon_back);
+        }
     }
 
     @Override
@@ -70,4 +76,5 @@ public class FeedbackActivity extends Activity implements View.OnClickListener{
                 break;
         }
     }
+
 }

@@ -10,77 +10,16 @@
 
     <include layout="@layout/toolbar_page" />
 
-
-    <LinearLayout
-        android:id="@+id/ll_clear_cache"
+    <FrameLayout
+        android:id="@+id/id_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/ripple_item_white_bg"
-        android:clickable="true"
-        android:gravity="center_vertical"
-        android:minHeight="?android:attr/listPreferredItemHeight"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
+        <ListView
+            android:id="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/tv_clear_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:text="清除缓存"
-            android:textColor="@color/text_common"
-            android:textSize="20sp" />
+    </FrameLayout>
 
-        <TextView
-            android:id="@+id/tv_clear_cache_context"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:text="缓存大小：0"
-            android:textColor="@color/slategray"
-            android:textSize="16sp" />
-
-    </LinearLayout>
-
-    <View
-        style="@style/horizontalLine"
-        android:layout_marginLeft="10dp" />
-
-    <LinearLayout
-        android:id="@+id/ll_text_size"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/ripple_item_white_bg"
-        android:clickable="true"
-        android:gravity="center_vertical"
-        android:textSize="20sp"
-        android:minHeight="?android:attr/listPreferredItemHeight"
-        android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/tv_text_size"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:background="@drawable/ripple_item_white_bg"
-        android:paddingLeft="10dp"
-        android:text="设置字体大小"
-        android:textColor="@color/text_common"
-        android:textSize="20sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:text="新闻详情页面有效"
-            android:textColor="@color/slategray"
-            android:textSize="16sp" />
-    </LinearLayout>
-
-    <View
-        style="@style/horizontalLine"
-        android:layout_marginLeft="10dp" />
 
 </LinearLayout>

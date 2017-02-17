@@ -1,17 +1,19 @@
 package cn.bproject.neteasynews.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.widget.TextView;
 
 import com.example.channelmanager.APPConst;
-import com.example.channelmanager.adapter.ChannelAdapter;
-import com.example.channelmanager.utils.GridItemDecoration;
-import com.example.channelmanager.base.IChannelType;
 import com.example.channelmanager.ProjectChannelBean;
+import com.example.channelmanager.adapter.ChannelAdapter;
+import com.example.channelmanager.base.IChannelType;
+import com.example.channelmanager.utils.GridItemDecoration;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,7 +26,7 @@ import cn.bproject.neteasynews.Utils.ListDataSave;
  * Created by Administrator on 2017/2/7.
  */
 
-public class ChannelManagerActivity extends Activity implements ChannelAdapter.ChannelItemClickListener{
+public class ChannelManagerActivity extends BaseActivity implements ChannelAdapter.ChannelItemClickListener{
 
     private RecyclerView mRecyclerView;
     private ChannelAdapter mRecyclerAdapter;
@@ -40,6 +42,7 @@ public class ChannelManagerActivity extends Activity implements ChannelAdapter.C
         setContentView(R.layout.activity_channel_manager);
         getIntentData();
         context = this;
+        initToolbar();
         listDataSave = new ListDataSave(this, "channel");
         mRecyclerView = (RecyclerView) findViewById(com.example.channelmanager.R.id.id_tab_recycler_view);
         GridLayoutManager gridLayout = new GridLayoutManager(context, 4);
@@ -63,6 +66,19 @@ public class ChannelManagerActivity extends Activity implements ChannelAdapter.C
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         tabposition = bundle.getInt("TABPOSITION");
+    }
+
+    private void initToolbar(){
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        toolbar.setTitle("");
+        TextView toolbar_title = (TextView) findViewById(R.id.toolbar_title);
+        toolbar_title.setText("频道管理");
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.icon_back);
+        }
     }
 
     /**

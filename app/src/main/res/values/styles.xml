@@ -6,7 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:listDivider">@drawable/divider_bg</item>
+        <!--<item name="android:listDivider">@drawable/divider_bg</item>-->
 
     </style>
 
