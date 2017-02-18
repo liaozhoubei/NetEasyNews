@@ -22,6 +22,7 @@ import com.aspsine.irecyclerview.OnRefreshListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.bproject.neteasynews.MyApplication;
 import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.DensityUtils;
 import cn.bproject.neteasynews.Utils.LocalCacheUtils;
@@ -63,6 +64,7 @@ public class VideoFragment extends BaseFragment {
     private VideoListAdapter mVideoListAdapter;
     private LoadingPage mLoadingPage;
     private boolean isShowCache = false; // 是否有缓存数据被展示
+    private boolean isConnectState = false;  // 判断当前是否在联网刷新, false表示当前没有联网刷新
 
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
@@ -77,8 +79,8 @@ public class VideoFragment extends BaseFragment {
                     break;
                 case HANDLER_SHOW_ERROR:
                     error = (String) message.obj;
-                    if (!TextUtils.isEmpty(error) && getActivity() == null) {
-                        Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
+                    if (!TextUtils.isEmpty(error) ) {
+                        Toast.makeText(MyApplication.getContext(), error, Toast.LENGTH_SHORT).show();
                     }
                     // 如果有缓存内容就不展示错误页面
                     if (!isShowCache) {
@@ -89,14 +91,16 @@ public class VideoFragment extends BaseFragment {
                     result = (String) message.obj;
                     newlist = DataParse.VideoList(result);
                     DataChange();
+                    isConnectState = false;
                     break;
                 case HANDLER_SHOW_REFRESH_LOADMORE_ERRO:
                     error = (String) message.obj;
-                    if (!TextUtils.isEmpty(error) && getActivity() == null) {
-                        Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
+                    if (!TextUtils.isEmpty(error) ) {
+                        Toast.makeText(MyApplication.getContext(), error, Toast.LENGTH_SHORT).show();
                     }
                     mIRecyclerView.setRefreshing(false);
                     mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.ERROR);
+                    isConnectState = false;
                     break;
             }
             return false;
@@ -177,38 +181,41 @@ public class VideoFragment extends BaseFragment {
 
 
     public void requestData() {
+        if (!isConnectState ){
+            mThreadPool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    isConnectState = true;
+                    mUrl = Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + mStartIndex + Api.devId;
+                    //        http://c.m.163.com/recommend/getChanListNews?channel=T1457068979049&size=10&offset=0&devId=44t6%2B5mG3ACAOlQOCLuIHg%3D%3D
+                    HttpHelper.get(mUrl, new HttpCallbackListener() {
+                        @Override
+                        public void onSuccess(String result) {
+                            mVideoBeanList = DataParse.VideoList(result);
+                            if (mVideoBeanList != null) {
 
-
-        mThreadPool.execute(new Runnable() {
-            @Override
-            public void run() {
-                mUrl = Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + mStartIndex + Api.devId;
-                //        http://c.m.163.com/recommend/getChanListNews?channel=T1457068979049&size=10&offset=0&devId=44t6%2B5mG3ACAOlQOCLuIHg%3D%3D
-                HttpHelper.get(mUrl, new HttpCallbackListener() {
-                    @Override
-                    public void onSuccess(String result) {
-                        mVideoBeanList = DataParse.VideoList(result);
-                        if (mVideoBeanList != null) {
-
-                            Message message = mHandler.obtainMessage();
-                            message.what = HANDLER_SHOW_NEWS;
-                            mHandler.sendMessage(message);
-                            saveCache(mUrl, result);
-                            saveUpdateTime(getActivity(), Api.specialVideoId, System.currentTimeMillis());
-                        } else {
-                            showEmptyPage();
+                                Message message = mHandler.obtainMessage();
+                                message.what = HANDLER_SHOW_NEWS;
+                                mHandler.sendMessage(message);
+                                saveCache(mUrl, result);
+                                saveUpdateTime(getActivity(), Api.specialVideoId, System.currentTimeMillis());
+                            } else {
+                                showEmptyPage();
+                            }
+                            isConnectState = false;
                         }
-                    }
 
-                    @Override
-                    public void onError(Exception e) {
-                        LogUtils.e(TAG, e.toString());
-                        sendErrorMessage(HANDLER_SHOW_ERROR, e.toString());
-                    }
-                });
+                        @Override
+                        public void onError(Exception e) {
+                            LogUtils.e(TAG, e.toString());
+                            sendErrorMessage(HANDLER_SHOW_ERROR, e.toString());
+                            isConnectState = false;
+                        }
+                    });
 
-            }
-        });
+                }
+            });
+        }
 
     }
 
@@ -219,56 +226,24 @@ public class VideoFragment extends BaseFragment {
         mIRecyclerView.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.GONE);
-                mThreadPool.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        String url = Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + 0 + Api.devId;
-                        HttpHelper.get(url, new HttpCallbackListener() {
-                            @Override
-                            public void onSuccess(String result) {
-                                LogUtils.d(TAG, "下拉刷新onSuccess: " + result);
-                                isPullRefresh = true;
-                                if (result != null) {
-                                    Message message = mHandler.obtainMessage();
-                                    message.what = HANDLER_SHOW_REFRESH_LOADMORE;
-                                    message.obj = result;
-                                    mHandler.sendMessage(message);
-                                    saveUpdateTime(getActivity(), Api.SpecialColumn2, System.currentTimeMillis());
-                                }
-                            }
-
-                            @Override
-                            public void onError(Exception e) {
-                                LogUtils.e(TAG, e.toString());
-                                sendErrorMessage(HANDLER_SHOW_REFRESH_LOADMORE_ERRO, e.toString());
-                            }
-                        });
-
-                    }
-                });
-            }
-        });
-        mIRecyclerView.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-                if (mLoadMoreFooterView.canLoadMore() && mVideoListAdapter.getItemCount() > 0) {
-                    mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.LOADING);
-
-                    mStartIndex += 20;
+                if (!isConnectState){
+                    isConnectState = true;
+                    mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.GONE);
                     mThreadPool.execute(new Runnable() {
                         @Override
                         public void run() {
-                            mUrl = Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + mStartIndex + Api.devId;
-                            HttpHelper.get(mUrl, new HttpCallbackListener() {
+                            String url = Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + 0 + Api.devId;
+                            HttpHelper.get(url, new HttpCallbackListener() {
                                 @Override
                                 public void onSuccess(String result) {
-                                    isPullRefresh = false;
+                                    LogUtils.d(TAG, "下拉刷新onSuccess: " + result);
+                                    isPullRefresh = true;
                                     if (result != null) {
                                         Message message = mHandler.obtainMessage();
                                         message.what = HANDLER_SHOW_REFRESH_LOADMORE;
                                         message.obj = result;
                                         mHandler.sendMessage(message);
+                                        saveUpdateTime(getActivity(), Api.SpecialColumn2, System.currentTimeMillis());
                                     }
                                 }
 
@@ -278,8 +253,46 @@ public class VideoFragment extends BaseFragment {
                                     sendErrorMessage(HANDLER_SHOW_REFRESH_LOADMORE_ERRO, e.toString());
                                 }
                             });
+
                         }
                     });
+                }
+            }
+        });
+        mIRecyclerView.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                if (mLoadMoreFooterView.canLoadMore() && mVideoListAdapter.getItemCount() > 0) {
+                    if (!isConnectState){
+                        isConnectState= true;
+                        mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.LOADING);
+
+                        mStartIndex += 20;
+                        mThreadPool.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                mUrl = Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + mStartIndex + Api.devId;
+                                HttpHelper.get(mUrl, new HttpCallbackListener() {
+                                    @Override
+                                    public void onSuccess(String result) {
+                                        isPullRefresh = false;
+                                        if (result != null) {
+                                            Message message = mHandler.obtainMessage();
+                                            message.what = HANDLER_SHOW_REFRESH_LOADMORE;
+                                            message.obj = result;
+                                            mHandler.sendMessage(message);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onError(Exception e) {
+                                        LogUtils.e(TAG, e.toString());
+                                        sendErrorMessage(HANDLER_SHOW_REFRESH_LOADMORE_ERRO, e.toString());
+                                    }
+                                });
+                            }
+                        });
+                    }
                 }
             }
         });
@@ -310,7 +323,7 @@ public class VideoFragment extends BaseFragment {
      */
     private void DataChange() {
         isPullRefreshView();
-        Toast.makeText(getActivity(), "数据已更新", Toast.LENGTH_SHORT).show();
+        Toast.makeText(MyApplication.getContext(), "数据已更新", Toast.LENGTH_SHORT).show();
         // 收起刷新视图
         mIRecyclerView.setRefreshing(false);
         showNewsPage();

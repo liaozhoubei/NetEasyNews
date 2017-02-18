@@ -83,7 +83,7 @@ public abstract class BaseFragment extends Fragment implements DefineView {
     public static void saveUpdateTime(Context ctx, String key, long value) {
         SharedPreferences sp = ctx.getSharedPreferences("save_time",
                 Context.MODE_PRIVATE);
-        sp.edit().putLong(key, value).commit();
+        sp.edit().putLong(key, value).apply();
     }
 
     // 获取保存缓存的时间

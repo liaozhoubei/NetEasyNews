@@ -21,6 +21,7 @@ import com.aspsine.irecyclerview.OnRefreshListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.bproject.neteasynews.MyApplication;
 import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.DensityUtils;
 import cn.bproject.neteasynews.Utils.LocalCacheUtils;
@@ -63,8 +64,10 @@ public class NewsListFragment extends BaseFragment {
 
     private int mStartIndex = 0;    // 请求数据的起始参数
     public ThreadManager.ThreadPool mThreadPool; // 线程池
-    private boolean isPullRefresh;
+    private boolean isPullRefresh;  // 判断当前是下拉刷新还是上拉刷新
     private boolean isShowCache = false; // 是否有缓存数据被展示
+
+    private boolean isConnectState = false;  // 判断当前是否在联网刷新, false表示当前没有联网刷新
 
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
@@ -79,8 +82,8 @@ public class NewsListFragment extends BaseFragment {
                     break;
                 case HANDLER_SHOW_ERROR:
                     error = (String) message.obj;
-                    if (!TextUtils.isEmpty(error) && getActivity() == null) {
-                        Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
+                    if (!TextUtils.isEmpty(error)) {
+                        Toast.makeText(MyApplication.getContext(), error, Toast.LENGTH_SHORT).show();
                     }
                     // 如果有缓存内容就不展示错误页面
                     if (!isShowCache) {
@@ -91,14 +94,16 @@ public class NewsListFragment extends BaseFragment {
                     result = (String) message.obj;
                     newlist = DataParse.NewsList(result, tid);
                     DataChange();
+                    isConnectState = false;
                     break;
                 case HANDLER_SHOW_REFRESH_LOADMORE_ERRO:
                     error = (String) message.obj;
-                    if (!TextUtils.isEmpty(error) && getActivity() == null) {
-                        Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
+                    if (!TextUtils.isEmpty(error)) {
+                        Toast.makeText(MyApplication.getContext(), error, Toast.LENGTH_SHORT).show();
                     }
                     mIRecyclerView.setRefreshing(false);
                     mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.ERROR);
+                    isConnectState = false;
                     break;
             }
             return false;
@@ -200,34 +205,37 @@ public class NewsListFragment extends BaseFragment {
 
 //        http://c.m.163.com/nc/article/list/T1467284926140/0-20.html
 //        http://c.m.163.com/nc/article/list/T1348647909107/0-20.html
+        if (!isConnectState){
+            mThreadPool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    isConnectState= true;
+                    HttpHelper.get(mUrl, new HttpCallbackListener() {
+                        @Override
+                        public void onSuccess(String result) {
+                            mNewsListNormalBeanList = DataParse.NewsList(result, tid);
 
-        mThreadPool.execute(new Runnable() {
-            @Override
-            public void run() {
-                HttpHelper.get(mUrl, new HttpCallbackListener() {
-                    @Override
-                    public void onSuccess(String result) {
-                        mNewsListNormalBeanList = DataParse.NewsList(result, tid);
-
-                        if (mNewsListNormalBeanList != null) {
-                            Message message = mHandler.obtainMessage();
-                            message.what = HANDLER_SHOW_NEWS;
-                            mHandler.sendMessage(message);
-                            saveUpdateTime(getActivity(), tid, System.currentTimeMillis());
-                            saveCache(mUrl, result);
+                            if (mNewsListNormalBeanList != null) {
+                                Message message = mHandler.obtainMessage();
+                                message.what = HANDLER_SHOW_NEWS;
+                                mHandler.sendMessage(message);
+                                saveUpdateTime(getActivity(), tid, System.currentTimeMillis());
+                                saveCache(mUrl, result);
+                            }
+                            isConnectState= false;
                         }
-                    }
 
-                    @Override
-                    public void onError(Exception e) {
-                        // 展示错误页面并尝试重新发出请求
-                        LogUtils.e(TAG, "requestData" + e.toString());
-                        sendErrorMessage(HANDLER_SHOW_ERROR, e.toString());
-                    }
-                });
-
-            }
-        });
+                        @Override
+                        public void onError(Exception e) {
+                            // 展示错误页面并尝试重新发出请求
+                            LogUtils.e(TAG, "requestData" + e.toString());
+                            sendErrorMessage(HANDLER_SHOW_ERROR, e.toString());
+                            isConnectState= false;
+                        }
+                    });
+                }
+            });
+        }
 
     }
 
@@ -236,7 +244,7 @@ public class NewsListFragment extends BaseFragment {
     public void bindData() {
         if (mNewsListAdapter == null) {
 
-            mNewsListAdapter = new NewsListAdapter(getActivity(), (ArrayList<NewsListNormalBean>) mNewsListNormalBeanList);
+            mNewsListAdapter = new NewsListAdapter(MyApplication.getContext(), (ArrayList<NewsListNormalBean>) mNewsListNormalBeanList);
             mIRecyclerView.setIAdapter(mNewsListAdapter);
             // 设置Item点击跳转事件
             mNewsListAdapter.setOnItemClickListener(new NewsListAdapter.OnItemClickListener() {
@@ -280,55 +288,23 @@ public class NewsListFragment extends BaseFragment {
         mIRecyclerView.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mUrl = Api.CommonUrl + tid + "/" + 0 + Api.endUrl;
-//                isPullRefresh = true;
-                mThreadPool.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        HttpHelper.get(mUrl, new HttpCallbackListener() {
-                            @Override
-                            public void onSuccess(String result) {
-                                isPullRefresh = true;
-                                // 无法刷新到新内容
-                                if (result != null){
-                                    Message message = mHandler.obtainMessage();
-                                    message.what = HANDLER_SHOW_REFRESH_LOADMORE;
-                                    message.obj = result;
-                                    mHandler.sendMessage(message);
-                                    saveUpdateTime(getActivity(), tid, System.currentTimeMillis());
-                                }
-                            }
-
-                            @Override
-                            public void onError(Exception e) {
-                                LogUtils.e(TAG, "requestData" + e.toString());
-                                sendErrorMessage(HANDLER_SHOW_REFRESH_LOADMORE_ERRO, e.toString());
-                            }
-                        });
-                    }
-                });
-            }
-        });
-
-        mIRecyclerView.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-                if (mLoadMoreFooterView.canLoadMore() && mNewsListAdapter.getItemCount() > 0) {
-                    mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.LOADING);
-                    mStartIndex += 20;
-                    mUrl = Api.CommonUrl + tid + "/" + mStartIndex + Api.endUrl;
+                if (!isConnectState){
+                    mUrl = Api.CommonUrl + tid + "/" + 0 + Api.endUrl;
                     mThreadPool.execute(new Runnable() {
                         @Override
                         public void run() {
+                            isConnectState = true;
                             HttpHelper.get(mUrl, new HttpCallbackListener() {
                                 @Override
                                 public void onSuccess(String result) {
-                                    Log.d(TAG, "setOnLoadMoreListener: " + result);
-                                    isPullRefresh = false;
-                                    Message message = mHandler.obtainMessage();
-                                    message.what = HANDLER_SHOW_REFRESH_LOADMORE;
-                                    message.obj = result;
-                                    mHandler.sendMessage(message);
+                                    // 无法刷新到新内容
+                                    if (result != null) {
+                                        Message message = mHandler.obtainMessage();
+                                        message.what = HANDLER_SHOW_REFRESH_LOADMORE;
+                                        message.obj = result;
+                                        mHandler.sendMessage(message);
+                                        saveUpdateTime(getActivity(), tid, System.currentTimeMillis());
+                                    }
                                 }
 
                                 @Override
@@ -339,6 +315,42 @@ public class NewsListFragment extends BaseFragment {
                             });
                         }
                     });
+                }
+            }
+        });
+
+        mIRecyclerView.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                if (mLoadMoreFooterView.canLoadMore() && mNewsListAdapter.getItemCount() > 0) {
+                    if (!isConnectState){
+                        isConnectState = true;
+                        mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.LOADING);
+                        mStartIndex += 20;
+                        mUrl = Api.CommonUrl + tid + "/" + mStartIndex + Api.endUrl;
+                        mThreadPool.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                HttpHelper.get(mUrl, new HttpCallbackListener() {
+                                    @Override
+                                    public void onSuccess(String result) {
+                                        Log.d(TAG, "setOnLoadMoreListener: " + result);
+                                        isPullRefresh = false;
+                                        Message message = mHandler.obtainMessage();
+                                        message.what = HANDLER_SHOW_REFRESH_LOADMORE;
+                                        message.obj = result;
+                                        mHandler.sendMessage(message);
+                                    }
+
+                                    @Override
+                                    public void onError(Exception e) {
+                                        LogUtils.e(TAG, "requestData" + e.toString());
+                                        sendErrorMessage(HANDLER_SHOW_REFRESH_LOADMORE_ERRO, e.toString());
+                                    }
+                                });
+                            }
+                        });
+                    }
                 }
             }
         });
@@ -358,13 +370,9 @@ public class NewsListFragment extends BaseFragment {
     private void DataChange() {
         if (newlist != null) {
             isPullRefreshView();
-            if (getActivity() != null) {
-                Toast.makeText(getActivity(), "数据已更新", Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(MyApplication.getContext(), "数据已更新", Toast.LENGTH_SHORT).show();
         } else {
-            if (getActivity() != null) {
-                Toast.makeText(getActivity(), "数据请求失败", Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(MyApplication.getContext(), "数据请求失败", Toast.LENGTH_SHORT).show();
         }
         mIRecyclerView.setRefreshing(false);
     }
