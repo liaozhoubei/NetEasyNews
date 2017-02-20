@@ -1,6 +1,16 @@
 # NetEasyNews
 仿网易新闻项目
 
+![image](https://github.com/liaozhoubei/NetEasyNews/blob/master/images/1.gif)
+
+![image](https://github.com/liaozhoubei/NetEasyNews/blob/master/images/2.gif)
+
+![image](https://github.com/liaozhoubei/NetEasyNews/blob/master/images/3.gif)
+
+![image](https://github.com/liaozhoubei/NetEasyNews/blob/master/images/4.gif)
+
+![image](https://github.com/liaozhoubei/NetEasyNews/blob/master/images/5.gif)
+
 # 已知错误信息
 
 1、如果采用Okhttp进行获取网易api数据，将会有几率返回403：服务器拒绝的问题。
