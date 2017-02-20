@@ -11,6 +11,8 @@
 
 ![image](https://github.com/liaozhoubei/NetEasyNews/blob/master/images/5.gif)
 
+![image](https://github.com/liaozhoubei/NetEasyNews/blob/master/images/6.gif)
+
 # 已知错误信息
 
 1、如果采用Okhttp进行获取网易api数据，将会有几率返回403：服务器拒绝的问题。
