@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.aspsine.irecyclerview.IRecyclerView;
 import com.aspsine.irecyclerview.OnLoadMoreListener;
@@ -27,6 +26,7 @@ import cn.bproject.neteasynews.Utils.LocalCacheUtils;
 import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.Utils.NetWorkUtil;
 import cn.bproject.neteasynews.Utils.ThreadManager;
+import cn.bproject.neteasynews.Utils.ToastUtils;
 import cn.bproject.neteasynews.activity.PicDetailActivity;
 import cn.bproject.neteasynews.adapter.PicListAdapter;
 import cn.bproject.neteasynews.bean.PicListBean;
@@ -84,9 +84,7 @@ public class PicListFragment extends BaseFragment implements DefineView {
                     break;
                 case HANDLER_SHOW_ERROR:
                     error = (String) message.obj;
-                    if (!TextUtils.isEmpty(error)) {
-                        Toast.makeText(MyApplication.getContext(), error, Toast.LENGTH_SHORT).show();
-                    }
+                    ToastUtils.showShort(error);
                     // 如果有缓存内容就不展示错误页面
                     if (!isShowCache) {
                         showErroPage();
@@ -100,9 +98,7 @@ public class PicListFragment extends BaseFragment implements DefineView {
                     break;
                 case HANDLER_SHOW_REFRESH_LOADMORE_ERRO:
                     error = (String) message.obj;
-                    if (!TextUtils.isEmpty(error)) {
-                        Toast.makeText(MyApplication.getContext(), error, Toast.LENGTH_SHORT).show();
-                    }
+                    ToastUtils.showShort(error);
                     mIRecyclerView.setRefreshing(false);
                     mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.ERROR);
                     isConnectState = false;
@@ -200,7 +196,7 @@ public class PicListFragment extends BaseFragment implements DefineView {
     public void requestData() {
 
 //        http://pic.news.163.com/photocenter/api/list/0003/00AJ0003,0AJQ0003,3LF60003,00B70003,00B50003//0/20.json
-        if (!isConnectState){
+        if (!isConnectState) {
             mThreadPool.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -214,10 +210,10 @@ public class PicListFragment extends BaseFragment implements DefineView {
                                 Message message = mHandler.obtainMessage();
                                 message.what = HANDLER_SHOW_NEWS;
                                 mHandler.sendMessage(message);
-                                saveUpdateTime(getActivity(), tid, System.currentTimeMillis());
+                                saveUpdateTime(tid, System.currentTimeMillis());
                                 saveCache(mUrl, result);
                             }
-                            isConnectState= false;
+                            isConnectState = false;
 
                         }
 
@@ -226,7 +222,7 @@ public class PicListFragment extends BaseFragment implements DefineView {
                             // 展示错误页面并尝试重新发出请求
                             LogUtils.e(TAG, "requestData" + e.toString());
                             sendErrorMessage(HANDLER_SHOW_ERROR, e.toString());
-                            isConnectState= false;
+                            isConnectState = false;
                         }
                     });
                 }
@@ -238,26 +234,20 @@ public class PicListFragment extends BaseFragment implements DefineView {
 
     @Override
     public void bindData() {
-        if (mAdapter == null) {
-            mAdapter = new PicListAdapter(MyApplication.getContext(), (ArrayList<PicListBean>) mPicListBeens);
-            mIRecyclerView.setIAdapter(mAdapter);
+        mAdapter = new PicListAdapter(MyApplication.getContext(), (ArrayList<PicListBean>) mPicListBeens);
+        mIRecyclerView.setIAdapter(mAdapter);
 
-            mAdapter.setOnItemClickListener(new PicListAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(int position, Object o, View v) {
-                    String id = mPicListBeens.get(position).getSetid();
-                    Intent intent = new Intent(getActivity(), PicDetailActivity.class);
-                    intent.putExtra(KEY_TID, tid);
-                    intent.putExtra(SETID, id);
-                    getActivity().startActivity(intent);
-                }
+        mAdapter.setOnItemClickListener(new PicListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position, Object o, View v) {
+                String id = mPicListBeens.get(position).getSetid();
+                Intent intent = new Intent(getActivity(), PicDetailActivity.class);
+                intent.putExtra(KEY_TID, tid);
+                intent.putExtra(SETID, id);
+                getActivity().startActivity(intent);
+            }
 
-            });
-        } else {
-            // 上拉刷新
-            mAdapter.notifyDataSetChanged();
-            mIRecyclerView.setIAdapter(mAdapter);
-        }
+        });
     }
 
     @Override
@@ -267,7 +257,7 @@ public class PicListFragment extends BaseFragment implements DefineView {
         mIRecyclerView.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (!isConnectState){
+                if (!isConnectState) {
                     DownToRefresh();
                 }
             }
@@ -276,7 +266,7 @@ public class PicListFragment extends BaseFragment implements DefineView {
             @Override
             public void onLoadMore() {
                 if (mLoadMoreFooterView.canLoadMore() && mAdapter.getItemCount() > 0) {
-                    if (!isConnectState){
+                    if (!isConnectState) {
                         mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.LOADING);
                         PullUpToRefresh();
                     }
@@ -305,6 +295,7 @@ public class PicListFragment extends BaseFragment implements DefineView {
                         message.what = HANDLER_SHOW_REFRESH_LOADMORE;
                         message.obj = result;
                         mHandler.sendMessage(message);
+                        saveCache(mUrl, result);
                     }
 
                     @Override
@@ -348,12 +339,6 @@ public class PicListFragment extends BaseFragment implements DefineView {
         });
     }
 
-    public void sendErrorMessage(int what, String e) {
-        Message message = mHandler.obtainMessage();
-        message.what = what;
-        message.obj = e;
-        mHandler.sendMessage(message);
-    }
 
     /**
      * 上拉或下拉刷新之后更新UI界面
@@ -361,9 +346,9 @@ public class PicListFragment extends BaseFragment implements DefineView {
     private void DataChange() {
         if (newlist != null) {
             isPullRefreshView();
-            Toast.makeText(MyApplication.getContext(), "数据已更新", Toast.LENGTH_SHORT).show();
+            ToastUtils.showShort("数据已更新");
         } else {
-            Toast.makeText(MyApplication.getContext(), "数据请求失败", Toast.LENGTH_SHORT).show();
+            ToastUtils.showShort("数据请求失败");
         }
         mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.GONE);
         mIRecyclerView.setRefreshing(false);
@@ -379,7 +364,7 @@ public class PicListFragment extends BaseFragment implements DefineView {
             newlist.addAll(mPicListBeens);
             mPicListBeens.removeAll(mPicListBeens);
             mPicListBeens.addAll(newlist);
-            saveUpdateTime(getActivity(), tid, System.currentTimeMillis());
+            saveUpdateTime(tid, System.currentTimeMillis());
         } else {
             // 上拉刷新
             mPicListBeens.addAll(newlist);
@@ -387,6 +372,12 @@ public class PicListFragment extends BaseFragment implements DefineView {
         mAdapter.notifyDataSetChanged();
     }
 
+    public void sendErrorMessage(int what, String e) {
+        Message message = mHandler.obtainMessage();
+        message.what = what;
+        message.obj = e;
+        mHandler.sendMessage(message);
+    }
 
     /**
      * 如果有新闻就展示新闻页面

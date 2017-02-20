@@ -16,7 +16,6 @@ import java.util.List;
 
 import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.CategoryDataUtils;
-import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.adapter.FixedPagerAdapter;
 import cn.bproject.neteasynews.fragment.photo.PicListFragment;
 
@@ -37,14 +36,12 @@ public class PhotoFragment extends BaseFragment {
     private FixedPagerAdapter fixedPagerAdapter;
     private List<BaseFragment> fragments;
     private static List<ProjectChannelBean> channelBeanList;
-    private BaseFragment mFragment;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.tablayout_pager, container, false);
-
         return mView;
     }
 
@@ -101,8 +98,6 @@ public class PhotoFragment extends BaseFragment {
 
             @Override
             public void onPageSelected(int position) {
-                LogUtils.d(TAG, "onPageSelected: mNewsViewpager页面监听执行了" + position);
-                BaseFragment fragment = fragments.get(position);
 
             }
 

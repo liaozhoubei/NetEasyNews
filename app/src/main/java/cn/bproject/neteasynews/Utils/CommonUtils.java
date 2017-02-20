@@ -53,10 +53,6 @@ public class CommonUtils {
         return dm.widthPixels;
     }
 
-//	public static void RunOnUiThread(Runnable r) {
-//		CloudReaderApplication.getInstance().getMainLooper().post(r);
-//	}
-
     public static Drawable getDrawable(int resid) {
         return getResoure().getDrawable(resid);
     }

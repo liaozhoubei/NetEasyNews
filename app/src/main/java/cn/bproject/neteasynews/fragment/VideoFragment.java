@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.aspsine.irecyclerview.IRecyclerView;
 import com.aspsine.irecyclerview.OnLoadMoreListener;
@@ -22,13 +21,13 @@ import com.aspsine.irecyclerview.OnRefreshListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.bproject.neteasynews.MyApplication;
 import cn.bproject.neteasynews.R;
 import cn.bproject.neteasynews.Utils.DensityUtils;
 import cn.bproject.neteasynews.Utils.LocalCacheUtils;
 import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.Utils.NetWorkUtil;
 import cn.bproject.neteasynews.Utils.ThreadManager;
+import cn.bproject.neteasynews.Utils.ToastUtils;
 import cn.bproject.neteasynews.Utils.UIUtils;
 import cn.bproject.neteasynews.activity.VideoDetailActivity;
 import cn.bproject.neteasynews.adapter.VideoListAdapter;
@@ -79,9 +78,7 @@ public class VideoFragment extends BaseFragment {
                     break;
                 case HANDLER_SHOW_ERROR:
                     error = (String) message.obj;
-                    if (!TextUtils.isEmpty(error) ) {
-                        Toast.makeText(MyApplication.getContext(), error, Toast.LENGTH_SHORT).show();
-                    }
+                    ToastUtils.showShort(error);
                     // 如果有缓存内容就不展示错误页面
                     if (!isShowCache) {
                         showErroPage();
@@ -95,9 +92,7 @@ public class VideoFragment extends BaseFragment {
                     break;
                 case HANDLER_SHOW_REFRESH_LOADMORE_ERRO:
                     error = (String) message.obj;
-                    if (!TextUtils.isEmpty(error) ) {
-                        Toast.makeText(MyApplication.getContext(), error, Toast.LENGTH_SHORT).show();
-                    }
+                    ToastUtils.showShort(error);
                     mIRecyclerView.setRefreshing(false);
                     mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.ERROR);
                     isConnectState = false;
@@ -179,9 +174,8 @@ public class VideoFragment extends BaseFragment {
     }
 
 
-
     public void requestData() {
-        if (!isConnectState ){
+        if (!isConnectState) {
             mThreadPool.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -198,7 +192,7 @@ public class VideoFragment extends BaseFragment {
                                 message.what = HANDLER_SHOW_NEWS;
                                 mHandler.sendMessage(message);
                                 saveCache(mUrl, result);
-                                saveUpdateTime(getActivity(), Api.specialVideoId, System.currentTimeMillis());
+                                saveUpdateTime(Api.specialVideoId, System.currentTimeMillis());
                             } else {
                                 showEmptyPage();
                             }
@@ -221,101 +215,106 @@ public class VideoFragment extends BaseFragment {
 
     @Override
     public void initListener() {
-//        mIRecyclerView.setLoadMoreEnabled(true);
-//        mIRecyclerView.setRefreshEnabled(true);
         mIRecyclerView.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (!isConnectState){
-                    isConnectState = true;
-                    mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.GONE);
-                    mThreadPool.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            String url = Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + 0 + Api.devId;
-                            HttpHelper.get(url, new HttpCallbackListener() {
-                                @Override
-                                public void onSuccess(String result) {
-                                    LogUtils.d(TAG, "下拉刷新onSuccess: " + result);
-                                    isPullRefresh = true;
-                                    if (result != null) {
-                                        Message message = mHandler.obtainMessage();
-                                        message.what = HANDLER_SHOW_REFRESH_LOADMORE;
-                                        message.obj = result;
-                                        mHandler.sendMessage(message);
-                                        saveUpdateTime(getActivity(), Api.SpecialColumn2, System.currentTimeMillis());
-                                    }
-                                }
-
-                                @Override
-                                public void onError(Exception e) {
-                                    LogUtils.e(TAG, e.toString());
-                                    sendErrorMessage(HANDLER_SHOW_REFRESH_LOADMORE_ERRO, e.toString());
-                                }
-                            });
-
-                        }
-                    });
-                }
+                DownToRefresh();
             }
         });
         mIRecyclerView.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
                 if (mLoadMoreFooterView.canLoadMore() && mVideoListAdapter.getItemCount() > 0) {
-                    if (!isConnectState){
-                        isConnectState= true;
-                        mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.LOADING);
-
-                        mStartIndex += 20;
-                        mThreadPool.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                mUrl = Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + mStartIndex + Api.devId;
-                                HttpHelper.get(mUrl, new HttpCallbackListener() {
-                                    @Override
-                                    public void onSuccess(String result) {
-                                        isPullRefresh = false;
-                                        if (result != null) {
-                                            Message message = mHandler.obtainMessage();
-                                            message.what = HANDLER_SHOW_REFRESH_LOADMORE;
-                                            message.obj = result;
-                                            mHandler.sendMessage(message);
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onError(Exception e) {
-                                        LogUtils.e(TAG, e.toString());
-                                        sendErrorMessage(HANDLER_SHOW_REFRESH_LOADMORE_ERRO, e.toString());
-                                    }
-                                });
-                            }
-                        });
-                    }
+                    PullUpToRefresh();
                 }
             }
         });
 
     }
 
+    // 下拉刷新
+    public void DownToRefresh() {
+        if (!isConnectState) {
+            isConnectState = true;
+            mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.GONE);
+            mThreadPool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    String url = Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + 0 + Api.devId;
+                    HttpHelper.get(url, new HttpCallbackListener() {
+                        @Override
+                        public void onSuccess(String result) {
+                            LogUtils.d(TAG, "下拉刷新onSuccess: " + result);
+                            isPullRefresh = true;
+                            if (result != null) {
+                                Message message = mHandler.obtainMessage();
+                                message.what = HANDLER_SHOW_REFRESH_LOADMORE;
+                                message.obj = result;
+                                mHandler.sendMessage(message);
+                                saveUpdateTime(Api.SpecialColumn2, System.currentTimeMillis());
+                            }
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            LogUtils.e(TAG, e.toString());
+                            sendErrorMessage(HANDLER_SHOW_REFRESH_LOADMORE_ERRO, e.toString());
+                        }
+                    });
+
+                }
+            });
+        }
+    }
+
+
+    // 上拉刷新
+    public void PullUpToRefresh() {
+        if (!isConnectState) {
+            isConnectState = true;
+            mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.LOADING);
+
+            mStartIndex += 20;
+            mThreadPool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    mUrl = Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + mStartIndex + Api.devId;
+                    HttpHelper.get(mUrl, new HttpCallbackListener() {
+                        @Override
+                        public void onSuccess(String result) {
+                            isPullRefresh = false;
+                            if (result != null) {
+                                Message message = mHandler.obtainMessage();
+                                message.what = HANDLER_SHOW_REFRESH_LOADMORE;
+                                message.obj = result;
+                                mHandler.sendMessage(message);
+                            }
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            LogUtils.e(TAG, e.toString());
+                            sendErrorMessage(HANDLER_SHOW_REFRESH_LOADMORE_ERRO, e.toString());
+                        }
+                    });
+                }
+            });
+        }
+    }
+
 
     @Override
     public void bindData() {
-        if (mVideoListAdapter == null){
-            mVideoListAdapter = new VideoListAdapter(getActivity(), mVideoBeanList);
-            mIRecyclerView.setIAdapter(mVideoListAdapter);
-            mVideoListAdapter.setOnItemClickListener(new VideoListAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(int position, Object o, View v) {
-                    Intent intent = new Intent(getActivity(), VideoDetailActivity.class);
-                    intent.putExtra(VID, mVideoBeanList.get(position).getVid());
-                    getActivity().startActivity(intent);
-                }
-            });
-        } else {
-            mVideoListAdapter.notifyDataSetChanged();
-        }
+        mVideoListAdapter = new VideoListAdapter(getActivity(), mVideoBeanList);
+        mIRecyclerView.setIAdapter(mVideoListAdapter);
+        mVideoListAdapter.setOnItemClickListener(new VideoListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position, Object o, View v) {
+                Intent intent = new Intent(getActivity(), VideoDetailActivity.class);
+                intent.putExtra(VID, mVideoBeanList.get(position).getVid());
+                getActivity().startActivity(intent);
+            }
+        });
     }
 
     /**
@@ -323,7 +322,7 @@ public class VideoFragment extends BaseFragment {
      */
     private void DataChange() {
         isPullRefreshView();
-        Toast.makeText(MyApplication.getContext(), "数据已更新", Toast.LENGTH_SHORT).show();
+        ToastUtils.showShort("数据已更新");
         // 收起刷新视图
         mIRecyclerView.setRefreshing(false);
         showNewsPage();

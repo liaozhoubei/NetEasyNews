@@ -1,15 +1,15 @@
 package cn.bproject.neteasynews.fragment;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
+import cn.bproject.neteasynews.MyApplication;
 import cn.bproject.neteasynews.Utils.LocalCacheUtils;
 import cn.bproject.neteasynews.Utils.LogUtils;
+import cn.bproject.neteasynews.Utils.PrefUtils;
 import cn.bproject.neteasynews.common.DefineView;
 
 /**
@@ -56,7 +56,7 @@ public abstract class BaseFragment extends Fragment implements DefineView {
     public boolean isLastNews(String key) {
         long threeHour = 3 * 60 * 60 * 1000;
         long currentTime = System.currentTimeMillis();
-        long saveTime = getUpdateTime(getActivity(), key, currentTime);
+        long saveTime = getUpdateTime(key, currentTime);
         // 判断保存缓存的时间与现在的时间是否超过3小时，没有超过就读取缓存
         long ll = currentTime - saveTime;
 
@@ -80,16 +80,13 @@ public abstract class BaseFragment extends Fragment implements DefineView {
     }
 
     // 设置保存缓存的时间
-    public static void saveUpdateTime(Context ctx, String key, long value) {
-        SharedPreferences sp = ctx.getSharedPreferences("save_time",
-                Context.MODE_PRIVATE);
-        sp.edit().putLong(key, value).apply();
+    public static void saveUpdateTime(String key, long value) {
+        PrefUtils.setLong(MyApplication.getContext(), "save_time", key, value);
     }
 
     // 获取保存缓存的时间
-    public static long getUpdateTime(Context ctx, String key, long defValue) {
-        SharedPreferences sp = ctx.getSharedPreferences("save_time",
-                Context.MODE_PRIVATE);
-        return sp.getLong(key, defValue);
+    public static long getUpdateTime(String key, long defValue) {
+        long saveTime = PrefUtils.getLong(MyApplication.getContext(), "save_time", key, defValue);
+        return saveTime;
     }
 }

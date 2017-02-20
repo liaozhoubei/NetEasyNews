@@ -7,12 +7,10 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.aspsine.irecyclerview.IRecyclerView;
 import com.aspsine.irecyclerview.OnLoadMoreListener;
@@ -28,6 +26,7 @@ import cn.bproject.neteasynews.Utils.LocalCacheUtils;
 import cn.bproject.neteasynews.Utils.LogUtils;
 import cn.bproject.neteasynews.Utils.NetWorkUtil;
 import cn.bproject.neteasynews.Utils.ThreadManager;
+import cn.bproject.neteasynews.Utils.ToastUtils;
 import cn.bproject.neteasynews.activity.NewsDetailActivity;
 import cn.bproject.neteasynews.activity.PicDetailActivity;
 import cn.bproject.neteasynews.adapter.NewsListAdapter;
@@ -82,9 +81,7 @@ public class NewsListFragment extends BaseFragment {
                     break;
                 case HANDLER_SHOW_ERROR:
                     error = (String) message.obj;
-                    if (!TextUtils.isEmpty(error)) {
-                        Toast.makeText(MyApplication.getContext(), error, Toast.LENGTH_SHORT).show();
-                    }
+                    ToastUtils.showShort(error);
                     // 如果有缓存内容就不展示错误页面
                     if (!isShowCache) {
                         showErroPage();
@@ -98,9 +95,7 @@ public class NewsListFragment extends BaseFragment {
                     break;
                 case HANDLER_SHOW_REFRESH_LOADMORE_ERRO:
                     error = (String) message.obj;
-                    if (!TextUtils.isEmpty(error)) {
-                        Toast.makeText(MyApplication.getContext(), error, Toast.LENGTH_SHORT).show();
-                    }
+                    ToastUtils.showShort(error);
                     mIRecyclerView.setRefreshing(false);
                     mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.ERROR);
                     isConnectState = false;
@@ -205,11 +200,11 @@ public class NewsListFragment extends BaseFragment {
 
 //        http://c.m.163.com/nc/article/list/T1467284926140/0-20.html
 //        http://c.m.163.com/nc/article/list/T1348647909107/0-20.html
-        if (!isConnectState){
+        if (!isConnectState) {
             mThreadPool.execute(new Runnable() {
                 @Override
                 public void run() {
-                    isConnectState= true;
+                    isConnectState = true;
                     HttpHelper.get(mUrl, new HttpCallbackListener() {
                         @Override
                         public void onSuccess(String result) {
@@ -219,10 +214,10 @@ public class NewsListFragment extends BaseFragment {
                                 Message message = mHandler.obtainMessage();
                                 message.what = HANDLER_SHOW_NEWS;
                                 mHandler.sendMessage(message);
-                                saveUpdateTime(getActivity(), tid, System.currentTimeMillis());
+                                saveUpdateTime(tid, System.currentTimeMillis());
                                 saveCache(mUrl, result);
                             }
-                            isConnectState= false;
+                            isConnectState = false;
                         }
 
                         @Override
@@ -230,7 +225,7 @@ public class NewsListFragment extends BaseFragment {
                             // 展示错误页面并尝试重新发出请求
                             LogUtils.e(TAG, "requestData" + e.toString());
                             sendErrorMessage(HANDLER_SHOW_ERROR, e.toString());
-                            isConnectState= false;
+                            isConnectState = false;
                         }
                     });
                 }
@@ -242,80 +237,44 @@ public class NewsListFragment extends BaseFragment {
 
     @Override
     public void bindData() {
-        if (mNewsListAdapter == null) {
+        mNewsListAdapter = new NewsListAdapter(MyApplication.getContext(), (ArrayList<NewsListNormalBean>) mNewsListNormalBeanList);
+        mIRecyclerView.setIAdapter(mNewsListAdapter);
+        // 设置Item点击跳转事件
+        mNewsListAdapter.setOnItemClickListener(new NewsListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View v, int position) {
+                NewsListNormalBean newsListNormalBean = mNewsListNormalBeanList.get(position);
+                String photosetID = newsListNormalBean.getPhotosetID();
+                Intent intent;
+                if (photosetID != null) {
+                    intent = new Intent(getActivity(), PicDetailActivity.class);
+                    String[] str = photosetID.split("\\|");
+                    //  图片新闻文章所属的类目id
+                    String tid = str[0].substring(4);
+                    // 图片新闻的文章id号
+                    String setid = str[1];
+                    intent.putExtra("TID", tid);
+                    intent.putExtra("SETID", setid);
+                    LogUtils.d(TAG, "onItemClick: photosetID:" + photosetID);
+                } else {
+                    intent = new Intent(getActivity(), NewsDetailActivity.class);
+                    intent.putExtra("DOCID", newsListNormalBean.getDocid());
 
-            mNewsListAdapter = new NewsListAdapter(MyApplication.getContext(), (ArrayList<NewsListNormalBean>) mNewsListNormalBeanList);
-            mIRecyclerView.setIAdapter(mNewsListAdapter);
-            // 设置Item点击跳转事件
-            mNewsListAdapter.setOnItemClickListener(new NewsListAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(View v, int position) {
-                    NewsListNormalBean newsListNormalBean = mNewsListNormalBeanList.get(position);
-                    String photosetID = newsListNormalBean.getPhotosetID();
-                    Intent intent;
-                    if (photosetID != null) {
-                        intent = new Intent(getActivity(), PicDetailActivity.class);
-                        String[] str = photosetID.split("\\|");
-                        //  图片新闻文章所属的类目id
-                        String tid = str[0].substring(4);
-                        // 图片新闻的文章id号
-                        String setid = str[1];
-                        intent.putExtra("TID", tid);
-                        intent.putExtra("SETID", setid);
-                        LogUtils.d(TAG, "onItemClick: photosetID:" + photosetID);
-                    } else {
-                        intent = new Intent(getActivity(), NewsDetailActivity.class);
-                        intent.putExtra("DOCID", newsListNormalBean.getDocid());
-
-                    }
-                    //论坛、读书、漫画、态度公开课、云课堂 等栏目进入新闻详情页未处理
-                    getActivity().startActivity(intent);
                 }
-            });
-        } else {
-            mNewsListAdapter.notifyDataSetChanged();
-            mIRecyclerView.setIAdapter(mNewsListAdapter);
-        }
+                //论坛、读书、漫画、态度公开课、云课堂 等栏目进入新闻详情页未处理
+                getActivity().startActivity(intent);
+            }
+        });
 
     }
 
     @Override
     public void initListener() {
 
-//        mIRecyclerView.setLoadMoreEnabled(true);
-//        mIRecyclerView.setRefreshEnabled(true);
-
         mIRecyclerView.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (!isConnectState){
-                    mUrl = Api.CommonUrl + tid + "/" + 0 + Api.endUrl;
-                    mThreadPool.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            isConnectState = true;
-                            HttpHelper.get(mUrl, new HttpCallbackListener() {
-                                @Override
-                                public void onSuccess(String result) {
-                                    // 无法刷新到新内容
-                                    if (result != null) {
-                                        Message message = mHandler.obtainMessage();
-                                        message.what = HANDLER_SHOW_REFRESH_LOADMORE;
-                                        message.obj = result;
-                                        mHandler.sendMessage(message);
-                                        saveUpdateTime(getActivity(), tid, System.currentTimeMillis());
-                                    }
-                                }
-
-                                @Override
-                                public void onError(Exception e) {
-                                    LogUtils.e(TAG, "requestData" + e.toString());
-                                    sendErrorMessage(HANDLER_SHOW_REFRESH_LOADMORE_ERRO, e.toString());
-                                }
-                            });
-                        }
-                    });
-                }
+                DownToRefresh();
             }
         });
 
@@ -323,46 +282,76 @@ public class NewsListFragment extends BaseFragment {
             @Override
             public void onLoadMore() {
                 if (mLoadMoreFooterView.canLoadMore() && mNewsListAdapter.getItemCount() > 0) {
-                    if (!isConnectState){
-                        isConnectState = true;
-                        mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.LOADING);
-                        mStartIndex += 20;
-                        mUrl = Api.CommonUrl + tid + "/" + mStartIndex + Api.endUrl;
-                        mThreadPool.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                HttpHelper.get(mUrl, new HttpCallbackListener() {
-                                    @Override
-                                    public void onSuccess(String result) {
-                                        Log.d(TAG, "setOnLoadMoreListener: " + result);
-                                        isPullRefresh = false;
-                                        Message message = mHandler.obtainMessage();
-                                        message.what = HANDLER_SHOW_REFRESH_LOADMORE;
-                                        message.obj = result;
-                                        mHandler.sendMessage(message);
-                                    }
-
-                                    @Override
-                                    public void onError(Exception e) {
-                                        LogUtils.e(TAG, "requestData" + e.toString());
-                                        sendErrorMessage(HANDLER_SHOW_REFRESH_LOADMORE_ERRO, e.toString());
-                                    }
-                                });
-                            }
-                        });
-                    }
+                    PullUpToRefresh();
                 }
             }
         });
     }
 
+    // 下拉刷新
+    public void DownToRefresh() {
+        if (!isConnectState) {
+            mUrl = Api.CommonUrl + tid + "/" + 0 + Api.endUrl;
+            mThreadPool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    isConnectState = true;
+                    HttpHelper.get(mUrl, new HttpCallbackListener() {
+                        @Override
+                        public void onSuccess(String result) {
+                            if (result != null) {
+                                Message message = mHandler.obtainMessage();
+                                message.what = HANDLER_SHOW_REFRESH_LOADMORE;
+                                message.obj = result;
+                                mHandler.sendMessage(message);
+                                saveUpdateTime(tid, System.currentTimeMillis());
+                                saveCache(mUrl, result);
+                            }
+                        }
 
-    public void sendErrorMessage(int what, String e) {
-        Message message = mHandler.obtainMessage();
-        message.what = what;
-        message.obj = e;
-        mHandler.sendMessage(message);
+                        @Override
+                        public void onError(Exception e) {
+                            LogUtils.e(TAG, "requestData" + e.toString());
+                            sendErrorMessage(HANDLER_SHOW_REFRESH_LOADMORE_ERRO, e.toString());
+                        }
+                    });
+                }
+            });
+        }
     }
+
+    // 上拉刷新
+    public void PullUpToRefresh() {
+        if (!isConnectState) {
+            isConnectState = true;
+            mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.LOADING);
+            mStartIndex += 20;
+            mUrl = Api.CommonUrl + tid + "/" + mStartIndex + Api.endUrl;
+            mThreadPool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    HttpHelper.get(mUrl, new HttpCallbackListener() {
+                        @Override
+                        public void onSuccess(String result) {
+                            LogUtils.d(TAG, "setOnLoadMoreListener: " + result);
+                            isPullRefresh = false;
+                            Message message = mHandler.obtainMessage();
+                            message.what = HANDLER_SHOW_REFRESH_LOADMORE;
+                            message.obj = result;
+                            mHandler.sendMessage(message);
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            LogUtils.e(TAG, "requestData" + e.toString());
+                            sendErrorMessage(HANDLER_SHOW_REFRESH_LOADMORE_ERRO, e.toString());
+                        }
+                    });
+                }
+            });
+        }
+    }
+
 
     /**
      * 上拉或下拉刷新之后更新UI界面
@@ -370,9 +359,9 @@ public class NewsListFragment extends BaseFragment {
     private void DataChange() {
         if (newlist != null) {
             isPullRefreshView();
-            Toast.makeText(MyApplication.getContext(), "数据已更新", Toast.LENGTH_SHORT).show();
+            ToastUtils.showShort("数据已更新");
         } else {
-            Toast.makeText(MyApplication.getContext(), "数据请求失败", Toast.LENGTH_SHORT).show();
+            ToastUtils.showShort("数据请求失败");
         }
         mIRecyclerView.setRefreshing(false);
     }
@@ -393,6 +382,14 @@ public class NewsListFragment extends BaseFragment {
             mLoadMoreFooterView.setStatus(LoadMoreFooterView.Status.GONE);
         }
         mNewsListAdapter.notifyDataSetChanged();
+    }
+
+
+    public void sendErrorMessage(int what, String e) {
+        Message message = mHandler.obtainMessage();
+        message.what = what;
+        message.obj = e;
+        mHandler.sendMessage(message);
     }
 
     /**
