@@ -15,7 +15,7 @@
 
 apk下载：
 
-https://pan.baidu.com/s/1i5HTGxv
+https://pan.baidu.com/s/1jI3E6bW
 
 # version 1.0
 《第二新闻》安卓客户端-是一个资讯类新闻客户端，包括首页新闻、详情、图片浏览、视频观看等，实时数据抓取新闻等相关功能客户端。
