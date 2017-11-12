@@ -42,6 +42,7 @@ public class VideoDetailActivity extends BaseActivity implements DefineView {
     private final String TAG = VideoFragment.class.getSimpleName();
 
     private final String VID = "VID";
+    private final String MP4URL = "MP4URL";
     private String vid;
 
     private Context mContext;
@@ -67,6 +68,7 @@ public class VideoDetailActivity extends BaseActivity implements DefineView {
         Intent intent = getIntent();
         if (intent != null) {
             vid = intent.getStringExtra(VID);
+            mMp4_url = intent.getStringExtra(MP4URL);
         }
         Log.d("VideoDetailActivity", "onCreate: " + vid);
         initView();
@@ -113,7 +115,8 @@ public class VideoDetailActivity extends BaseActivity implements DefineView {
         if (NetWorkUtil.isWifiConnected(this)) {
             isShowVideo = true;
             showLoadingPage();
-            requestData();
+//            requestData();
+            showVideoPage();
         } else {
             showVideoDialog();
         }
@@ -131,7 +134,8 @@ public class VideoDetailActivity extends BaseActivity implements DefineView {
                         isShowVideo = true;
 
                         showLoadingPage();
-                        requestData();
+//                        requestData();
+                        showVideoPage();
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -151,6 +155,7 @@ public class VideoDetailActivity extends BaseActivity implements DefineView {
             public void run() {
 ////                http://c.m.163.com/nc/video/detail/VC8TVUN5N.html
                 String url = Api.videoDetailUrl + vid + Api.EndUrlVideoDetailUrl;
+                Log.i(TAG, "run: video url = " + url);
                 HttpHelper.get(url, new HttpCallbackListener() {
                     @Override
                     public void onSuccess(String result) {

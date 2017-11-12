@@ -6,9 +6,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
+import com.github.chrisbanes.photoview.PhotoView;
 
 import cn.bproject.neteasynews.R;
-import uk.co.senab.photoview.PhotoView;
+
 
 /**
  * 单张可缩放的图片
