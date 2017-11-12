@@ -55,7 +55,7 @@ public class VideoFragment extends BaseFragment {
     private ArrayList<VideoBean> mVideoBeanList;
     private IRecyclerView mIRecyclerView;
     private ThreadManager.ThreadPool mThreadPool;   // 线程池
-    private int mStartIndex = 0;
+    private int mStartIndex = 10;
     private boolean isPullRefresh;
     private List<VideoBean> newlist;   // 上拉刷新后获得的数据
     private final String VID = "VID";
