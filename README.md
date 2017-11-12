@@ -15,7 +15,7 @@
 
 apk下载：
 
-https://pan.baidu.com/s/1miaIT7q
+http://pan.baidu.com/s/1qXTPhZu
 
 # 2017.11.12
 修复了网易视频网址更新导致视频无法观看的问题
