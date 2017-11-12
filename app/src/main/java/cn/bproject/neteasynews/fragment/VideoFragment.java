@@ -59,6 +59,7 @@ public class VideoFragment extends BaseFragment {
     private boolean isPullRefresh;
     private List<VideoBean> newlist;   // 上拉刷新后获得的数据
     private final String VID = "VID";
+    private final String MP4URL = "MP4URL";
     private LoadMoreFooterView mLoadMoreFooterView;
     private VideoListAdapter mVideoListAdapter;
     private LoadingPage mLoadingPage;
@@ -180,7 +181,7 @@ public class VideoFragment extends BaseFragment {
                 @Override
                 public void run() {
                     isConnectState = true;
-                    mUrl = Api.host + Api.SpecialColumn2 + "T1457068979049" + Api.SpecialendUrl + mStartIndex + Api.devId;
+                    mUrl = Api.host + Api.SpecialColumn2 + "T1457068979049" + "&subtab=Video_Recom" +Api.SpecialendUrl + mStartIndex + Api.devId;
                     //        http://c.m.163.com/recommend/getChanListNews?channel=T1457068979049&size=10&offset=0&devId=44t6%2B5mG3ACAOlQOCLuIHg%3D%3D
                     HttpHelper.get(mUrl, new HttpCallbackListener() {
                         @Override
@@ -312,6 +313,7 @@ public class VideoFragment extends BaseFragment {
             public void onItemClick(int position, Object o, View v) {
                 Intent intent = new Intent(getActivity(), VideoDetailActivity.class);
                 intent.putExtra(VID, mVideoBeanList.get(position).getVid());
+                intent.putExtra(MP4URL, mVideoBeanList.get(position).getMp4_url());
                 getActivity().startActivity(intent);
             }
         });
