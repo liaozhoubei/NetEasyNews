@@ -19,8 +19,10 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven { url "https://jitpack.io" }
         
     }
+
 }
 
 task clean(type: Delete) {
