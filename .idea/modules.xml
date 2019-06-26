@@ -2,13 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/library/InitActivity/InitActivity.iml" filepath="$PROJECT_DIR$/library/InitActivity/InitActivity.iml" />
-      <module fileurl="file://$PROJECT_DIR$/NetEasyNews.iml" filepath="$PROJECT_DIR$/NetEasyNews.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NetEasyNews_Kotlin.iml" filepath="$PROJECT_DIR$/NetEasyNews_Kotlin.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/channelmanager/channelmanager.iml" filepath="$PROJECT_DIR$/channelmanager/channelmanager.iml" />
-      <module fileurl="file://$PROJECT_DIR$/library/irecyclerview/irecyclerview.iml" filepath="$PROJECT_DIR$/library/irecyclerview/irecyclerview.iml" />
-      <module fileurl="file://$PROJECT_DIR$/library/library.iml" filepath="$PROJECT_DIR$/library/library.iml" />
-      <module fileurl="file://$PROJECT_DIR$/library/pulltorefresh/pulltorefresh.iml" filepath="$PROJECT_DIR$/library/pulltorefresh/pulltorefresh.iml" />
     </modules>
   </component>
 </project>
