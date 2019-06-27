@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:divider="@null"
+    android:dividerHeight="0px">
+
+    <cn.bproject.neteasynews.widget.MyDialogPreference
+        android:dialogIcon="@android:drawable/ic_dialog_alert"
+        android:dialogMessage="是否清除应用缓存"
+        android:key="clear_cache"
+        android:negativeButtonText="@string/cancel"
+        android:positiveButtonText="@string/ok"
+        android:title="清除缓存" />
+
+    <ListPreference
+        android:defaultValue="2"
+        android:entries="@array/array_text_size_title"
+        android:entryValues="@array/array_text_size_value"
+        android:key="text_size"
+        android:title="设置字体大小" />
+
+</PreferenceScreen>

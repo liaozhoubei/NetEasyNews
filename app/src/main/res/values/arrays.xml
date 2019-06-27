@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="array_about_type">
+        <item>项目主页</item>
+        <item>问题反馈</item>
+        <item>设置</item>
+        <item>关于App</item>
+    </string-array>
+
+    <string-array name="array_text_size_title">
+        <item>超大号字体</item>
+        <item>大号字体</item>
+        <item>正常字体</item>
+        <item>小号字体</item>
+    </string-array>
+
+    <string-array name="array_text_size_value">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+</resources>

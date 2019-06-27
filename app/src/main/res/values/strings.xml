@@ -1,3 +1,37 @@
 <resources>
-    <string name="app_name">NetEasyNews</string>
+    <string name="app_name">第二新闻</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="news_fragment">新闻</string>
+    <string name="photo_fragment">图片</string>
+    <string name="video_fragment">视频</string>
+    <string name="about_fragment">我</string>
+
+    <string name="default_text">会武术谁都挡不住——感受进化的力量，哇哈哈哈啊哈</string>
+    <string name="source_news_text">网易</string>
+
+    <string name="string_about_tv_top_name">简单新闻</string>
+    <string name="string_about_tv_content">第二新闻安卓客户端-是一个资讯类新闻客户端
+        包括首页新闻、详情、图片浏览、视频观看等，实时数据抓取新闻等相关功能客户端。</string>
+    <string name="string_about_tv_bottom_right">《来自 宝塔山上的猫》</string>
+    <string name="string_about_tv_botton_copyright">Copyright ©2015-2017</string>
+    <string name="version_name">当前版本 V</string>
+
+    <string name="project_url">https://github.com/liaozhoubei/NetEasyNews</string>
+
+    <string name="news_home">新闻中心</string>
+    <string name="picture_home">图片中心</string>
+    <string name="video_home">推荐视频</string>
+    <string name="user_home">用户中心</string>
+    <string name="feedback_hint">描述您意见或者遭遇的问题，如在哪个界面遇到了什么情况（崩溃/闪退等）</string>
+    <string name="contact_information_edit_hint">填写您的手机或邮箱</string>
+    <string name="cancel">取消</string>
+    <string name="ok">确定</string>
+    <string name="dialog_fire_missiles">是否清除App缓存</string>
+    <string name="pick_toppings">字体设置</string>
+    <string name="text_size">textSize</string>
+
+    <string name="show_video_without_wifi">是否在非wifi状态下观看视频</string>
+
 </resources>
