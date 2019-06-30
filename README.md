@@ -1,5 +1,30 @@
 # NetEasyNews
+
 仿网易新闻项目
+
+# 2019.6.30
+
+好消息啦，近期将会对本项目使用 kotlin 进行直播重写，位置在开发分支 dev_kotlin 中
+
+主要阵营为：
+
+ > 简书博客 https://www.jianshu.com/u/ddf01d43e5ac
+
+微信公众号： Android实战之旅
+
+微信号： 	unidirection
+
+扫描关注：
+
+![image](https://github.com/liaozhoubei/NetEasyNews/blob/master/images/weixin.jpg)
+
+也可以申请加群，大家一起沟通交流
+
+QQ 群：799054441
+
+![image](https://github.com/liaozhoubei/NetEasyNews/blob/master/images/qqCode.png)
+
+## 以下是项目详情
 
 ![image](https://github.com/liaozhoubei/NetEasyNews/blob/master/images/1.gif)
 
@@ -15,7 +40,7 @@
 
 apk下载：
 
-http://pan.baidu.com/s/1qXTPhZu
+ > http://pan.baidu.com/s/1qXTPhZu
 
 # 2017.11.12
 修复了网易视频网址更新导致视频无法观看的问题
