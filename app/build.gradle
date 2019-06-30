@@ -5,11 +5,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion build_versions.target_sdk
+    buildToolsVersion build_versions.build_tools
     defaultConfig {
         applicationId "cn.bproject.neteasynews"
-        minSdkVersion 21
-        targetSdkVersion 28
+        minSdkVersion build_versions.min_sdk
+        targetSdkVersion build_versions.target_sdk
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -30,22 +31,30 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation deps.kotlin.stdlib
+    implementation deps.support.app_compat
+    implementation deps.support.recyclerview
+    implementation deps.support.cardview
+    implementation deps.constraint_layout
+    implementation deps.lifecycle.runtime
+    implementation deps.lifecycle.extensions
+    implementation deps.paging_ktx
 
-    // For developers using AndroidX in their applications
-    implementation 'pub.devrel:easypermissions:3.0.0'
+    // Android Testing Support Library's runner and rules
+    androidTestImplementation deps.test_runner
+    androidTestImplementation deps.espresso_core
+    testImplementation deps.junit
 
-    implementation 'com.github.bumptech.glide:glide:4.9.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
-    implementation 'com.google.code.gson:gson:2.8.5'
-    implementation 'com.blankj:utilcodex:1.24.4'
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
-    implementation "com.squareup.okhttp3:okhttp:3.14.2"
+    implementation deps.easypermissions
+    implementation deps.gson
+    implementation deps.chrisbanes_PhotoView
+    implementation deps.okhttp3
+    implementation deps.retrofit.runtime
+    implementation deps.retrofit.gson
+    implementation deps.utilcodex
+
+    implementation deps.glide.runtime
+    annotationProcessor deps.glide.compiler
+
+
 }

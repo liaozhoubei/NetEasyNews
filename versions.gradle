@@ -1,0 +1,108 @@
+/*
+ * Copyright (C) 2018 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+/**
+ * Shared file between builds so that they can all use the same dependencies and
+ * maven repositories.
+ **/
+ext.deps = [:]
+def versions = [:]
+versions.android_gradle_plugin = '3.4.1'
+versions.kotlin = "1.3.31"
+versions.glide = "4.9.0"
+versions.constraint_layout = "1.1.3"
+versions.retrofit = "2.6.0"
+versions.support = "1.0.0"
+versions.gson = "2.8.5"
+versions.easypermissions = "3.0.0"
+versions.okhttp = "3.14.2"
+versions.utilcodex = "1.24.4"
+versions.chrisbanes_PhotoView = "2.3.0"
+versions.junit = "4.12"
+versions.test_espresso = "3.2.0"
+versions.test_runner = "1.2.0"
+versions.lifecycle = "2.0.0"
+versions.paging = "2.1.0-rc01"
+ext.versions = versions
+
+def deps = [:]
+
+def support = [:]
+support.annotations = "androidx.annotation:annotation:$versions.support"
+support.app_compat = "androidx.appcompat:appcompat:$versions.support"
+support.recyclerview = "androidx.recyclerview:recyclerview:$versions.support"
+support.cardview = "androidx.cardview:cardview:$versions.support"
+support.design = "com.google.android.material:material:$versions.support"
+deps.support = support
+
+def lifecycle = [:]
+lifecycle.runtime = "androidx.lifecycle:lifecycle-runtime:$versions.lifecycle"
+lifecycle.extensions = "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle"
+lifecycle.java8 = "androidx.lifecycle:lifecycle-common-java8:$versions.lifecycle"
+lifecycle.compiler = "androidx.lifecycle:lifecycle-compiler:$versions.lifecycle"
+lifecycle.viewmodel_ktx = "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifecycle"
+deps.lifecycle = lifecycle
+
+
+def kotlin = [:]
+kotlin.stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
+//kotlin.test = "org.jetbrains.kotlin:kotlin-test-junit:$versions.kotlin"
+kotlin.plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+//kotlin.allopen = "org.jetbrains.kotlin:kotlin-allopen:$versions.kotlin"
+deps.kotlin = kotlin
+
+
+
+def retrofit = [:]
+retrofit.runtime = "com.squareup.retrofit2:retrofit:$versions.retrofit"
+retrofit.gson = "com.squareup.retrofit2:converter-gson:$versions.retrofit"
+deps.retrofit = retrofit
+deps.okhttp_logging_interceptor = "com.squareup.okhttp3:logging-interceptor:${versions.okhttp_logging_interceptor}"
+
+
+def glide = [:]
+glide.runtime = "com.github.bumptech.glide:glide:$versions.glide"
+glide.compiler = "com.github.bumptech.glide:compiler:$versions.glide"
+deps.glide = glide
+
+deps.paging_ktx = "androidx.paging:paging-runtime-ktx:$versions.paging"
+deps.gson = "com.google.code.gson:gson:$versions.gson"
+deps.okhttp3 = "com.squareup.okhttp3:okhttp:$versions.okhttp"
+deps.chrisbanes_PhotoView = "com.github.chrisbanes:PhotoView:$versions.chrisbanes_PhotoView"
+deps.utilcodex = "com.blankj:utilcodex:$versions.utilcodex"
+deps.easypermissions = "pub.devrel:easypermissions:$versions.easypermissions"
+deps.test_runner = "androidx.test:runner:$versions.test_runner"
+deps.espresso_core = "androidx.test.espresso:espresso-core:$versions.test_espresso"
+deps.constraint_layout = "androidx.constraintlayout:constraintlayout:$versions.constraint_layout"
+deps.junit = "junit:junit:$versions.junit"
+deps.android_gradle_plugin = "com.android.tools.build:gradle:$versions.android_gradle_plugin"
+ext.deps = deps
+
+def build_versions = [:]
+build_versions.min_sdk = 19
+build_versions.target_sdk = 28
+build_versions.build_tools = "28.0.3"
+ext.build_versions = build_versions
+
+ext.deps = deps
+
+def addRepos(RepositoryHandler handler) {
+    handler.google()
+    handler.jcenter()
+    handler.maven { url "https://jitpack.io" }
+}
+ext.addRepos = this.&addRepos
