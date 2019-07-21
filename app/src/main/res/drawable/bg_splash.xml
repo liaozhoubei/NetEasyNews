@@ -16,11 +16,11 @@
                 android:gravity="top|right"
                 android:src="@mipmap/ic_launcher" />
         </item>-->
-    <!-- 最下面的文字，注意这里有个 bottom 设置 -->
-    <!--<item android:bottom="@dimen/logo_text_bottom">-->
-    <!--<bitmap-->
-    <!--android:gravity="bottom"-->
-    <!--android:src="@drawable/bg_text_name" />-->
-    <!--</item>-->
+    <!--   最下面的文字，注意这里有个 bottom 设置-->
+    <item android:bottom="@dimen/logo_text_bottom">
+        <bitmap
+                android:gravity="bottom"
+                android:src="@drawable/bg_text_name"/>
+    </item>
 
 </layer-list>

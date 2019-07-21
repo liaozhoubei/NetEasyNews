@@ -38,8 +38,8 @@ class SplashActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks 
 
         if (EasyPermissions.hasPermissions(this, *permission)) {
             Toast.makeText(this, "有权限，为所欲为", Toast.LENGTH_SHORT).show()
-            finish()
             startActivity(Intent(this, MainActivity::class.java))
+            finish()
         } else {
             EasyPermissions.requestPermissions(
                 this,
@@ -50,14 +50,21 @@ class SplashActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks 
         }
     }
 
-    // 必须重写此方法，否则权限申请允许或拒绝的方法不会呗调用
+    // 必须重写此方法，否则权限申请允许或拒绝的方法不会被调用
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        // Forward results to EasyPermissions
+        for((index,e) in permissions.withIndex()){
+            Log.e(TAG, "permissions ${e}" + grantResults[index])
+        }
+
+        // 1. 系统获取权限后先调用 onRequestPermissionsResult
+        // 2. 调用后通过 EasyPermissions.onRequestPermissionsResult 将权限允许状态传递给 EasyPermissions
+        // 3. EasyPermissions 将状态分发至 onPermissionsDenied / onPermissionsGranted 两个方法中
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
     }
 
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
+        Log.e(TAG, "permissions onPermissionsDenied")
         Toast.makeText(this, "没有权限，为所欲为", Toast.LENGTH_SHORT).show()
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
             Toast.makeText(this, "您选择了拒绝授权" + PERMISSION_REQUEST_CODE, Toast.LENGTH_SHORT).show()
@@ -77,6 +84,7 @@ class SplashActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks 
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
+        Log.e(TAG, "permissions onPermissionsGranted")
         Toast.makeText(this, "您同意了授权" + PERMISSION_REQUEST_CODE, Toast.LENGTH_SHORT).show()
         checkPermission()
     }

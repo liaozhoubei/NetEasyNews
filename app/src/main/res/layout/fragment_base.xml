@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context=".base.BaseFragment">
+
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/frame_container"
+            android:orientation="vertical"/>
+    <!-- 网络错误-->
+    <include
+            android:id="@+id/layout_net_error"
+            layout="@layout/page_error"
+    android:visibility="gone"/>
+    <include
+            android:id="@+id/layout_page_empty"
+            layout="@layout/page_empty"
+    android:visibility="gone"/>
+</FrameLayout>

@@ -11,4 +11,6 @@
 
     <dimen name="text_font_size_normal">17sp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="logo_text_bottom">100dp</dimen>
 </resources>
