@@ -1,6 +1,8 @@
 package cn.bproject.neteasynews.base
 
+import android.content.Context
 import android.os.Bundle
+import android.os.Handler
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -18,16 +20,17 @@ private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
 
-open class BaseFragment : Fragment() ,View.OnClickListener{
+open class BaseFragment : Fragment(), View.OnClickListener {
     private var mLoading: LinearLayout? = null;
-
+    private var mHandler = Handler()
+    private var attaach = false;
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-       var parentView:View =  inflater.inflate(R.layout.fragment_base, container, false);
+        var parentView: View = inflater.inflate(R.layout.fragment_base, container, false);
         val activity = activity
         val layoutInflater = LayoutInflater.from(activity)
         val view = layoutInflater.inflate(getLayoutResId(), null, false)
@@ -37,16 +40,21 @@ open class BaseFragment : Fragment() ,View.OnClickListener{
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (NetworkUtils.isAvailable()){
-            layout_net_error.visibility = View.GONE;
-        }else{
-            layout_net_error.visibility = View.VISIBLE;
-            btn_retry.setOnClickListener(this)
-        }
+        onNetWorkRefresh()
     }
 
     open fun getLayoutResId(): Int {
         return 0
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        attaach= true;
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        attaach = false
     }
 
 
@@ -54,40 +62,49 @@ open class BaseFragment : Fragment() ,View.OnClickListener{
      * 点击无网络更新
      */
     protected fun onNetWorkRefresh() {
-        if (NetworkUtils.isAvailable()){
-            layout_net_error.visibility = View.GONE;
-        }else{
-            Toast.makeText(activity, "网络链接失败，请检查网络配置", Toast.LENGTH_SHORT).show();
-            layout_net_error.visibility = View.VISIBLE;
-            btn_retry.setOnClickListener(this)
+        var thread = Thread() {
+            if (NetworkUtils.isAvailable()) {
+                mHandler.post({ if (attaach)layout_net_error.visibility = View.GONE })
+
+            } else {
+                mHandler.post {
+                    if (attaach){
+                        Toast.makeText(activity, "网络链接失败，请检查网络配置", Toast.LENGTH_SHORT).show();
+                        layout_net_error.visibility = View.VISIBLE;
+                        btn_retry.setOnClickListener(this)
+                    }
+                }
+
+            }
         }
+
     }
 
-    protected fun initLoading(root:View){
-        if (root == null){
+    protected fun initLoading(root: View) {
+        if (root == null) {
             return
         }
-        if (activity != null && (activity is BaseActivity)){
+        if (activity != null && (activity is BaseActivity)) {
             mLoading = root.findViewById(R.id.loading)
         }
     }
 
-    public fun showLoading(show:Boolean) {
-        if (activity != null && (activity is BaseActivity)){
-            if (show){
-                mLoading?.visibility =View.VISIBLE
-            }else{
-                mLoading?.visibility =  View.GONE
+    public fun showLoading(show: Boolean) {
+        if (activity != null && (activity is BaseActivity)) {
+            if (show) {
+                mLoading?.visibility = View.VISIBLE
+            } else {
+                mLoading?.visibility = View.GONE
             }
         }
     }
 
     fun showNoContentView(show: Boolean) {
 
-        if (activity != null && (activity is BaseActivity)){
-            if (show){
+        if (activity != null && (activity is BaseActivity)) {
+            if (show) {
                 layout_page_empty.visibility = View.VISIBLE
-            }else{
+            } else {
                 layout_page_empty.visibility = View.GONE
             }
         }
@@ -95,8 +112,8 @@ open class BaseFragment : Fragment() ,View.OnClickListener{
 
 
     override fun onClick(v: View?) {
-        when(v?.id){
-            R.id.btn_retry ->onNetWorkRefresh();
+        when (v?.id) {
+            R.id.btn_retry -> onNetWorkRefresh();
         }
     }
 

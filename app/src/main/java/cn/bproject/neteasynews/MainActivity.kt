@@ -22,6 +22,12 @@ class MainActivity : BaseActivity() {
         loading.visibility = View.GONE
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
         navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
+
+
+        var transaction:FragmentTransaction =supportFragmentManager.beginTransaction();
+        var news = NewsFragment();
+        transaction.replace(R.id.realtabcontent, news)
+        transaction.commit()
     }
 
     override fun getLayoutId(): Int {
@@ -65,7 +71,5 @@ class MainActivity : BaseActivity() {
     override fun hasBackButton(): Boolean {
         return false
     }
-
-
 
 }
