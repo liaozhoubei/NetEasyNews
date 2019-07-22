@@ -6,6 +6,8 @@
 
 好消息啦，近期将会对本项目使用 kotlin 进行直播重写，位置在开发分支 dev_kotlin 中
 
+https://github.com/liaozhoubei/NetEasyNews/tree/dev_kotlin
+
 主要阵营为：
 
  > 简书博客 https://www.jianshu.com/u/ddf01d43e5ac
