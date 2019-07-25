@@ -23,7 +23,6 @@ class MainActivity : BaseActivity() {
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
         navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
 
-
         var transaction:FragmentTransaction =supportFragmentManager.beginTransaction();
         var news = NewsFragment();
         transaction.replace(R.id.realtabcontent, news)

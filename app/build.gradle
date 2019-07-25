@@ -50,11 +50,12 @@ dependencies {
     testImplementation deps.junit
 
     implementation deps.easypermissions
-    implementation deps.gson
     implementation deps.chrisbanes_PhotoView
     implementation deps.okhttp3
     implementation deps.retrofit.runtime
     implementation deps.retrofit.gson
+    implementation deps.retrofit.simplexml
+    implementation deps.retrofit.jaxb
     implementation deps.utilcodex
 
     implementation deps.glide.runtime
