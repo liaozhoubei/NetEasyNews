@@ -2,17 +2,24 @@ package cn.bproject.neteasynews
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.FragmentTransaction
 import cn.bproject.neteasynews.base.BaseActivity
+import cn.bproject.neteasynews.bean.NewsBean
+import cn.bproject.neteasynews.bean.VideoBean
 import cn.bproject.neteasynews.fragment.AboutFragment
 import cn.bproject.neteasynews.fragment.NewsFragment
 import cn.bproject.neteasynews.fragment.PhotoFragment
 import cn.bproject.neteasynews.fragment.VideoFragment
+import cn.bproject.neteasynews.network.Api
+import cn.bproject.neteasynews.network.RetrofitHelper
 
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.page_loading.*
+import okhttp3.HttpUrl
+import retrofit2.Call
 
 class MainActivity : BaseActivity() {
 
@@ -27,6 +34,8 @@ class MainActivity : BaseActivity() {
         var news = NewsFragment();
         transaction.replace(R.id.realtabcontent, news)
         transaction.commit()
+
+
     }
 
     override fun getLayoutId(): Int {

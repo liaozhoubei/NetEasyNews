@@ -55,7 +55,7 @@ dependencies {
     implementation deps.retrofit.runtime
     implementation deps.retrofit.gson
     implementation deps.retrofit.simplexml
-    implementation deps.retrofit.jaxb
+    implementation deps.retrofit.scalars
     implementation deps.utilcodex
 
     implementation deps.glide.runtime

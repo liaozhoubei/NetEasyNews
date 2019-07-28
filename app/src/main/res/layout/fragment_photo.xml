@@ -5,11 +5,9 @@
              android:layout_height="match_parent"
              tools:context=".fragment.PhotoFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-            android:gravity="center"
+    <ListView
+            android:id="@+id/lv_fragment_photo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="photo"/>
-
+            android:text="news"/>
 </LinearLayout>

@@ -1,21 +1,12 @@
-package cn.bproject.neteasynews.bean
+package cn.bproject.neteasynews
 
-import android.os.Parcel
-import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+
 import java.io.Serializable
 
-/**
- * Created by Bei on 2016/12/28.
- * 视频列表单个条目与视频详情页的数据基本相同
- * 不同点在于视频列表的m3u8_url和mp4_url的视频链接采用的是https协议，而视频详情页采用的是http协议
- */
-
-class VideoBean() : Serializable {
+class TestVieo : Serializable {
     @SerializedName("视频")
     var videolist: List<VideoBean>? = null
-
-
 
     class VideoBean {
         /**

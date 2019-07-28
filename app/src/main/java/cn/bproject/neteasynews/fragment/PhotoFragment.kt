@@ -2,13 +2,22 @@ package cn.bproject.neteasynews.fragment
 
 
 import android.os.Bundle
+import android.os.Handler
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 
 import cn.bproject.neteasynews.R
 import cn.bproject.neteasynews.base.BaseFragment
+import cn.bproject.neteasynews.bean.PicListBean
+import cn.bproject.neteasynews.network.Api
+import cn.bproject.neteasynews.network.RetrofitHelper
+import com.google.gson.Gson
+import kotlinx.android.synthetic.main.fragment_photo.*
+import kotlinx.android.synthetic.main.fragment_video.*
+import okhttp3.HttpUrl
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -21,8 +30,29 @@ private const val ARG_PARAM2 = "param2"
  */
 class PhotoFragment : BaseFragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return super.onCreateView(inflater, container, savedInstanceState)
+    var handler: Handler = Handler();
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        var thread:Thread = Thread(Runnable {
+            context?.let {
+                var retrofitHelper= RetrofitHelper.getInstance(HttpUrl.parse(Api.host)!!, it);
+                var picContent: String? = retrofitHelper.getPicBean("0003","00AJ0003,0AJQ0003,3LF60003,00B70003,00B50003",0).execute().body()
+                var content:String = "{\"piclist\":" + picContent +"}"
+
+                var gson= Gson()
+                var picListBean = gson.fromJson(content, PicListBean::class.java)
+                var list =picListBean?.piclist;
+                var stringlist = arrayListOf<String>();
+                for (index in list!!){
+                    index.setname?.let { it1 -> stringlist.add(it1) }
+                }
+                val adapter = ArrayAdapter(context, android.R.layout.simple_list_item_1, stringlist)
+                handler.post {    lv_fragment_photo.adapter = adapter; }
+
+            };
+        })
+        thread.start()
     }
 
 
