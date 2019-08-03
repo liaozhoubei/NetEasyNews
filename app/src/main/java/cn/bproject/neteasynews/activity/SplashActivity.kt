@@ -1,4 +1,4 @@
-package cn.bproject.neteasynews
+package cn.bproject.neteasynews.activity
 
 import android.Manifest
 import android.app.Activity
@@ -13,7 +13,7 @@ import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import pub.devrel.easypermissions.AppSettingsDialog
+import cn.bproject.neteasynews.R
 import pub.devrel.easypermissions.EasyPermissions
 
 class SplashActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {

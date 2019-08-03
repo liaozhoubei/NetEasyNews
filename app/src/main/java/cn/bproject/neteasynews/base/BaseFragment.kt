@@ -10,21 +10,22 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Toast
-
 import cn.bproject.neteasynews.R
+
 import com.blankj.utilcode.util.NetworkUtils
 import kotlinx.android.synthetic.main.fragment_base.*
 import kotlinx.android.synthetic.main.page_error.*
 
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-
-open class BaseFragment : Fragment(), View.OnClickListener {
+/**
+ *  https://blog.csdn.net/njp_njp/article/details/80003406 fragment 懒加载
+ */
+open abstract class BaseFragment : Fragment(), View.OnClickListener {
     private var mLoading: LinearLayout? = null;
-    private var mHandler = Handler()
     private var attaach = false;
-
+    var mHandler = Handler()
+    var mContext: Context? = null
+    private var isFirstLoad = false
+    public var onFragmentInteractionListener: OnFragmentInteractionListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,22 +36,49 @@ open class BaseFragment : Fragment(), View.OnClickListener {
         val layoutInflater = LayoutInflater.from(activity)
         val view = layoutInflater.inflate(getLayoutResId(), null, false)
         (parentView.findViewById<View>(R.id.frame_container) as FrameLayout).addView(view)
+
         return parentView
     }
-
+    // 在此次判断是否fragment 初次显示，若是则需要加载数据
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        isFirstLoad = true;//视图创建完成，将变量置为true
+        if (getUserVisibleHint()) {//判断Fragment是否可见
+            onlazyLoadData();//数据加载操作
+            isFirstLoad = false;//将变量置为false
+        }
         onNetWorkRefresh()
     }
 
-    open fun getLayoutResId(): Int {
-        return 0
+    abstract fun getLayoutResId(): Int
+
+    open override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        mContext = context
+        attaach = true;
+        if (context is OnFragmentInteractionListener) {
+            onFragmentInteractionListener = context
+        } else {
+            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
+        }
     }
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        attaach= true;
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        if (isFirstLoad && isVisibleToUser) {//视图变为可见并且是第一次加载
+            onlazyLoadData();
+            isFirstLoad = false;
+        }
+        super.setUserVisibleHint(isVisibleToUser)
     }
+
+    private fun onlazyLoadData() {
+        initData()
+    }
+
+    /**
+     * 加载要显示的数据
+     */
+    protected abstract fun initData()
 
     override fun onDetach() {
         super.onDetach()
@@ -64,11 +92,11 @@ open class BaseFragment : Fragment(), View.OnClickListener {
     protected fun onNetWorkRefresh() {
         var thread = Thread() {
             if (NetworkUtils.isAvailable()) {
-                mHandler.post({ if (attaach)layout_net_error.visibility = View.GONE })
+                mHandler.post({ if (attaach) layout_net_error.visibility = View.GONE })
 
             } else {
                 mHandler.post {
-                    if (attaach){
+                    if (attaach) {
                         Toast.makeText(activity, "网络链接失败，请检查网络配置", Toast.LENGTH_SHORT).show();
                         layout_net_error.visibility = View.VISIBLE;
                         btn_retry.setOnClickListener(this)
@@ -125,6 +153,11 @@ open class BaseFragment : Fragment(), View.OnClickListener {
         return false
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        isFirstLoad = false;//视图销毁将变量置为false
+    }
+
 
     /**
      * 销毁当前fragment
@@ -137,5 +170,7 @@ open class BaseFragment : Fragment(), View.OnClickListener {
         }
 
     }
+
+
 
 }

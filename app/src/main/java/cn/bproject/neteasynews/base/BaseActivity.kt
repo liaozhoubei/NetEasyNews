@@ -63,6 +63,10 @@ abstract class BaseActivity : AppCompatActivity() {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(hasBackButton())
             actionBar.setDisplayShowTitleEnabled(false)
+
+        }
+        mToolbar!!.setNavigationOnClickListener(){
+            finish()
         }
 
 

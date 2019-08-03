@@ -44,8 +44,8 @@ class RetrofitHelper {
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .addInterceptor(BaseUrlInterceptor())
                 .addInterceptor(LoggingInterceptor())
-                .addInterceptor(HeaderInterceptor())
-                .cookieJar(CookiesManager(context)) // cookie 管理
+                .addInterceptor(HeaderInterceptor(context))
+//                .cookieJar(CookiesManager(context)) // cookie 管理
                 .sslSocketFactory(createSSLSocketFactory()!!, TrustAllManager())  // 测试版本，信任所有未知来源证书
                 .build()
             return okHttpClient

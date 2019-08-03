@@ -14,12 +14,18 @@ import cn.bproject.neteasynews.base.BaseFragment
 
 class AboutFragment : BaseFragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return super.onCreateView(inflater, container, savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        onFragmentInteractionListener?.onFragmentTitleChange("关于应用")
     }
+
+
 
     override fun getLayoutResId(): Int {
         return R.layout.fragment_about
+    }
+
+    override fun initData() {
     }
 
 

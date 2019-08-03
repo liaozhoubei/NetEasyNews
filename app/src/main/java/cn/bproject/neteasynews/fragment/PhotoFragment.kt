@@ -1,6 +1,7 @@
 package cn.bproject.neteasynews.fragment
 
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import androidx.fragment.app.Fragment
@@ -8,21 +9,28 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 
 import cn.bproject.neteasynews.R
+import cn.bproject.neteasynews.adapter.FixedPagerAdapter
 import cn.bproject.neteasynews.base.BaseFragment
 import cn.bproject.neteasynews.bean.PicListBean
+import cn.bproject.neteasynews.bean.ProjectChannelBean
 import cn.bproject.neteasynews.network.Api
 import cn.bproject.neteasynews.network.RetrofitHelper
+import cn.bproject.neteasynews.util.CategoryDataUtils
+import cn.bproject.neteasynews.util.ListDataSave
+import com.google.android.material.tabs.TabLayout
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_photo.*
 import kotlinx.android.synthetic.main.fragment_video.*
+import kotlinx.android.synthetic.main.tablayout_pager.*
 import okhttp3.HttpUrl
+import java.util.ArrayList
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
@@ -30,35 +38,49 @@ private const val ARG_PARAM2 = "param2"
  */
 class PhotoFragment : BaseFragment() {
 
+
     var handler: Handler = Handler();
+
+    private var fixedPagerAdapter: FixedPagerAdapter? = null
+    private var fragments: MutableList<BaseFragment>? = null
+    private var channelBeanList: List<ProjectChannelBean.TListBean>? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var thread:Thread = Thread(Runnable {
-            context?.let {
-                var retrofitHelper= RetrofitHelper.getInstance(HttpUrl.parse(Api.host)!!, it);
-                var picContent: String? = retrofitHelper.getPicBean("0003","00AJ0003,0AJQ0003,3LF60003,00B70003,00B50003",0).execute().body()
-                var content:String = "{\"piclist\":" + picContent +"}"
+        onFragmentInteractionListener?.onFragmentTitleChange("图片")
 
-                var gson= Gson()
-                var picListBean = gson.fromJson(content, PicListBean::class.java)
-                var list =picListBean?.piclist;
-                var stringlist = arrayListOf<String>();
-                for (index in list!!){
-                    index.setname?.let { it1 -> stringlist.add(it1) }
-                }
-                val adapter = ArrayAdapter(context, android.R.layout.simple_list_item_1, stringlist)
-                handler.post {    lv_fragment_photo.adapter = adapter; }
 
-            };
-        })
-        thread.start()
+        channelBeanList = CategoryDataUtils.getPicCategoryBeans()
+        fixedPagerAdapter = FixedPagerAdapter(childFragmentManager)
+
+        fragments = ArrayList()
+        fragments!!.clear()
+        for (i in channelBeanList!!.indices) {
+            // "推荐","","0031"
+            // "明星","","0003"使用瀑布流
+            val channelBean = channelBeanList!!.get(i)
+            val fragment = PicListFragment.newInstance(channelBean.tid!!, channelBean.column!!)
+            fragments!!.add(fragment)
+        }
+
+        fixedPagerAdapter!!.setChannelBean(channelBeanList)
+        fixedPagerAdapter!!.setFragments(fragments)
+
+
+        tablayout_viewpager.setAdapter(fixedPagerAdapter)
+//        tab_layout.setTabMode(TabLayout.MODE_SCROLLABLE); //适合很多tab
+        tab_layout.setTabMode(TabLayout.MODE_FIXED) // tablayout均分，适合少Tablayout
+        tab_layout.setupWithViewPager(tablayout_viewpager)
     }
 
 
 
     override fun getLayoutResId(): Int {
-        return R.layout.fragment_photo
+        return R.layout.tablayout_pager
+    }
+
+    override fun initData() {
+
     }
 
 

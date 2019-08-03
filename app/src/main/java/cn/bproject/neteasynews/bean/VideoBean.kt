@@ -2,7 +2,7 @@ package cn.bproject.neteasynews.bean
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
+
 import java.io.Serializable
 
 /**
@@ -11,113 +11,120 @@ import java.io.Serializable
  * 不同点在于视频列表的m3u8_url和mp4_url的视频链接采用的是https协议，而视频详情页采用的是http协议
  */
 
-class VideoBean() : Serializable {
-    @SerializedName("视频")
-    var videolist: List<VideoBean>? = null
+class VideoBean : Serializable {
+
+    /**
+     * cover : http://vimg2.ws.126.net/image/snapshot/2016/12/L/K/VC8FOVBLK.jpg
+     * description :
+     * length : 206
+     * m3u8_url : http://flv2.bn.netease.com/tvmrepo/2016/12/6/A/EC8F5GU6A/SD/movie_index.m3u8
+     * mp4_url : http://flv2.bn.netease.com/tvmrepo/2016/12/6/A/EC8F5GU6A/SD/EC8F5GU6A-mobile.mp4
+     * playCount : 103
+     * playersize : 1
+     * ptime : 2016-12-28 22:46:41.0
+     * replyBoard : video_bbs
+     * replyCount : 0
+     * replyid : C8F5KVH9008535RB
+     * sectiontitle : http://vimg3.ws.126.net/image/snapshot/2016/12/L/S/VC7T21ILS.jpg
+     * title : 吃货福利！手把手教你做酸菜鱼 超极好吃
+     * topicDesc : 关于知识,关于世界
+     * topicImg : http://vimg3.ws.126.net/image/snapshot/2016/12/L/S/VC7T21ILS.jpg
+     * topicName : 大开眼界
+     * topicSid : VC7T21ILQ
+     * vid : VC8F5KVH9
+     * videoTopic : {"alias":"关于知识,关于世界","ename":"T1482313997359","tid":"T1482313997359","tname":"大开眼界"}
+     * videosource : 新媒体
+     */
+
+    var cover: String? = null
+    var length: Int = 0
+    var m3u8_url: String? = null
+    var m3u8Hd_url: String? = null
+    var mp4_url: String? = null
+    var mp4Hd_url: String? = null
+    var playCount: Int = 0
+    var ptime: String? = null
+    var replyid: String? = null
+    var title: String? = null
+    var topicDesc: String? = null
+    var topicName: String? = null
+    var topicSid: String? = null
+    var vid: String? = null
+    //    private VideoTopicBean videoTopic;
+    //    public VideoTopicBean getVideoTopic() {
+    //        return videoTopic;
+    //    }
+    //
+    //    public void setVideoTopic(VideoTopicBean videoTopic) {
+    //        this.videoTopic = videoTopic;
+    //    }
+
+    var videosource: String? = null
 
 
+    //    public static class VideoTopicBean {
+    //        /**
+    //         * alias : 关于知识,关于世界
+    //         * ename : T1482313997359
+    //         * tid : T1482313997359
+    //         * tname : 大开眼界
+    //         */
+    //
+    //        private String alias;
+    //        private String ename;
+    //        private String tid;
+    //        private String tname;
+    //
+    //        public String getAlias() {
+    //            return alias;
+    //        }
+    //
+    //        public void setAlias(String alias) {
+    //            this.alias = alias;
+    //        }
+    //
+    //        public String getEname() {
+    //            return ename;
+    //        }
+    //
+    //        public void setEname(String ename) {
+    //            this.ename = ename;
+    //        }
+    //
+    //        public String getTid() {
+    //            return tid;
+    //        }
+    //
+    //        public void setTid(String tid) {
+    //            this.tid = tid;
+    //        }
+    //
+    //        public String getTname() {
+    //            return tname;
+    //        }
+    //
+    //        public void setTname(String tname) {
+    //            this.tname = tname;
+    //        }
+    //    }
 
-    class VideoBean {
-        /**
-         * prompt : 成功为您推荐10条新视频
-         * replyCount : 7
-         * videosource : 大叔麻溜娱
-         * title : 这才是美腿的正确打开方式，让魅力围绕在身边
-         * playCount : 33104
-         * voteCount : 10
-         * description : 这才是美腿的正确打开方式，让魅力围绕在身边
-         * replyid : RK64LP8T050835RB
-         * mp4_url : http://flv3.bn.netease.com/videolib1/1907/27/10oo11qke/SD/10oo11qke-mobile.mp4
-         * mp4Hd_url : http://flv3.bn.netease.com/videolib1/1907/27/10oo11qke/HD/10oo11qke-mobile.mp4
-         * m3u8_url : http://flv0.bn.netease.com/videolib1/1907/27/10oo11qke/SD/movie_index.m3u8
-         * m3u8Hd_url : http://flv0.bn.netease.com/videolib1/1907/27/10oo11qke/HD/movie_index.m3u8
-         * length : 11
-         * playersize : 0
-         * vid : VRK64LP8T
-         * ptime : 2019-07-27 16:50:08
-         * replyBoard : video_bbs
-         * danmu : 1
-         * topicDesc : 自驾去西部吧，那里有大漠长河，戈壁高山、古城要塞、金戈铁马......如画美景和雄浑的历史扑面而来，让你应接不暇。
-         * topicSid : VCPQO5Q34
-         * cover : http://videoimg.ws.126.net/cover/20190727/HrQuw61Tq_cover.jpg
-         * topicName : 大叔麻溜娱
-         * videoTopic : {"alias":"易闻·易见·易娱·易乐","tname":"大叔麻溜娱","ename":"T1501170466492","tid":"T1501170466492","topic_icons":"http://dingyue.ws.126.net/78UAdzfTAcnjc7vGhmBE9d5J0nVHi=zXUpzEcIw4SNoxG1553242175372.jpeg","followed":false}
-         * program : VCH_NEWUSER_BASE
-         * sizeSD : 526
-         * sizeHD : 657
-         * sizeSHD : 0
-         * unlikeReason : ["美女视频/1","美腿/2","萌妹子/2","来源:大叔麻溜娱/4","标题党/6","内容质量差/6","看过了/6","低俗重口/6"]
-         * autoPlay : 0
-         * category : 美女/美女
-         * accoutClassify : 1
-         * videoRatio : 0.5625
-         * covCLevel : 4
-         * cntCLevel : 3
-         * recomCount : 0
-         * shortV : true
-         * firstFrameImg : http://videoimg.ws.126.net/cover/20190727/FBZGucdrf_1stframe.jpg
-         * fullSizeImg : http://videoimg.ws.126.net/cover/20190727/HrQuw61Tq_cover.jpg
-         * reqId : 981ff43d-9019-4278-ac1d-85e711240ed2
-         * videoHideTitle : 0
-         */
-
-        var prompt: String? = null
-        var replyCount: Int = 0
-        var videosource: String? = null
-        var title: String? = null
-        var playCount: Int = 0
-        var voteCount: Int = 0
-        var description: String? = null
-        var replyid: String? = null
-        var mp4_url: String? = null
-        var mp4Hd_url: String? = null
-        var m3u8_url: String? = null
-        var m3u8Hd_url: String? = null
-        var length: Int = 0
-        var playersize: Int = 0
-        var vid: String? = null
-        var ptime: String? = null
-        var replyBoard: String? = null
-        var danmu: Int = 0
-        var topicDesc: String? = null
-        var topicSid: String? = null
-        var cover: String? = null
-        var topicName: String? = null
-        var videoTopic: VideoTopicBean? = null
-        var program: String? = null
-        var sizeSD: Int = 0
-        var sizeHD: Int = 0
-        var sizeSHD: Int = 0
-        var autoPlay: Int = 0
-        var category: String? = null
-        var accoutClassify: Int = 0
-        var videoRatio: Double = 0.toDouble()
-        var covCLevel: Int = 0
-        var cntCLevel: Int = 0
-        var recomCount: Int = 0
-        var isShortV: Boolean = false
-        var firstFrameImg: String? = null
-        var fullSizeImg: String? = null
-        var reqId: String? = null
-        var videoHideTitle: Int = 0
-        var unlikeReason: List<String>? = null
-
-        class VideoTopicBean {
-            /**
-             * alias : 易闻·易见·易娱·易乐
-             * tname : 大叔麻溜娱
-             * ename : T1501170466492
-             * tid : T1501170466492
-             * topic_icons : http://dingyue.ws.126.net/78UAdzfTAcnjc7vGhmBE9d5J0nVHi=zXUpzEcIw4SNoxG1553242175372.jpeg
-             * followed : false
-             */
-
-            var alias: String? = null
-            var tname: String? = null
-            var ename: String? = null
-            var tid: String? = null
-            var topic_icons: String? = null
-            var isFollowed: Boolean = false
-        }
+    override fun toString(): String {
+        return "VideoBean{" +
+                "cover='" + cover + '\''.toString() +
+                ", length=" + length +
+                ", m3u8_url='" + m3u8_url + '\''.toString() +
+                ", m3u8Hd_url='" + m3u8Hd_url + '\''.toString() +
+                ", mp4_url='" + mp4_url + '\''.toString() +
+                ", mp4Hd_url='" + mp4Hd_url + '\''.toString() +
+                ", playCount=" + playCount +
+                ", ptime='" + ptime + '\''.toString() +
+                ", replyid='" + replyid + '\''.toString() +
+                ", title='" + title + '\''.toString() +
+                ", topicDesc='" + topicDesc + '\''.toString() +
+                ", topicName='" + topicName + '\''.toString() +
+                ", topicSid='" + topicSid + '\''.toString() +
+                ", vid='" + vid + '\''.toString() +
+                ", videosource='" + videosource + '\''.toString() +
+                '}'.toString()
     }
 }

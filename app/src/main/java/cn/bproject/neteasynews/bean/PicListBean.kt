@@ -5,9 +5,7 @@ package cn.bproject.neteasynews.bean
  */
 
 class PicListBean {
-    var piclist: List<PicBean>? = null
 
-    class PicBean{
     /**
      * desc : Hendo除了COS男版蜘蛛侠外更是挑战了一下原作中由蜘蛛侠女友温格所变身的女版蜘蛛，效果更是到位。女版蜘蛛侠会不会更厉害，更值得期待？
      * pvnum :
@@ -27,17 +25,7 @@ class PicListBean {
      * tcover : http://img4.cache.netease.com/photo/0031/2016-12-27/t_C98O8VGL6LRK0031.jpg
      */
 
-    //    private List<PicList> mPicLists;
-    //
-    //    public List<PicList> getPicLists() {
-    //        return mPicLists;
-    //    }
-    //
-    //    public void setPicLists(List<PicList> picLists) {
-    //        mPicLists = picLists;
-    //    }
-    //
-    //    public class PicList{
+
     var desc: String? = null
     // 创建时间
     var createdate: String? = null
@@ -58,7 +46,7 @@ class PicListBean {
                 ", createdate='" + createdate + '\''.toString() +
                 '}'.toString()
     }
-    }
+
 
     //    }
 
