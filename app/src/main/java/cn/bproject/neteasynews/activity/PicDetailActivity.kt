@@ -61,7 +61,12 @@ class PicDetailActivity : BaseActivity() {
                 var result = response.body()
                 var mImageDetailBean = DataParse.ImageDetail(result)
                 mHandler.post {
-                    bindData(mImageDetailBean)
+                    if (mImageDetailBean != null){
+                        bindData(mImageDetailBean)
+                    }else{
+                        Toast.makeText(mContext, "无法获取数据，${result}", Toast.LENGTH_SHORT).show()
+                    }
+
                 }
             }else{
                 mHandler.post { Toast.makeText(mContext, "${response.code()}", Toast.LENGTH_SHORT).show()}
