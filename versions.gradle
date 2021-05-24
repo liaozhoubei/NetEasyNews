@@ -93,12 +93,14 @@ def addRepos(RepositoryHandler handler) {
         handler.maven { url("http://localhost:9091/repository/aliyun/") }
         handler.maven { url("http://localhost:9091/repository/aliyun-google/") }
         handler.maven { url("http://localhost:9091/repository/aliyun-gradle-plugin/") }
+        handler.maven { url "https://jitpack.io" }
     }else{
         handler.maven { url("https://maven.aliyun.com/repository/public") }
         handler.maven { url("https://maven.aliyun.com/repository/google") }
         handler.maven { url("https://maven.aliyun.com/repository/gradle-plugin") }
         handler.google()
         handler.mavenCentral()
+        handler.maven { url "https://jitpack.io" }
     }
 }
 ext.addRepos = this.&addRepos

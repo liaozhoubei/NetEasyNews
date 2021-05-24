@@ -52,7 +52,7 @@ open abstract class BaseFragment : Fragment(), View.OnClickListener {
 
     abstract fun getLayoutResId(): Int
 
-    open override fun onAttach(context: Context?) {
+    open override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
         attaach = true;
